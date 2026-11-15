@@ -1,0 +1,10 @@
+const fs = require('fs');
+const path = require('path');
+
+const src = path.resolve(__dirname, '../dist/index.html');
+const dest = path.resolve(__dirname, '../dist/404.html');
+
+if (fs.existsSync(src)) {
+  fs.copyFileSync(src, dest);
+  console.log('✓ Created dist/404.html for GitHub Pages SPA fallback');
+}

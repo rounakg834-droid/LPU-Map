@@ -3,10 +3,12 @@ import * as maplibregl from 'maplibre-gl';
 import { setWorkerUrl, Map as MapLibreMap, Marker, LngLatBounds, MapLayerMouseEvent } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
-// Crucial: Route MapLibre Web Worker to the static worker bundle served at /maplibre-gl-worker.mjs
-// This ensures WebGL geometry tessellation runs without CSP or bundling worker failures.
+// Crucial: Route MapLibre Web Worker to the static worker bundle with base path support
+// This ensures WebGL geometry tessellation runs properly on both local dev and GitHub Pages (/LPU-Map/).
 if (typeof window !== 'undefined') {
-  setWorkerUrl('/maplibre-gl-worker.mjs');
+  const base = import.meta.env.BASE_URL || '/';
+  const cleanBase = base.endsWith('/') ? base.slice(0, -1) : base;
+  setWorkerUrl(`${cleanBase}/maplibre-gl-worker.mjs`);
 }
 import {
   Compass,
