@@ -1,0 +1,131 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && (
+        request.auth.token.admin == true ||
+        exists(/databases/$(database)/documents/admin_users/$(request.auth.uid))
+      );
+    }
+
+    function isAuthor(creatorUid) {
+      return isAuthenticated() && request.auth.uid == creatorUid;
+    }
+
+    // 1. PUBLIC EVENTS COLLECTION
+    // Readable by all students. Contains ONLY public fields (title, location, times, creatorName).
+    // NO course, year, email, or sensitive student details allowed in this collection.
+    match /events/{eventId} {
+      // Anyone can read active, upcoming, or public campus events
+      allow read: if true;
+
+      // Only authenticated students can create events
+      allow create: if isAuthenticated() &&
+        request.resource.data.creatorUid == request.auth.uid &&
+        // Verify no private student data leaks into public collection
+        !('studentFullName' in request.resource.data) &&
+        !('course' in request.resource.data) &&
+        !('yearOfStudy' in request.resource.data) &&
+        !('email' in request.resource.data) &&
+        // Duration constraint: End time must not exceed 6 hours from start time
+        timestamp.date(request.resource.data.endTime) <= timestamp.date(request.resource.data.startTime) + duration.value(6, 'h');
+
+      // Creator can update or cancel their event; Admins can moderate
+      allow update: if isAuthenticated() && (
+        isAuthor(resource.data.creatorUid) ||
+        isAdmin() ||
+        // Allow students to increment reportCount
+        (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reportCount', 'updatedAt']))
+      );
+
+      // Only admins can hard delete events
+      allow delete: if isAdmin();
+    }
+
+    // 2. PROTECTED STUDENT METADATA COLLECTION
+    // Holds sensitive identity: student legal name, course, academic year, and account ID.
+    // Strictly RESTRICTED: Public students can NEVER read this collection.
+    // Only authorized university administrators (and the creator for their own record) may read.
+    match /event_private_metadata/{eventId} {
+      // SENSITIVE STUDENT PRIVACY RULE: Only Admins or Event Author can read!
+      allow read: if isAuthenticated() && (
+        isAdmin() ||
+        resource.data.creatorUid == request.auth.uid
+      );
+
+      // Creator can write their own identity metadata upon event creation
+      allow create: if isAuthenticated() &&
+        request.resource.data.creatorUid == request.auth.uid;
+
+      // Only administrators can modify or delete student metadata records
+      allow update, delete: if isAdmin();
+    }
+
+    // 3. EVENT REPORTS COLLECTION
+    // Used for community moderation against fake or abusive events
+    match /event_reports/{reportId} {
+      // Any authenticated user can submit a moderation report
+      allow create: if isAuthenticated();
+
+      // Only administrators can review, modify, or resolve reports
+      allow read, update, delete: if isAdmin();
+    }
+
+    // 4. LIVE LOCATION SHARES (Phase 5)
+    // Secure capability token architecture for "WhatsApp Live Location" and "Meet My Friend"
+    // Private GPS coordinates are NEVER exposed through public list queries.
+    match /location_shares/{token} {
+      // Disallow list queries to prevent scraping or enumerating all campus students' locations
+      allow list: if false;
+
+      // Direct get allowed only by token holders (capability URL)
+      allow get: if true;
+
+      // Authenticated students can create a location share (Max duration: 8 hours)
+      allow create: if isAuthenticated() &&
+        request.resource.data.creatorId == request.auth.uid &&
+        request.resource.data.token == token &&
+        timestamp.date(request.resource.data.expiresAt) <= timestamp.date(request.resource.data.createdAt) + duration.value(8, 'h');
+
+      // Only the author can update coordinates, note, or revoke the share
+      allow update: if isAuthenticated() && (
+        isAuthor(resource.data.creatorId) ||
+        isAdmin()
+      );
+
+      // Creator or admin can delete the location share
+      allow delete: if isAuthenticated() && (
+        isAuthor(resource.data.creatorId) ||
+        isAdmin()
+      );
+    }
+
+    // 5. ROAD CLOSURES & MAINTENANCE (Phase 5)
+    match /road_closures/{closureId} {
+      // Publicly readable so student navigators can route around closed paths
+      allow read: if true;
+
+      // Students can submit pending blockage reports (approvedByAdmin must be false)
+      // Admins can create official approved road closures
+      allow create: if isAuthenticated() && (
+        isAdmin() ||
+        request.resource.data.approvedByAdmin == false
+      );
+
+      // Only admins can approve, modify, or delete official closures
+      allow update, delete: if isAdmin();
+    }
+
+    // 6. ADMIN USERS REGISTRY
+    match /admin_users/{userId} {
+      allow read: if isAuthenticated();
+      allow write: if false; // Only manageable via Firebase Admin SDK / Console
+    }
+  }
+}

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2563eb" />
+      <stop offset="100%" stop-color="#1d4ed8" />
+    </linearGradient>
+  </defs>
+  <rect width="48" height="48" rx="12" fill="url(#grad)" />
+  <!-- Campus navigation pin -->
+  <path d="M24 10C18.477 10 14 14.477 14 20C14 27.5 24 38 24 38C24 38 34 27.5 34 20C34 14.477 29.523 10 24 10ZM24 24C21.791 24 20 22.209 20 20C20 17.791 21.791 16 24 16C26.209 16 28 17.791 28 20C28 22.209 26.209 24 24 24Z" fill="#ffffff" />
+  <circle cx="24" cy="20" r="2.5" fill="#ea580c" />
+</svg>
