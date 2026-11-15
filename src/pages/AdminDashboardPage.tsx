@@ -22,7 +22,10 @@ import {
   AlertCircle,
   Menu,
   X,
-  Server
+  Server,
+  MapPin,
+  ExternalLink,
+  ShieldCheck,
 } from 'lucide-react';
 import { PublicCampusEvent, ProtectedStudentMetadata, EventReport } from '../types/events';
 import { eventService } from '../services/eventService';
@@ -30,16 +33,17 @@ import { authService } from '../services/authService';
 import { RoadClosure } from '../types/roadClosure';
 import { roadClosureService } from '../services/roadClosureService';
 import { CAMPUS_LOCATIONS } from '../data/locations';
-import { CampusLocation } from '../types/location';
+import { CampusLocation, LocationCorrection } from '../types/location';
 import { campusRouteGraph } from '../data/campusRouteGraph';
 import { qrToSVG } from '../utils/qrGenerator';
 import { isFirebaseConfigured } from '../config/firebase';
+import { locationCorrectionService } from '../services/locationCorrectionService';
 
 interface AdminDashboardPageProps {
   onNavigateHome: () => void;
 }
 
-type AdminTab = 'overview' | 'events' | 'students' | 'reports' | 'closures' | 'qr';
+type AdminTab = 'overview' | 'events' | 'students' | 'reports' | 'closures' | 'qr' | 'locations';
 
 export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNavigateHome }) => {
   const [isAdmin, setIsAdmin] = useState<boolean>(authService.isAdmin());
@@ -83,6 +87,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
   const [selectedQrLocationId, setSelectedQrLocationId] = useState<string>('block-34');
   const [qrCopied, setQrCopied] = useState(false);
 
+  // Location Verification States
+  const [corrections, setCorrections] = useState<LocationCorrection[]>([]);
+  const [isUpdatingLocation, setIsUpdatingLocation] = useState<boolean>(false);
+
   useEffect(() => {
     setIsAdmin(authService.isAdmin());
     if (authService.isAdmin()) {
@@ -90,7 +98,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
       const unsubscribe = eventService.subscribeToAllEvents(() => {
         loadData();
       });
-      return () => unsubscribe();
+      const unsubCorr = locationCorrectionService.subscribe(() => {
+        setCorrections(locationCorrectionService.getAllCorrections());
+      });
+      return () => {
+        unsubscribe();
+        unsubCorr();
+      };
     }
   }, [isAdmin]);
 
@@ -107,10 +121,48 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
       setMetadata(data.metadata);
       setReports(data.reports);
       setClosures(roadClosureService.getAllClosures());
+      const loadedCorrections = await locationCorrectionService.loadCorrections();
+      setCorrections(loadedCorrections);
     } catch (err: any) {
       console.warn('Admin load data error:', err);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleConfirmEntrance = async (
+    locationId: string,
+    coords: { lat: number; lng: number },
+    placeName: string
+  ) => {
+    setIsUpdatingLocation(true);
+    try {
+      const adminIdentity = authService.getCurrentUser()?.email || adminEmail || 'University Campus Administrator';
+      await locationCorrectionService.confirmEntrance(
+        locationId,
+        coords,
+        adminIdentity,
+        'Field-identified entrance confirmed via on-ground Google Maps survey'
+      );
+      setCorrections(locationCorrectionService.getAllCorrections());
+      showToast(`Entrance coordinates for ${placeName} confirmed & synced across devices!`);
+    } catch (err: any) {
+      showToast(err.message || 'Failed to confirm entrance');
+    } finally {
+      setIsUpdatingLocation(false);
+    }
+  };
+
+  const handleRevertEntrance = async (locationId: string, placeName: string) => {
+    setIsUpdatingLocation(true);
+    try {
+      await locationCorrectionService.revertEntrance(locationId);
+      setCorrections(locationCorrectionService.getAllCorrections());
+      showToast(`Reverted entrance confirmation for ${placeName} to pending survey`);
+    } catch (err: any) {
+      showToast(err.message || 'Failed to revert entrance');
+    } finally {
+      setIsUpdatingLocation(false);
     }
   };
 
@@ -553,7 +605,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
               { id: 'students', label: 'Student Records', icon: Users, count: registeredStudentsCount },
               { id: 'reports', label: 'Abuse Reports', icon: AlertTriangle, count: reportedEventsCount, isWarning: reportedEventsCount > 0 },
               { id: 'closures', label: 'Road Closures', icon: Ban, count: activeClosuresCount },
-              { id: 'qr', label: 'QR Navigation', icon: QrCode }
+              { id: 'qr', label: 'QR Navigation', icon: QrCode },
+              { id: 'locations', label: 'Locations & Entrances', icon: MapPin }
             ].map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
@@ -659,7 +712,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
             { id: 'students', label: 'Student Records', icon: Users },
             { id: 'reports', label: 'Abuse Reports', icon: AlertTriangle },
             { id: 'closures', label: 'Road Closures', icon: Ban },
-            { id: 'qr', label: 'QR Navigation', icon: QrCode }
+            { id: 'qr', label: 'QR Navigation', icon: QrCode },
+            { id: 'locations', label: 'Locations & Entrances', icon: MapPin }
           ].map((item) => (
             <button
               key={item.id}
@@ -1397,6 +1451,170 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
                     </button>
                   </div>
                 ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ==================================================== */}
+        {/* TAB 7: CAMPUS LOCATION & ENTRANCE MODERATION */}
+        {/* ==================================================== */}
+        {activeTab === 'locations' && (
+          <div className="space-y-6 max-w-6xl mx-auto">
+            <div className="border-b border-slate-800 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                  <MapPin className="w-5 h-5 text-emerald-400" />
+                  Campus Location Verification & Entrance Moderation
+                </h2>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Review field-surveyed coordinates, maintain separation between building structures and pedestrian entrance gates, and persist verified navigation targets to the authoritative shared campus database.
+                </p>
+              </div>
+            </div>
+
+            {/* Building 41 (Boys Apartment) Moderation Card */}
+            {(() => {
+              const b41Correction = corrections.find((c) => c.locationId === 'building-41');
+              const isB41Confirmed = Boolean(b41Correction?.isConfirmed);
+
+              return (
+                <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-5">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-md bg-blue-900/60 text-blue-300 border border-blue-700/50">
+                          Hostel / Boys Apartment
+                        </span>
+                        <span className="text-xs font-mono font-bold text-slate-400">Location ID: building-41</span>
+                      </div>
+                      <h3 className="text-lg font-bold text-white mt-1.5">
+                        Building No. 41 (Boys Apartment)
+                      </h3>
+                    </div>
+
+                    <div>
+                      {isB41Confirmed ? (
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-950/80 text-emerald-400 border border-emerald-800">
+                          <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                          Confirmed by University Administrator
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-950/80 text-amber-400 border border-amber-800">
+                          <AlertTriangle className="w-4 h-4 text-amber-400" />
+                          Pending Administrator Confirmation
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Separate Geographic Objects Display */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+                        Building Footprint (Structure Centroid)
+                      </span>
+                      <div className="text-sm font-mono font-bold text-white">
+                        31.251880° N, 75.702050° E
+                      </div>
+                      <p className="text-xs text-slate-400 leading-relaxed">
+                        Centroid for physical 8-story student residential building structure, rendered as extruded polygon in 3D Explore Mode.
+                      </p>
+                    </div>
+
+                    <div className="p-4 rounded-xl bg-emerald-950/40 border border-emerald-800/80 space-y-1.5">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 block flex items-center justify-between">
+                        <span>Pedestrian Entrance Gate</span>
+                        <span className="text-[9px] font-semibold bg-emerald-900 text-emerald-200 px-1.5 py-0.2 rounded">Routing Destination</span>
+                      </span>
+                      <div className="text-sm font-mono font-bold text-emerald-200">
+                        31.251697° N, 75.701877° E
+                      </div>
+                      <p className="text-xs text-emerald-300 leading-relaxed">
+                        On-ground security turnstile gate identified via Google Maps field coordinates. All walking navigation directly targets this entrance.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Policy & Source Reference */}
+                  <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2.5 text-xs text-slate-300">
+                    <div className="flex items-center justify-between flex-wrap gap-2">
+                      <span className="font-semibold text-white">Google Maps Contributor Reference:</span>
+                      <a
+                        href="https://maps.app.goo.gl/2YU1MkGznvViTyCp7"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 font-bold text-brand-400 hover:text-brand-300 underline"
+                      >
+                        <span>https://maps.app.goo.gl/2YU1MkGznvViTyCp7</span>
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </a>
+                    </div>
+
+                    <p className="text-[11px] text-slate-400 leading-relaxed">
+                      <strong>Connectivity Policy:</strong> These are user-provided field coordinates. Per strict navigation policy, they do not automatically assume verified road connectivity or wheelchair accessibility. Only the verified pedestrian walking pathway from Gate 1 is activated upon administrator confirmation.
+                    </p>
+
+                    {isB41Confirmed && b41Correction?.confirmedAt && (
+                      <div className="text-[11px] text-slate-400 pt-2 border-t border-slate-800 flex items-center justify-between">
+                        <span>Confirmed By: <strong className="text-slate-200">{b41Correction.confirmedBy || 'Campus Administrator'}</strong></span>
+                        <span>Synchronized At: {new Date(b41Correction.confirmedAt).toLocaleString()}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
+                    {!isB41Confirmed ? (
+                      <button
+                        onClick={() => handleConfirmEntrance('building-41', { lat: 31.251697, lng: 75.701877 }, 'Building 41 (Boys Apartment)')}
+                        disabled={isUpdatingLocation}
+                        className="w-full sm:w-auto px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2 transition active:scale-95 disabled:opacity-50"
+                      >
+                        <ShieldCheck className="w-4 h-4" />
+                        <span>{isUpdatingLocation ? 'Persisting...' : 'Confirm & Persist Entrance Coordinates'}</span>
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => handleRevertEntrance('building-41', 'Building 41 (Boys Apartment)')}
+                        disabled={isUpdatingLocation}
+                        className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition active:scale-95 disabled:opacity-50"
+                      >
+                        <span>Revert Confirmation to Pending Survey</span>
+                      </button>
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Campus Residential & Academic Buildings Registry */}
+            <div className="space-y-3">
+              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                Campus Buildings Entrance Status
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 max-h-72 overflow-y-auto p-1">
+                {CAMPUS_LOCATIONS.filter((l) => l.category === 'hostel_boys' || l.category === 'academic').map((loc: CampusLocation) => {
+                  const hasEntrance = Boolean(loc.entranceCoordinates || (loc.id === 'building-41' && corrections.some((c) => c.locationId === loc.id && c.isConfirmed)));
+                  return (
+                    <div
+                      key={loc.id}
+                      className="p-3 bg-slate-900 rounded-xl border border-slate-800 flex items-center justify-between gap-2"
+                    >
+                      <div className="min-w-0">
+                        <div className="text-xs font-bold text-white truncate">{loc.name}</div>
+                        <div className="text-[10px] text-slate-400 capitalize">{loc.category.replace('_', ' ')}</div>
+                      </div>
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                        hasEntrance
+                          ? 'bg-emerald-950 text-emerald-400 border border-emerald-800'
+                          : 'bg-slate-800 text-slate-400'
+                      }`}>
+                        {hasEntrance ? 'Verified Gate' : 'Centroid'}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>

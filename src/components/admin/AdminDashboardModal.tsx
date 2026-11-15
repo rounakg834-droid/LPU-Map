@@ -13,7 +13,10 @@ import {
   Copy,
   Check,
   Ban,
-  Plus
+  Plus,
+  MapPin,
+  ExternalLink,
+  ShieldCheck,
 } from 'lucide-react';
 import { PublicCampusEvent, ProtectedStudentMetadata, EventReport } from '../../types/events';
 import { eventService } from '../../services/eventService';
@@ -21,9 +24,10 @@ import { authService } from '../../services/authService';
 import { RoadClosure } from '../../types/roadClosure';
 import { roadClosureService } from '../../services/roadClosureService';
 import { CAMPUS_LOCATIONS } from '../../data/locations';
-import { CampusLocation } from '../../types/location';
+import { CampusLocation, LocationCorrection } from '../../types/location';
 import { campusRouteGraph } from '../../data/campusRouteGraph';
 import { qrToSVG } from '../../utils/qrGenerator';
+import { locationCorrectionService } from '../../services/locationCorrectionService';
 
 interface AdminDashboardModalProps {
   isOpen: boolean;
@@ -42,14 +46,16 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({
   const [loginError, setLoginError] = useState<string | null>(null);
   const [isLoggingIn, setIsLoggingIn] = useState<boolean>(false);
 
-  const [activeTab, setActiveTab] = useState<'events' | 'reports' | 'closures' | 'qr'>('events');
+  const [activeTab, setActiveTab] = useState<'events' | 'reports' | 'closures' | 'qr' | 'locations'>('events');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   const [events, setEvents] = useState<PublicCampusEvent[]>([]);
   const [metadata, setMetadata] = useState<ProtectedStudentMetadata[]>([]);
   const [reports, setReports] = useState<EventReport[]>([]);
   const [closures, setClosures] = useState<RoadClosure[]>([]);
+  const [corrections, setCorrections] = useState<LocationCorrection[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isUpdatingLocation, setIsUpdatingLocation] = useState<boolean>(false);
 
   // Road Closure Form States
   const [closureTitle, setClosureTitle] = useState('');
@@ -73,7 +79,13 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({
       const unsub = eventService.subscribeToAllEvents(() => {
         loadData();
       });
-      return () => unsub();
+      const unsubCorr = locationCorrectionService.subscribe(() => {
+        setCorrections(locationCorrectionService.getAllCorrections());
+      });
+      return () => {
+        unsub();
+        unsubCorr();
+      };
     }
   }, [isOpen, isAdmin]);
 
@@ -85,10 +97,48 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({
       setMetadata(data.metadata);
       setReports(data.reports);
       setClosures(roadClosureService.getAllClosures());
+      const loadedCorrections = await locationCorrectionService.loadCorrections();
+      setCorrections(loadedCorrections);
     } catch (err) {
       onShowToast((err as Error).message || 'Failed to load admin data', 'error');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleConfirmEntrance = async (
+    locationId: string,
+    coords: { lat: number; lng: number },
+    placeName: string
+  ) => {
+    setIsUpdatingLocation(true);
+    try {
+      const adminIdentity = authService.getCurrentUser()?.email || adminEmail || 'University Campus Administrator';
+      await locationCorrectionService.confirmEntrance(
+        locationId,
+        coords,
+        adminIdentity,
+        'Field-identified entrance confirmed via on-ground Google Maps survey'
+      );
+      setCorrections(locationCorrectionService.getAllCorrections());
+      onShowToast(`Entrance coordinates for ${placeName} confirmed & synced across devices!`, 'success');
+    } catch (err: any) {
+      onShowToast(err.message || 'Failed to confirm entrance', 'error');
+    } finally {
+      setIsUpdatingLocation(false);
+    }
+  };
+
+  const handleRevertEntrance = async (locationId: string, placeName: string) => {
+    setIsUpdatingLocation(true);
+    try {
+      await locationCorrectionService.revertEntrance(locationId);
+      setCorrections(locationCorrectionService.getAllCorrections());
+      onShowToast(`Reverted entrance confirmation for ${placeName} to pending survey`, 'info');
+    } catch (err: any) {
+      onShowToast(err.message || 'Failed to revert entrance', 'error');
+    } finally {
+      setIsUpdatingLocation(false);
     }
   };
 
@@ -412,6 +462,17 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({
                 >
                   <QrCode className="w-3.5 h-3.5 text-blue-500" />
                   <span>QR Navigation</span>
+                </button>
+                <button
+                  onClick={() => setActiveTab('locations')}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 flex-shrink-0 ${
+                    activeTab === 'locations'
+                      ? 'bg-slate-900 text-white'
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  }`}
+                >
+                  <MapPin className="w-3.5 h-3.5 text-emerald-500" />
+                  <span>Locations & Entrances</span>
                 </button>
               </div>
 
@@ -839,6 +900,171 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({
                           </button>
                         </div>
                       ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* LOCATIONS & ENTRANCES MODERATION TAB */}
+              {activeTab === 'locations' && (
+                <div className="p-5 space-y-5 overflow-y-auto max-h-[calc(90dvh-200px)]">
+                  {/* Banner / Info */}
+                  <div className="p-4 bg-gradient-to-r from-blue-50 via-slate-50 to-indigo-50 rounded-2xl border border-blue-200/80 flex items-start gap-3">
+                    <div className="p-2.5 bg-blue-600 text-white rounded-xl shadow-sm flex-shrink-0 mt-0.5">
+                      <MapPin className="w-5 h-5" />
+                    </div>
+                    <div className="space-y-1">
+                      <h4 className="text-sm font-bold text-slate-900">
+                        Campus Location Verification & Entrance Moderation
+                      </h4>
+                      <p className="text-xs text-slate-600 leading-relaxed">
+                        Authorized administrators can review field-identified coordinates, separate building structure centroids from pedestrian entrance gates, verify pedestrian connectivity, and persist confirmed geographic data to the authoritative shared cloud database.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Building 41 Moderation Card */}
+                  {(() => {
+                    const b41Correction = corrections.find((c) => c.locationId === 'building-41');
+                    const isB41Confirmed = Boolean(b41Correction?.isConfirmed);
+
+                    return (
+                      <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-4">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <span className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-md bg-blue-100 text-blue-800">
+                                Hostel / Boys Apartment
+                              </span>
+                              <span className="text-xs font-mono font-bold text-slate-400">ID: building-41</span>
+                            </div>
+                            <h3 className="text-base font-bold text-slate-900 mt-1">
+                              Building No. 41 (Boys Apartment)
+                            </h3>
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            {isB41Confirmed ? (
+                              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                                Confirmed by Administrator
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-300">
+                                <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
+                                Pending Admin Review
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Geographic Separation Display */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                          <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+                              Building Footprint (Structure Centroid)
+                            </span>
+                            <div className="font-mono font-bold text-slate-800">
+                              31.251880° N, 75.702050° E
+                            </div>
+                            <p className="text-[11px] text-slate-500">
+                              Physical 8-story building structure (represented in 3D extruded geometry).
+                            </p>
+                          </div>
+
+                          <div className="p-3.5 rounded-xl bg-emerald-50/80 border border-emerald-200 space-y-1">
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 block flex items-center justify-between">
+                              <span>Pedestrian Entrance Gate</span>
+                              <span className="text-[9px] font-semibold bg-emerald-100 px-1.5 py-0.2 rounded">Navigation Target</span>
+                            </span>
+                            <div className="font-mono font-bold text-emerald-950">
+                              31.251697° N, 75.701877° E
+                            </div>
+                            <p className="text-[11px] text-emerald-700">
+                              User-identified pedestrian entrance gate from Google Maps.
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Reference Link & Notes */}
+                        <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 text-xs space-y-2">
+                          <div className="flex items-center justify-between flex-wrap gap-2">
+                            <span className="font-semibold text-slate-700">External Field Survey Reference:</span>
+                            <a
+                              href="https://maps.app.goo.gl/2YU1MkGznvViTyCp7"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 font-semibold text-blue-600 hover:text-blue-800 underline"
+                            >
+                              <span>Open Google Maps Pin</span>
+                              <ExternalLink className="w-3 h-3" />
+                            </a>
+                          </div>
+
+                          <div className="text-[11px] text-slate-600 leading-relaxed">
+                            <strong>Policy Note:</strong> User-provided field coordinates are not assumed to establish verified road connectivity or wheelchair accessibility. Only the verified pedestrian walking pathway to Gate 1 is activated upon confirmation.
+                          </div>
+
+                          {isB41Confirmed && b41Correction?.confirmedAt && (
+                            <div className="text-[11px] text-slate-500 pt-2 border-t border-slate-200 flex items-center justify-between">
+                              <span>Confirmed by: <strong>{b41Correction.confirmedBy || 'Campus Administrator'}</strong></span>
+                              <span>Timestamp: {new Date(b41Correction.confirmedAt).toLocaleString()}</span>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="flex flex-col sm:flex-row items-center gap-2 pt-1">
+                          {!isB41Confirmed ? (
+                            <button
+                              onClick={() => handleConfirmEntrance('building-41', { lat: 31.251697, lng: 75.701877 }, 'Building 41 (Boys Apartment)')}
+                              disabled={isUpdatingLocation}
+                              className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-emerald-500/20 flex items-center justify-center gap-2 transition active:scale-95 disabled:opacity-50"
+                            >
+                              <ShieldCheck className="w-4 h-4" />
+                              <span>{isUpdatingLocation ? 'Persisting...' : 'Confirm & Persist Entrance Coordinates'}</span>
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => handleRevertEntrance('building-41', 'Building 41 (Boys Apartment)')}
+                              disabled={isUpdatingLocation}
+                              className="w-full sm:w-auto px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs transition active:scale-95 disabled:opacity-50"
+                            >
+                              <span>Revert Confirmation to Pending Review</span>
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })()}
+
+                  {/* Summary of other campus buildings */}
+                  <div className="space-y-2">
+                    <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                      Campus Residential & Academic Buildings Registry
+                    </h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 max-h-60 overflow-y-auto p-1">
+                      {CAMPUS_LOCATIONS.filter((l) => l.category === 'hostel_boys' || l.category === 'academic').map((loc: CampusLocation) => {
+                        const hasEntrance = Boolean(loc.entranceCoordinates || (loc.id === 'building-41' && corrections.some((c) => c.locationId === loc.id && c.isConfirmed)));
+                        return (
+                          <div
+                            key={loc.id}
+                            className="p-3 rounded-xl bg-white border border-slate-200 flex items-center justify-between gap-2"
+                          >
+                            <div className="min-w-0">
+                              <div className="text-xs font-bold text-slate-800 truncate">{loc.name}</div>
+                              <div className="text-[10px] text-slate-400">
+                                {hasEntrance ? 'Entrance Verified' : 'Centroid Only'}
+                              </div>
+                            </div>
+                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                              hasEntrance ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-50 text-slate-600'
+                            }`}>
+                              {hasEntrance ? 'Verified Gate' : 'Pending'}
+                            </span>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>

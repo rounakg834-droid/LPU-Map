@@ -2,6 +2,7 @@ import { CAMPUS_LOCATIONS } from '../data/locations';
 import { searchClassrooms, resolveClassroom } from '../data/classrooms';
 import { CampusLocation, LocationCategory } from '../types/location';
 import { ClassroomInfo } from '../types/classroom';
+import { locationCorrectionService } from './locationCorrectionService';
 
 export interface SearchFilters {
   category?: LocationCategory | 'all';
@@ -12,6 +13,10 @@ export class SearchService {
   private locations: CampusLocation[];
 
   constructor(locations: CampusLocation[] = CAMPUS_LOCATIONS) {
+    this.locations = locationCorrectionService.applyCorrectionsToLocations(locations);
+  }
+
+  public setLocations(locations: CampusLocation[]) {
     this.locations = locations;
   }
 
@@ -127,9 +132,13 @@ export class SearchService {
       gate: ['gate 1', 'gate 2', 'gate 3'],
       g1: ['gate 1', 'main gate 1'],
       main: ['gate 1'],
-      hostel: ['bh-1', 'bh-2', 'bh-3', 'bh-4', 'bh-5', 'bh-6', 'gh-1', 'gh-2', 'gh-3', 'gh-4'],
+      hostel: ['bh-1', 'bh-2', 'bh-3', 'bh-4', 'bh-5', 'bh-6', 'gh-1', 'gh-2', 'gh-3', 'gh-4', 'building-41'],
       bh: ['bh-1', 'bh-2', 'bh-3', 'bh-4', 'bh-5', 'bh-6'],
       gh: ['gh-1', 'gh-2', 'gh-3', 'gh-4'],
+      apartment: ['building-41', 'boys apartment', '41'],
+      apartments: ['building-41', 'boys apartment', '41'],
+      b41: ['building-41', 'boys apartment', '41'],
+      '41': ['building-41', 'boys apartment', 'block 41'],
     };
 
     // Expand search tokens with aliases
@@ -276,3 +285,7 @@ export class SearchService {
 }
 
 export const searchService = new SearchService();
+
+locationCorrectionService.subscribe(() => {
+  searchService.setLocations(locationCorrectionService.applyCorrectionsToLocations(CAMPUS_LOCATIONS));
+});

@@ -1,4 +1,5 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
+import { Check } from 'lucide-react';
 import { Router } from './router/Router';
 import { AdminDashboardPage } from './pages/AdminDashboardPage';
 import { NavigationMenuDrawer } from './components/common/NavigationMenuDrawer';
@@ -37,6 +38,7 @@ import { eventService } from './services/eventService';
 import { locationSharingService } from './services/locationSharingService';
 import { roadClosureService } from './services/roadClosureService';
 import { offlineService } from './services/offlineService';
+import { locationCorrectionService } from './services/locationCorrectionService';
 import { isFirebaseConfigured } from './config/firebase';
 import { PublicCampusEvent } from './types/events';
 import { LiveLocationShare } from './types/locationSharing';
@@ -52,10 +54,25 @@ function CampusNavigatorView({ navigate }: { navigate: (path: string) => void })
 
   // Navigation states
   const [isNavigating, setIsNavigating] = useState<boolean>(false);
+  const [hasArrived, setHasArrived] = useState<boolean>(false);
   const [activeRoute, setActiveRoute] = useState<RoutePlan | null>(null);
   const [currentInstructionIndex, setCurrentInstructionIndex] = useState<number>(0);
   const [isStepsModalOpen, setIsStepsModalOpen] = useState<boolean>(false);
   const [selectedNavMode, setSelectedNavMode] = useState<NavigationMode>('walking');
+  const [campusLocations, setCampusLocations] = useState<CampusLocation[]>(() =>
+    locationCorrectionService.applyCorrectionsToLocations(CAMPUS_LOCATIONS)
+  );
+
+  // Synchronize dynamic location entrance corrections (persisted in shared database)
+  useEffect(() => {
+    locationCorrectionService.loadCorrections().then(() => {
+      setCampusLocations(locationCorrectionService.applyCorrectionsToLocations(CAMPUS_LOCATIONS));
+    });
+    const unsub = locationCorrectionService.subscribe(() => {
+      setCampusLocations(locationCorrectionService.applyCorrectionsToLocations(CAMPUS_LOCATIONS));
+    });
+    return () => unsub();
+  }, []);
 
   // Events states (Phase 4 Live Campus Events)
   const [events, setEvents] = useState<PublicCampusEvent[]>([]);
@@ -198,7 +215,7 @@ function CampusNavigatorView({ navigate }: { navigate: (path: string) => void })
     // QR Campus Navigation: ?qr=<locationId>
     const qrParam = params.get('qr');
     if (qrParam) {
-      const found = CAMPUS_LOCATIONS.find((l: CampusLocation) => l.id === qrParam.toLowerCase().trim());
+      const found = campusLocations.find((l: CampusLocation) => l.id === qrParam.toLowerCase().trim());
       if (found) {
         setQrScannedLocation(found);
         setQrInvalidLocationId(null);
@@ -210,7 +227,7 @@ function CampusNavigatorView({ navigate }: { navigate: (path: string) => void })
         setIsQrModalOpen(true);
       }
     }
-  }, [showToast]);
+  }, [campusLocations, showToast]);
 
   // 5. Update my active broadcasting location as GPS moves
   useEffect(() => {
@@ -233,10 +250,10 @@ function CampusNavigatorView({ navigate }: { navigate: (path: string) => void })
   // Filter locations by active category for map pins
   const displayedLocations = useMemo(() => {
     if (selectedCategory === 'all') {
-      return CAMPUS_LOCATIONS;
+      return campusLocations;
     }
-    return CAMPUS_LOCATIONS.filter((loc) => loc.category === selectedCategory);
-  }, [selectedCategory]);
+    return campusLocations.filter((loc) => loc.category === selectedCategory);
+  }, [selectedCategory, campusLocations]);
 
   const handleSelectLocation = useCallback(
     (loc: CampusLocation) => {
@@ -307,6 +324,7 @@ function CampusNavigatorView({ navigate }: { navigate: (path: string) => void })
       setActiveRoute(plan);
       setCurrentInstructionIndex(0);
       setIsNavigating(true);
+      setHasArrived(false);
       setSelectedLocation(null);
       setSelectedEvent(null);
       setIsFollowing(true);
@@ -327,6 +345,7 @@ function CampusNavigatorView({ navigate }: { navigate: (path: string) => void })
   const handleStopNavigation = useCallback(() => {
     setIsNavigating(false);
     setIsNavigatingToFriend(false);
+    setHasArrived(false);
     setActiveRoute(null);
     setIsStepsModalOpen(false);
     setCurrentInstructionIndex(0);
@@ -481,6 +500,33 @@ function CampusNavigatorView({ navigate }: { navigate: (path: string) => void })
         });
     }
   }, [isNavigating, activeRoute, position, showToast]);
+
+  // Accuracy-aware arrival detection at destination entrance (Requirement 10)
+  useEffect(() => {
+    if (!isNavigating || !activeRoute || !position || hasArrived) return;
+
+    const target =
+      activeRoute.destination.entranceCoordinates || activeRoute.destination.coordinates;
+    if (!target) return;
+
+    const userCoord = {
+      lat: position.coords.latitude,
+      lng: position.coords.longitude,
+    };
+
+    const distToTarget = routingService.calculateStraightLineMeters(userCoord, target);
+    const userAccuracy = position.coords.accuracy || 15;
+    // Accuracy-aware arrival threshold: dynamically scales with GPS confidence (15m to 35m)
+    const arrivalThreshold = Math.max(15, Math.min(35, userAccuracy * 1.2));
+
+    if (distToTarget <= arrivalThreshold) {
+      setHasArrived(true);
+      showToast(
+        `You Have Arrived at ${activeRoute.destination.shortName || activeRoute.destination.name}!`,
+        'success'
+      );
+    }
+  }, [isNavigating, activeRoute, position, hasArrived, showToast]);
 
   // Real-time remaining metrics along actual route geometry
   const remainingDistanceMeters = useMemo(() => {
@@ -652,6 +698,45 @@ function CampusNavigatorView({ navigate }: { navigate: (path: string) => void })
               onDismiss={clearError}
               onRetry={startTracking}
             />
+          </div>
+        </div>
+      )}
+
+      {/* Accuracy-Aware Arrival Dialog / Card (Requirement 10) */}
+      {isNavigating && hasArrived && activeRoute && (
+        <div className="fixed top-20 inset-x-3 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 sm:w-[400px] z-50 pointer-events-auto animate-in slide-in-from-top-4 duration-300">
+          <div className="p-4 sm:p-5 rounded-3xl bg-slate-900/98 backdrop-blur-xl border border-emerald-500/50 shadow-2xl text-white space-y-3">
+            <div className="flex items-start gap-3.5">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-500 text-slate-950 flex items-center justify-center flex-shrink-0 shadow-lg shadow-emerald-500/30">
+                <Check className="w-6 h-6 stroke-[3]" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                  Destination Reached
+                </div>
+                <h3 className="text-lg font-black text-white mt-1">
+                  You Have Arrived
+                </h3>
+                <p className="text-xs text-slate-300 font-medium">
+                  At {activeRoute.destination.shortName || activeRoute.destination.name} Entrance Gate
+                </p>
+              </div>
+            </div>
+
+            <div className="p-2.5 rounded-xl bg-slate-800/80 border border-slate-700/80 text-[11px] text-slate-300 flex items-center justify-between">
+              <span>GPS Confidence: Accuracy-aware</span>
+              <span className="font-mono text-emerald-400 font-bold">
+                ±{Math.round(position?.coords.accuracy || 12)}m accuracy
+              </span>
+            </div>
+
+            <button
+              onClick={handleStopNavigation}
+              className="w-full py-2.5 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black text-xs shadow-lg transition active:scale-95 flex items-center justify-center gap-2"
+            >
+              <span>Finish Navigation</span>
+            </button>
           </div>
         </div>
       )}

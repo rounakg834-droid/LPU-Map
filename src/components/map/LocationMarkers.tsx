@@ -138,6 +138,30 @@ export const LocationMarkers: React.FC<LocationMarkersProps> = ({
     });
   };
 
+  // Distinct icon for pedestrian entrance gates (separate geographic object from building footprint)
+  const createEntranceIcon = (isConfirmed: boolean) => {
+    const color = isConfirmed ? '#059669' : '#d97706';
+    const html = `
+      <div class="relative group cursor-pointer flex flex-col items-center justify-center">
+        <div style="background-color: ${color}; width: 28px; height: 28px;"
+             class="rounded-[9px] shadow-[0_3px_10px_rgba(0,0,0,0.25)] border-[1.5px] border-white flex items-center justify-center text-white font-bold transition-all duration-150 transform group-hover:scale-110">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M13.8 12H3"/>
+          </svg>
+        </div>
+        <div style="border-top-color: ${color};" class="w-0 h-0 border-l-[3.5px] border-l-transparent border-r-[3.5px] border-r-transparent border-t-[4px] -mt-[0.5px]"></div>
+      </div>
+    `;
+
+    return L.divIcon({
+      html,
+      className: 'custom-entrance-marker',
+      iconSize: [28, 32],
+      iconAnchor: [14, 31],
+      tooltipAnchor: [0, -29],
+    });
+  };
+
   return (
     <>
       {visibleLocations.map((loc) => {
@@ -145,33 +169,72 @@ export const LocationMarkers: React.FC<LocationMarkersProps> = ({
         const isSelected = selectedLocation?.id === loc.id;
         const icon = createCustomIcon(loc, isSelected);
 
+        const entranceCoord = loc.entranceCoordinates || (loc.proposedEntrance ? { lat: loc.proposedEntrance.lat, lng: loc.proposedEntrance.lng } : null);
+        const isEntranceDistinct = entranceCoord && (
+          Math.abs(entranceCoord.lat - loc.coordinates.lat) > 0.00005 ||
+          Math.abs(entranceCoord.lng - loc.coordinates.lng) > 0.00005
+        );
+
         return (
-          <Marker
-            key={loc.id}
-            position={[loc.coordinates.lat, loc.coordinates.lng]}
-            icon={icon}
-            zIndexOffset={isSelected ? 1000 : loc.minZoom === 14 ? 50 : 10}
-            eventHandlers={{
-              click: () => onSelectLocation(loc),
-            }}
-          >
-            {/* Clean, non-colliding Tooltip with unambiguous concise info */}
-            <Tooltip
-              direction="top"
-              offset={[0, -20]}
-              opacity={0.96}
-              className="custom-map-tooltip"
+          <React.Fragment key={loc.id}>
+            {/* Building Footprint / Centroid Pin */}
+            <Marker
+              position={[loc.coordinates.lat, loc.coordinates.lng]}
+              icon={icon}
+              zIndexOffset={isSelected ? 1000 : loc.minZoom === 14 ? 50 : 10}
+              eventHandlers={{
+                click: () => onSelectLocation(loc),
+              }}
             >
-              <div className="px-1.5 py-0.5 text-center font-sans">
-                <span className="font-semibold text-xs text-slate-800 block leading-tight">
-                  {loc.shortName || loc.name}
-                </span>
-                <span className="text-[10px] text-slate-500 font-medium capitalize">
-                  {loc.category.replace('_', ' ')}
-                </span>
-              </div>
-            </Tooltip>
-          </Marker>
+              {/* Clean, non-colliding Tooltip with unambiguous concise info */}
+              <Tooltip
+                direction="top"
+                offset={[0, -20]}
+                opacity={0.96}
+                className="custom-map-tooltip"
+              >
+                <div className="px-1.5 py-0.5 text-center font-sans">
+                  <span className="font-semibold text-xs text-slate-800 block leading-tight">
+                    {loc.shortName || loc.name}
+                  </span>
+                  <span className="text-[10px] text-slate-500 font-medium capitalize">
+                    {loc.category.replace('_', ' ')} (Building Structure)
+                  </span>
+                </div>
+              </Tooltip>
+            </Marker>
+
+            {/* Separate Pedestrian Entrance Gate Marker */}
+            {isEntranceDistinct && entranceCoord && (isSelected || currentZoom >= 16 || loc.id === 'building-41') && (
+              <Marker
+                position={[entranceCoord.lat, entranceCoord.lng]}
+                icon={createEntranceIcon(Boolean(loc.isEntranceConfirmed))}
+                zIndexOffset={isSelected ? 1100 : 120}
+                eventHandlers={{
+                  click: () => onSelectLocation(loc),
+                }}
+              >
+                <Tooltip
+                  direction="top"
+                  offset={[0, -20]}
+                  opacity={0.96}
+                  className="custom-map-tooltip"
+                >
+                  <div className="px-1.5 py-0.5 text-center font-sans">
+                    <span className="font-bold text-xs text-slate-800 block leading-tight">
+                      {loc.shortName || loc.name} Entrance Gate
+                    </span>
+                    <span className="text-[10px] text-emerald-700 font-medium block">
+                      {loc.isEntranceConfirmed ? 'Confirmed Pedestrian Gate' : 'Proposed Entrance (Pending Confirmation)'}
+                    </span>
+                    <span className="text-[9px] text-slate-400 font-mono block">
+                      {entranceCoord.lat.toFixed(6)}, {entranceCoord.lng.toFixed(6)}
+                    </span>
+                  </div>
+                </Tooltip>
+              </Marker>
+            )}
+          </React.Fragment>
         );
       })}
     </>

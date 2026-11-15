@@ -620,6 +620,30 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
         coordinates: createBoxFootprint(75.70720, 31.25150, 52, 28, 0),
       },
     },
+    {
+      type: 'Feature',
+      id: 'building-41',
+      properties: {
+        id: 'building-41',
+        name: 'Building 41 (Boys Apartment)',
+        shortName: 'Boys Apt 41',
+        category: 'hostel_boys',
+        blockNumber: '41',
+        height: 26,
+        baseHeight: 0,
+        floors: 8,
+        color: CATEGORY_3D_PALETTE.hostel_boys.color,
+        accentColor: CATEGORY_3D_PALETTE.hostel_boys.accent,
+        isApproximate: false,
+        geometrySource: 'curated_survey',
+        center: [75.70205, 31.25188],
+        description: '8-story boys apartment complex (Building 41) with separate pedestrian entrance gate at [75.701877, 31.251697].',
+      },
+      geometry: {
+        type: 'Polygon',
+        coordinates: createBoxFootprint(75.70205, 31.25188, 44, 28, 12),
+      },
+    },
 
     // --- GIRLS HOSTELS (GH-1 TO GH-4) ---
     {

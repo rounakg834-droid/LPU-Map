@@ -167,7 +167,13 @@ export class RoutingService implements IRoutingService {
       }
     }
 
-    // 2. Geographic nearest match if coordinates exist
+    // 2. Exact match using entrance coordinates if present
+    if (location.entranceCoordinates) {
+      const nearest = this.findNearestNode(location.entranceCoordinates);
+      if (nearest) return nearest;
+    }
+
+    // 3. Geographic nearest match if centroid coordinates exist
     if (location.coordinates) {
       return this.findNearestNode(location.coordinates);
     }
@@ -381,14 +387,17 @@ export class RoutingService implements IRoutingService {
 
     // Final arrival instruction
     const lastNode = pathNodes[pathNodes.length - 1];
+    const finalCoord = destination.entranceCoordinates || destination.coordinates || lastNode.coords;
+    const finalName = destination.entranceCoordinates ? `${destination.shortName || destination.name} Entrance` : (destination.shortName || destination.name);
+
     instructions.push({
       id: `inst_${pathNodes.length}`,
-      instruction: `Arrive at ${destination.shortName || destination.name}`,
+      instruction: `Arrive at ${finalName}`,
       maneuver: 'arrive',
       distanceMeters: 0,
       durationSeconds: 0,
-      coordinates: lastNode.coords,
-      pathName: destination.name,
+      coordinates: finalCoord,
+      pathName: finalName,
     });
 
     return instructions;
@@ -462,6 +471,45 @@ export class RoutingService implements IRoutingService {
       };
     }
 
+    // Specific verification guard for Building 41 (field coordinates):
+    // Requires administrator confirmation and restricts to verified pedestrian walkway
+    if (destination.id === 'building-41') {
+      if (!destination.isEntranceConfirmed) {
+        return {
+          origin: effectiveOrigin,
+          destination,
+          mode,
+          status: 'unavailable',
+          distanceMeters: 0,
+          estimatedTimeMinutes: 0,
+          pathCoordinates: [],
+          instructions: [],
+          isVerifiedRoute: false,
+          unreachableReason:
+            'Verified route unavailable: Entrance coordinates for Building 41 require university administrator confirmation before live navigation can proceed.',
+        };
+      }
+
+      // Wheelchair accessibility unverified for user-provided field coordinates
+      if (mode === 'wheelchair') {
+        return {
+          origin: effectiveOrigin,
+          destination,
+          mode,
+          status: 'unavailable',
+          distanceMeters: 0,
+          estimatedTimeMinutes: 0,
+          pathCoordinates: [],
+          instructions: [],
+          isVerifiedRoute: false,
+          accessibilityNotice:
+            'Step-free entrance unavailable. Step-free ramp accessibility has not been verified for user-provided field coordinates.',
+          unreachableReason:
+            'Verified route unavailable: Step-free ramp accessibility has not been verified for user-provided field coordinates. Physical survey pending.',
+        };
+      }
+    }
+
     // Wheelchair validation check
     if (mode === 'wheelchair') {
       if (destNode.isEntrance && destNode.hasStepFreeRamp === false) {
@@ -521,9 +569,9 @@ export class RoutingService implements IRoutingService {
 
     if (!pathResult) {
       const activeClosures = roadClosureService.getActiveClosures();
-      let failureReason = `No permitted ${mode} pathway connects these two campus points on the verified network.`;
+      let failureReason = `Verified route unavailable: No permitted ${mode} pathway connects these two campus points on the verified network.`;
       if (activeClosures.length > 0) {
-        failureReason = `No open ${mode} pathway available. Active road maintenance / closure in effect: ${activeClosures
+        failureReason = `Verified route unavailable: Pathway closed due to active campus road maintenance: ${activeClosures
           .map((c) => c.title)
           .join(', ')}.`;
       }
@@ -551,14 +599,15 @@ export class RoutingService implements IRoutingService {
     const speedMps = (speedKmh * 1000) / 3600;
     const estimatedMinutes = Math.max(1, Math.round(pathResult.distance / speedMps / 60));
 
-    // Compile path coordinates: prepend user origin coordinate, then path node coords, then destination coordinate
+    // Compile path coordinates: prepend user origin coordinate, then path node coords, then destination entrance coordinate
     const pathCoords: Coordinates[] = [
       effectiveOrigin,
       ...pathResult.path.map((n) => n.coords),
     ];
 
-    if (destination.coordinates && targetNodeId === destNode.id) {
-      pathCoords.push(destination.coordinates);
+    const effectiveDestCoord = destination.entranceCoordinates || destination.coordinates;
+    if (effectiveDestCoord && targetNodeId === destNode.id) {
+      pathCoords.push(effectiveDestCoord);
     }
 
     const instructions = this.generateInstructions(

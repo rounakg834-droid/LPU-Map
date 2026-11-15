@@ -58,6 +58,18 @@ export interface CampusLocation {
   tags: string[];
   gateAccess?: string;
   accessibilityNotes?: string;
+  // Entrance & Verification Metadata
+  entranceCoordinates?: Coordinates;
+  isEntranceConfirmed?: boolean;
+  entranceVerifiedBy?: string;
+  entranceVerifiedAt?: string;
+  proposedEntrance?: {
+    lat: number;
+    lng: number;
+    sourceNote?: string;
+    submittedAt?: string;
+    submittedBy?: string;
+  };
   // Architectural & Facility Information
   totalFloors?: number;
   hasElevator?: boolean;
@@ -73,4 +85,16 @@ export interface CategoryMetadata {
   iconName: string;
   color: string;
   bgColor: string;
+}
+
+export interface LocationCorrection {
+  locationId: string;
+  entranceCoordinates: Coordinates;
+  isConfirmed: boolean;
+  confirmedAt?: string;
+  confirmedBy?: string;
+  proposedAt?: string;
+  proposedBy?: string;
+  notes?: string;
+  sourceUrl?: string;
 }

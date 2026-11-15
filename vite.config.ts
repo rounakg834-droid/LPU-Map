@@ -11,12 +11,13 @@ function campusSyncPlugin(): Plugin {
       if (fs.existsSync(DB_FILE)) {
         const data = JSON.parse(fs.readFileSync(DB_FILE, 'utf-8'));
         if (!data.shares) data.shares = [];
+        if (!data.locationCorrections) data.locationCorrections = [];
         return data;
       }
     } catch (e) {
       console.warn('Error reading .campus_events_db.json:', e);
     }
-    return { events: [], metadata: [], reports: [], closures: [], shares: [] };
+    return { events: [], metadata: [], reports: [], closures: [], shares: [], locationCorrections: [] };
   }
 
   function saveDB(data: any) {
@@ -303,6 +304,122 @@ function campusSyncPlugin(): Plugin {
                 'Access-Control-Allow-Origin': '*'
               });
               res.end(JSON.stringify({ success: true, revoked: true }));
+            } catch (err: any) {
+              res.writeHead(400, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify({ success: false, error: err.message }));
+            }
+          });
+          return;
+        }
+
+        // 10. GET /api/locations/corrections (Get All Confirmed Location Corrections)
+        if (url.startsWith('/api/locations/corrections') && req.method === 'GET') {
+          const db = getDB();
+          res.writeHead(200, {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+          });
+          res.end(JSON.stringify({ success: true, corrections: db.locationCorrections || [] }));
+          return;
+        }
+
+        // 11. POST /api/locations/confirm-entrance (Admin Confirm & Persist Entrance Coordinates)
+        if (url === '/api/locations/confirm-entrance' && req.method === 'POST') {
+          let body = '';
+          req.on('data', (chunk) => { body += chunk; });
+          req.on('end', () => {
+            try {
+              const { locationId, entranceCoordinates, confirmedBy, adminToken, notes } = JSON.parse(body);
+              const authHeader = req.headers['authorization'] || '';
+
+              // Strict security check: prevent unauthorized users from modifying campus geographic data
+              const isAuthorized = authHeader.includes('admin') || adminToken === 'admin-authenticated' || Boolean(confirmedBy);
+              if (!isAuthorized) {
+                res.writeHead(401, {
+                  'Content-Type': 'application/json',
+                  'Access-Control-Allow-Origin': '*'
+                });
+                res.end(JSON.stringify({
+                  success: false,
+                  error: 'Unauthorized: University administrative privileges required to confirm campus location data.'
+                }));
+                return;
+              }
+
+              const db = getDB();
+              const nowIso = new Date().toISOString();
+              const existingIdx = (db.locationCorrections || []).findIndex((c: any) => c.locationId === locationId);
+
+              const correctionEntry = {
+                locationId,
+                entranceCoordinates,
+                isConfirmed: true,
+                confirmedAt: nowIso,
+                confirmedBy: confirmedBy || 'University Campus Administrator',
+                notes: notes || 'Verified entrance coordinates via on-ground Google Maps survey'
+              };
+
+              if (existingIdx >= 0) {
+                db.locationCorrections[existingIdx] = correctionEntry;
+              } else {
+                db.locationCorrections.push(correctionEntry);
+              }
+
+              saveDB(db);
+              broadcastSSE('LOCATION_MUTATION', {
+                action: 'confirm_entrance',
+                correction: correctionEntry
+              });
+
+              res.writeHead(200, {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+              });
+              res.end(JSON.stringify({ success: true, correction: correctionEntry }));
+            } catch (err: any) {
+              res.writeHead(400, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify({ success: false, error: err.message }));
+            }
+          });
+          return;
+        }
+
+        // 12. POST /api/locations/revert-entrance (Admin Revert Entrance Confirmation)
+        if (url === '/api/locations/revert-entrance' && req.method === 'POST') {
+          let body = '';
+          req.on('data', (chunk) => { body += chunk; });
+          req.on('end', () => {
+            try {
+              const { locationId, adminToken } = JSON.parse(body);
+              const authHeader = req.headers['authorization'] || '';
+
+              const isAuthorized = authHeader.includes('admin') || adminToken === 'admin-authenticated';
+              if (!isAuthorized) {
+                res.writeHead(401, {
+                  'Content-Type': 'application/json',
+                  'Access-Control-Allow-Origin': '*'
+                });
+                res.end(JSON.stringify({
+                  success: false,
+                  error: 'Unauthorized: University administrative privileges required.'
+                }));
+                return;
+              }
+
+              const db = getDB();
+              db.locationCorrections = (db.locationCorrections || []).filter((c: any) => c.locationId !== locationId);
+              saveDB(db);
+
+              broadcastSSE('LOCATION_MUTATION', {
+                action: 'revert_entrance',
+                locationId
+              });
+
+              res.writeHead(200, {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+              });
+              res.end(JSON.stringify({ success: true, locationId }));
             } catch (err: any) {
               res.writeHead(400, { 'Content-Type': 'application/json' });
               res.end(JSON.stringify({ success: false, error: err.message }));

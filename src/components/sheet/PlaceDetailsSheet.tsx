@@ -295,6 +295,62 @@ export const PlaceDetailsSheet: React.FC<PlaceDetailsSheetProps> = ({
           isExpanded ? 'block' : 'hidden md:block'
         }`}
       >
+        {/* Dedicated Pedestrian Entrance Gate Section (Requirement 3: Separate Footprint & Entrance) */}
+        {(location.entranceCoordinates || location.proposedEntrance) && (
+          <div className="p-3.5 rounded-2xl bg-gradient-to-br from-emerald-50/70 via-slate-50 to-blue-50/40 border border-emerald-200/80 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-800 flex items-center gap-1.5">
+                <MapPin className="w-3.5 h-3.5 text-emerald-600" />
+                Pedestrian Entrance Gate
+              </span>
+              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                location.isEntranceConfirmed
+                  ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
+                  : 'bg-amber-100 text-amber-800 border-amber-300'
+              }`}>
+                {location.isEntranceConfirmed ? 'Confirmed by Admin' : 'Field Survey Pending Admin Review'}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 text-xs">
+              <div className="p-2 bg-white rounded-xl border border-slate-200/70 space-y-0.5">
+                <span className="text-[10px] text-slate-400 block font-medium">Entrance Gate Target</span>
+                <span className="font-mono font-bold text-slate-800 text-[11px]">
+                  {location.entranceCoordinates
+                    ? `${location.entranceCoordinates.lat.toFixed(6)}, ${location.entranceCoordinates.lng.toFixed(6)}`
+                    : location.proposedEntrance
+                    ? `${location.proposedEntrance.lat.toFixed(6)}, ${location.proposedEntrance.lng.toFixed(6)}`
+                    : 'N/A'}
+                </span>
+              </div>
+              <div className="p-2 bg-white rounded-xl border border-slate-200/70 space-y-0.5">
+                <span className="text-[10px] text-slate-400 block font-medium">Structure Centroid</span>
+                <span className="font-mono font-bold text-slate-600 text-[11px]">
+                  {location.coordinates
+                    ? `${location.coordinates.lat.toFixed(6)}, ${location.coordinates.lng.toFixed(6)}`
+                    : 'Centroid'}
+                </span>
+              </div>
+            </div>
+
+            <p className="text-[11px] text-slate-600 leading-relaxed">
+              Turn-by-turn navigation targets this pedestrian entrance gate. The building structure footprint is maintained as a separate 3D volume.
+            </p>
+
+            {location.id === 'building-41' && (
+              <a
+                href="https://maps.app.goo.gl/2YU1MkGznvViTyCp7"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-600 hover:text-blue-800 underline pt-0.5"
+              >
+                <span>Verified Google Maps Entrance Pin</span>
+                <ExternalLink className="w-3 h-3" />
+              </a>
+            )}
+          </div>
+        )}
+
         {/* Real Building Image Card or Polished Survey Pending Card */}
         {location.imageUrl ? (
           <div className="relative rounded-2xl overflow-hidden border border-slate-200 shadow-sm group">

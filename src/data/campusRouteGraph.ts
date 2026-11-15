@@ -38,6 +38,15 @@ const nodesArray: CampusGraphNode[] = [
     hasStepFreeRamp: true,
   },
   {
+    id: 'n_b41_entrance',
+    name: 'Building 41 Entrance (Boys Apartment Gate)',
+    coords: { lat: 31.251697, lng: 75.701877 },
+    isEntrance: true,
+    locationId: 'building-41',
+    hasStepFreeRamp: false, // Field coordinates: step-free ramp unverified
+    description: 'Pedestrian entrance gate to Building 41 (Boys Apartment) identified via field survey coordinates.',
+  },
+  {
     id: 'n_block30',
     name: 'Block 30 (Admissions)',
     coords: { lat: 31.25300, lng: 75.70280 },
@@ -392,6 +401,11 @@ export function buildCampusRouteGraph(): CampusRouteGraph {
     // Block 30 Admin Access
     createEdge('e_spine_b30', 'n_spine_south', 'n_block30', nodes, ['walking', 'bike', 'wheelchair'], 'Admissions Access Walk', true),
     createEdge('e_b30_spine', 'n_block30', 'n_spine_south', nodes, ['walking', 'bike', 'wheelchair'], 'Admissions Access Walk', true),
+
+    // Building 41 (Boys Apartment) Verified Pedestrian Walkway from Gate 1
+    // Important: Field-survey coordinates. Only verified for pedestrian walking. Wheelchair ramp & vehicular road unverified.
+    createEdge('e_g1_b41', 'n_gate1', 'n_b41_entrance', nodes, ['walking'], 'Gate 1 South Pedestrian Walkway to Building 41', false),
+    createEdge('e_b41_g1', 'n_b41_entrance', 'n_gate1', nodes, ['walking'], 'Gate 1 South Pedestrian Walkway', false),
 
     // Block 13 Polytechnic Access
     createEdge('e_spine_b13', 'n_spine_south', 'n_block13', nodes, ['walking', 'bike'], 'Polytechnic West Corridor', false),

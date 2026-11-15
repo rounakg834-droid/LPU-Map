@@ -76,6 +76,7 @@ export const Campus3DMap: React.FC<Campus3DMapProps> = ({
   const friendMarkerRef = useRef<Marker | null>(null);
   const eventMarkersRef = useRef<Marker[]>([]);
   const buildingMarkersRef = useRef<Marker[]>([]);
+  const entranceMarkersRef = useRef<Marker[]>([]);
   const closureMarkersRef = useRef<Marker[]>([]);
 
   const [bearing, setBearing] = useState<number>(-20);
@@ -346,7 +347,48 @@ export const Campus3DMap: React.FC<Campus3DMapProps> = ({
 
       buildingMarkersRef.current.push(marker);
     });
-  }, [selectedCategory, locations, onSelectLocation]);
+
+    // 2b. Render Distinct Pedestrian Entrance Gate Markers (Separate from 3D extruded footprints)
+    entranceMarkersRef.current.forEach((m) => m.remove());
+    entranceMarkersRef.current = [];
+
+    locations.forEach((loc) => {
+      const entrance = loc.entranceCoordinates || (loc.proposedEntrance ? { lat: loc.proposedEntrance.lat, lng: loc.proposedEntrance.lng } : null);
+      if (!entrance) return;
+
+      const isConfirmed = Boolean(loc.isEntranceConfirmed);
+      const isSelected = selectedLocation?.id === loc.id;
+
+      const el = document.createElement('div');
+      el.className = `group pointer-events-auto cursor-pointer transition-transform hover:scale-110 ${isSelected ? 'scale-125 z-30' : ''}`;
+      el.innerHTML = `
+        <div class="px-2.5 py-1 rounded-full ${
+          isConfirmed
+            ? 'bg-emerald-600 text-white shadow-lg ring-2 ring-emerald-400/60'
+            : 'bg-amber-600 text-white shadow-lg ring-2 ring-amber-400/60'
+        } ${isSelected ? 'ring-4 ring-white shadow-emerald-600/50' : ''} flex items-center space-x-1.5 text-[10px] font-bold whitespace-nowrap">
+          <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M13.8 12H3"/>
+          </svg>
+          <span>${loc.blockNumber ? `B-${loc.blockNumber}` : ''} Gate</span>
+        </div>
+      `;
+
+      el.addEventListener('click', (e) => {
+        e.stopPropagation();
+        onSelectLocation(loc);
+      });
+
+      const marker = new maplibregl.Marker({
+        element: el,
+        anchor: 'bottom',
+      })
+        .setLngLat([entrance.lng, entrance.lat])
+        .addTo(map);
+
+      entranceMarkersRef.current.push(marker);
+    });
+  }, [selectedCategory, locations, onSelectLocation, selectedLocation]);
 
   // 3. Highlight Selected Building & Smooth 3D Camera Flight
   useEffect(() => {
@@ -369,9 +411,18 @@ export const Campus3DMap: React.FC<Campus3DMapProps> = ({
       (f) => f.properties.id === selectedLocation.id
     );
 
-    const targetCoords: [number, number] = matchedFeature
-      ? matchedFeature.properties.center
-      : [selectedLocation.coordinates.lng, selectedLocation.coordinates.lat];
+    // Frame both the building structure and the pedestrian entrance gate
+    const targetCoords: [number, number] =
+      selectedLocation.entranceCoordinates && matchedFeature
+        ? [
+            (selectedLocation.entranceCoordinates.lng + matchedFeature.properties.center[0]) / 2,
+            (selectedLocation.entranceCoordinates.lat + matchedFeature.properties.center[1]) / 2,
+          ]
+        : selectedLocation.entranceCoordinates
+        ? [selectedLocation.entranceCoordinates.lng, selectedLocation.entranceCoordinates.lat]
+        : matchedFeature
+        ? matchedFeature.properties.center
+        : [selectedLocation.coordinates.lng, selectedLocation.coordinates.lat];
 
     if (matchedFeature) {
       selectedFeatureIdRef.current = matchedFeature.id;

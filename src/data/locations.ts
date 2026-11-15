@@ -545,6 +545,44 @@ export const CAMPUS_LOCATIONS: CampusLocation[] = [
     tags: ['bh8', 'bh 8', 'boys hostel 8', 'hostel'],
     gateAccess: 'Eastern hostel zone'
   },
+  {
+    id: 'building-41',
+    name: 'Building 41 (Boys Apartment)',
+    shortName: 'Boys Apartment (41)',
+    category: 'hostel_boys',
+    blockNumber: '41',
+    coordinates: { lat: 31.25188, lng: 75.70205 }, // Structure footprint centroid
+    entranceCoordinates: { lat: 31.251697, lng: 75.701877 }, // Corrected pedestrian entrance gate
+    isEntranceConfirmed: false, // Pending admin confirmation; synced with shared DB
+    proposedEntrance: {
+      lat: 31.251697,
+      lng: 75.701877,
+      sourceNote: 'Field-identified entrance gate via Google Maps: https://maps.app.goo.gl/2YU1MkGznvViTyCp7',
+      submittedAt: '2026-11-15T20:00:00Z',
+      submittedBy: 'Field Contributor'
+    },
+    verificationStatus: 'verified_osm',
+    isVerified: true,
+    minZoom: 15,
+    description: 'Multi-story student residential apartment complex for boys (Building 41), located in the south-western residential sector near Gate 1. Features student suites and dedicated pedestrian entrance gate.',
+    features: ['Student Apartment Suites', 'Pedestrian Turnstile Gate', 'Elevator Access', 'High-Speed Wi-Fi', 'Study Hall', 'RO Water Stations', '24/7 Security Desk'],
+    totalFloors: 8,
+    hasElevator: true,
+    hasRestrooms: true,
+    hasWaterDispenser: true,
+    departments: ['Boys Residential Life', 'Apartment Management Division'],
+    imageMetadata: {
+      url: '',
+      caption: 'Building 41 Boys Apartment Complex',
+      credit: 'LPU Residential Division',
+      license: 'Field Verified Entrance',
+      isVerified: true,
+    },
+    source: 'Field GPS Survey & Google Maps Reference (https://maps.app.goo.gl/2YU1MkGznvViTyCp7)',
+    tags: ['41', 'building 41', 'block 41', 'boys apartment', 'boys apartments', 'apartment 41', 'hostel', 'residence', 'apartment', 'apartments', 'boys'],
+    gateAccess: 'Dedicated pedestrian entrance gate at 31.251697, 75.701877 (south walkway from Gate 1)',
+    accessibilityNotes: 'Step-free ramp survey pending for user-provided field coordinates.'
+  },
 
   // --- GIRLS HOSTELS ---
   {
