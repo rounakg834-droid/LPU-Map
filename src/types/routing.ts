@@ -9,10 +9,13 @@ export interface CampusGraphNode {
   id: string;
   name: string;
   coords: Coordinates;
+  nodeType?: 'intersection' | 'entrance' | 'gate' | 'roundabout' | 'waypoint';
   isEntrance?: boolean;
   locationId?: string; // ID of CampusLocation if this node is its entrance
   hasStepFreeRamp?: boolean; // Verified step-free ground plinth
   description?: string;
+  isVerified?: boolean;
+  verificationSource?: string;
 }
 
 export interface CampusGraphEdge {
@@ -23,9 +26,14 @@ export interface CampusGraphEdge {
   allowedModes: NavigationMode[]; // ['walking', 'bike', 'car', 'wheelchair']
   pathName: string;
   isWheelchairAccessible: boolean;
-  surface: 'paved_asphalt' | 'concrete' | 'paver_blocks';
+  surface: 'paved_asphalt' | 'concrete' | 'paver_blocks' | 'gravel';
   isOneWay?: boolean;
-  waypoints?: Coordinates[]; // Additional intermediate curve points
+  waypoints?: Coordinates[]; // Additional intermediate curve/bend points
+  geometry?: Coordinates[]; // Full ordered polyline from `from` node to `to` node
+  isVerified?: boolean;
+  verificationSource?: string;
+  isRestrictedVehicle?: boolean;
+  maxSpeedKmh?: number;
 }
 
 export interface CampusRouteGraph {

@@ -9,6 +9,7 @@ import {
 import { CampusGraphNode, CampusGraphEdge, IRoutingService } from '../types/routing';
 import { campusRouteGraph } from '../data/campusRouteGraph';
 import { roadClosureService } from './roadClosureService';
+import { routeQualityService } from './routeQualityService';
 
 export const NAVIGATION_MODES: NavigationModeConfig[] = [
   {
@@ -785,12 +786,13 @@ export class RoutingService implements IRoutingService {
 
       if (isPedestrianOnly && !modeConfig?.allowedOnPedestrianSpine) {
         // Find nearest parking to destination
-        const parkingNodes = ['n_unimall_parking', 'n_gate1_parking'];
+        const parkingNodes = ['n_gate1_parking'];
         let bestParkingId = 'n_gate1_parking';
         let minParkingDist = Infinity;
 
         for (const pId of parkingNodes) {
           const pNode = this.graph.nodes[pId];
+          if (!pNode || !pNode.coords) continue;
           const d = this.calculateStraightLineMeters(destNode.coords, pNode.coords);
           if (d < minParkingDist) {
             minParkingDist = d;
@@ -799,7 +801,7 @@ export class RoutingService implements IRoutingService {
         }
 
         targetNodeId = bestParkingId;
-        const parkingName = this.graph.nodes[bestParkingId].name;
+        const parkingName = this.graph.nodes[bestParkingId]?.name || 'Gate 1 Visitor Parking Bay';
         carNotice = `Private vehicles are prohibited inside central academic corridors. Route calculated to nearest parking: ${parkingName}.`;
       }
     }
@@ -839,15 +841,83 @@ export class RoutingService implements IRoutingService {
     const speedMps = (speedKmh * 1000) / 3600;
     const estimatedMinutes = Math.max(1, Math.round(pathResult.distance / speedMps / 60));
 
-    // Compile path coordinates: prepend user origin coordinate, then path node coords, then destination entrance coordinate
-    const pathCoords: Coordinates[] = [
-      effectiveOrigin,
-      ...pathResult.path.map((n) => n.coords),
-    ];
+    // Compile exact road path coordinates: concatenate edge.geometry for all path edges
+    const compiledCoords: Coordinates[] = [];
 
-    const effectiveDestCoord = destination.entranceCoordinates || destination.coordinates;
+    // Approach connector from origin to path start (only if within 35m and safe from building collision)
+    const distToStart = this.calculateStraightLineMeters(effectiveOrigin, pathResult.path[0].coords);
+    if (distToStart > 0 && distToStart <= 35) {
+      const colCheck = routeQualityService.checkSegmentBuildingCollision(effectiveOrigin, pathResult.path[0].coords);
+      if (!colCheck.collides) {
+        compiledCoords.push(effectiveOrigin);
+      }
+    }
+
+    for (let i = 0; i < pathResult.edges.length; i++) {
+      const edge = pathResult.edges[i];
+      const edgeGeometry = edge.geometry && edge.geometry.length > 0
+        ? edge.geometry
+        : [this.graph.nodes[edge.from].coords, this.graph.nodes[edge.to].coords];
+
+      for (let j = 0; j < edgeGeometry.length; j++) {
+        const pt = edgeGeometry[j];
+        const last = compiledCoords[compiledCoords.length - 1];
+        if (
+          !last ||
+          Math.abs(last.lat - pt.lat) > 1e-6 ||
+          Math.abs(last.lng - pt.lng) > 1e-6
+        ) {
+          compiledCoords.push(pt);
+        }
+      }
+    }
+
+    const effectiveDestCoord = destination.entranceCoordinates;
     if (effectiveDestCoord && targetNodeId === destNode.id) {
-      pathCoords.push(effectiveDestCoord);
+      const last = compiledCoords[compiledCoords.length - 1];
+      if (
+        last &&
+        (Math.abs(last.lat - effectiveDestCoord.lat) > 1e-6 ||
+          Math.abs(last.lng - effectiveDestCoord.lng) > 1e-6)
+      ) {
+        const distToDest = this.calculateStraightLineMeters(last, effectiveDestCoord);
+        if (distToDest <= 25) {
+          const colCheck = routeQualityService.checkSegmentBuildingCollision(last, effectiveDestCoord);
+          if (!colCheck.collides) {
+            compiledCoords.push(effectiveDestCoord);
+          }
+        }
+      }
+    }
+
+    // Automated Route Quality Check (Requirement 7):
+    // Audit that the calculated road path does not intersect any campus building footprint
+    const validation = routeQualityService.validateRouteGeometry({
+      origin: effectiveOrigin,
+      destination,
+      mode,
+      status: 'available',
+      distanceMeters: pathResult.distance,
+      estimatedTimeMinutes: estimatedMinutes,
+      pathCoordinates: compiledCoords,
+      instructions: [],
+      isVerifiedRoute: true,
+    });
+
+    if (!validation.isValid) {
+      const collisionName = validation.buildingCollisions[0]?.buildingName || 'Campus Building';
+      return {
+        origin: effectiveOrigin,
+        destination,
+        mode,
+        status: 'unavailable',
+        distanceMeters: 0,
+        estimatedTimeMinutes: 0,
+        pathCoordinates: [],
+        instructions: [],
+        isVerifiedRoute: false,
+        unreachableReason: `Accurate route unavailable: Path crosses building footprint (${collisionName}). Physical survey required to establish safe perimeter bypass.`,
+      };
     }
 
     const instructions = this.generateInstructions(
@@ -870,7 +940,7 @@ export class RoutingService implements IRoutingService {
       status: 'available',
       distanceMeters: pathResult.distance,
       estimatedTimeMinutes: estimatedMinutes,
-      pathCoordinates: pathCoords,
+      pathCoordinates: compiledCoords,
       instructions,
       isVerifiedRoute: true,
       notes: [carNotice, offCampusNotice, this.getRouteStatusMessage(mode)].filter(Boolean).join(' '),
