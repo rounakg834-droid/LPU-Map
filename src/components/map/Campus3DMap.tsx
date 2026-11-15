@@ -10,6 +10,7 @@ if (typeof window !== 'undefined') {
   const cleanBase = base.endsWith('/') ? base.slice(0, -1) : base;
   setWorkerUrl(`${cleanBase}/maplibre-gl-worker.mjs`);
 }
+
 import {
   Compass,
   Plus,
@@ -18,7 +19,7 @@ import {
   Crosshair,
   Sparkles,
   Share2,
-  ShieldAlert
+  ShieldAlert,
 } from 'lucide-react';
 import { LPU_CAMPUS_CENTER, LPU_CAMPUS_BOUNDS } from '../../data/campusBounds';
 import { CAMPUS_3D_FOOTPRINTS } from '../../data/campus3DFootprints';
@@ -38,6 +39,14 @@ interface Campus3DMapProps {
   selectedCategory?: LocationCategory | 'all';
   activeRoute?: RoutePlan | null;
   isNavigating?: boolean;
+  isFollowing?: boolean;
+  onSetIsFollowing?: (following: boolean) => void;
+  snappedCoords?: { lat: number; lng: number } | null;
+  roadBearing?: number;
+  traveledCoords?: { lat: number; lng: number }[];
+  remainingCoords?: { lat: number; lng: number }[];
+  isNorthUp?: boolean;
+  onToggleNorthUp?: () => void;
   events?: PublicCampusEvent[];
   selectedEvent?: PublicCampusEvent | null;
   onSelectEvent?: (event: PublicCampusEvent) => void;
@@ -59,6 +68,13 @@ export const Campus3DMap: React.FC<Campus3DMapProps> = ({
   selectedCategory = 'all',
   activeRoute = null,
   isNavigating = false,
+  isFollowing = true,
+  onSetIsFollowing,
+  snappedCoords = null,
+  roadBearing = 0,
+  traveledCoords = [],
+  remainingCoords = [],
+  isNorthUp = false,
   events = [],
   selectedEvent = null,
   onSelectEvent,
@@ -73,6 +89,8 @@ export const Campus3DMap: React.FC<Campus3DMapProps> = ({
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const userMarkerRef = useRef<Marker | null>(null);
+  const userMarkerElementRef = useRef<HTMLDivElement | null>(null);
+  const destinationMarkerRef = useRef<Marker | null>(null);
   const friendMarkerRef = useRef<Marker | null>(null);
   const eventMarkersRef = useRef<Marker[]>([]);
   const buildingMarkersRef = useRef<Marker[]>([]);
@@ -100,9 +118,7 @@ export const Campus3DMap: React.FC<Campus3DMapProps> = ({
         sources: {
           'osm-tiles': {
             type: 'raster',
-            tiles: [
-              'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-            ],
+            tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
             tileSize: 256,
             attribution: '© OpenStreetMap contributors | LPU 3D Campus',
             maxzoom: 19,
@@ -122,15 +138,15 @@ export const Campus3DMap: React.FC<Campus3DMapProps> = ({
           },
         ],
         light: {
-          anchor: 'map', // Fixed geographic coordinate lighting creates real dynamic wall shadows as camera orbits
-          position: [1.5, 210, 32], // Sun at 210° azimuth, 32° polar elevation
+          anchor: 'map',
+          position: [1.5, 210, 32],
           color: '#ffffff',
           intensity: 0.75,
         },
       },
       center: initialCenter,
       zoom: selectedLocation ? 17.6 : 16.8,
-      pitch: 60, // 60° pitch for prominent 3D architectural perspective
+      pitch: 60,
       bearing: -20,
       maxPitch: 80,
       minZoom: 14,
@@ -149,12 +165,22 @@ export const Campus3DMap: React.FC<Campus3DMapProps> = ({
     map.on('pitch', () => setPitch(Math.round(map.getPitch())));
     map.on('zoom', () => setZoom(Number(map.getZoom().toFixed(1))));
 
+    // Detect manual user map pan/drag during navigation to allow free route exploration
+    const handleUserDrag = () => {
+      if (onSetIsFollowing) {
+        onSetIsFollowing(false);
+      }
+    };
+    map.on('dragstart', handleUserDrag);
+    map.on('rotatestart', handleUserDrag);
+    map.on('pitchstart', handleUserDrag);
+
     map.on('load', () => {
       // Add 3D Building Footprints GeoJSON Source
       map.addSource('campus-footprints', {
         type: 'geojson',
         data: CAMPUS_3D_FOOTPRINTS as any,
-        promoteId: 'id', // Uses feature ID directly for feature-state selection & hover
+        promoteId: 'id',
       });
 
       // 1. Crisp ground foundation outline
@@ -189,7 +215,7 @@ export const Campus3DMap: React.FC<Campus3DMapProps> = ({
         },
       });
 
-      // Add Active Route GeoJSON Source and Layer
+      // Add Active Route GeoJSON Source with multi-segment styling
       map.addSource('active-route-3d', {
         type: 'geojson',
         data: {
@@ -198,9 +224,9 @@ export const Campus3DMap: React.FC<Campus3DMapProps> = ({
         },
       });
 
-      // Outer glowing halo for 3D route
+      // Layer 1: White protective casing under route polyline (Google Maps style)
       map.addLayer({
-        id: 'route-line-halo',
+        id: 'route-line-casing',
         type: 'line',
         source: 'active-route-3d',
         layout: {
@@ -208,25 +234,43 @@ export const Campus3DMap: React.FC<Campus3DMapProps> = ({
           'line-cap': 'round',
         },
         paint: {
-          'line-color': '#60a5fa',
+          'line-color': '#FFFFFF',
           'line-width': 9,
-          'line-opacity': 0.6,
+          'line-opacity': 0.95,
         },
       });
 
-      // Core crisp polyline for 3D route
+      // Layer 2: Traveled route (dimmed gray-slate behind current user position)
       map.addLayer({
-        id: 'route-line-core',
+        id: 'route-line-traveled',
         type: 'line',
         source: 'active-route-3d',
+        filter: ['==', ['get', 'segment'], 'traveled'],
         layout: {
           'line-join': 'round',
           'line-cap': 'round',
         },
         paint: {
-          'line-color': '#1d4ed8',
+          'line-color': '#94A3B8',
           'line-width': 5,
-          'line-opacity': 0.95,
+          'line-opacity': 0.8,
+        },
+      });
+
+      // Layer 3: Remaining active route (vibrant Google Maps Blue #1A73E8)
+      map.addLayer({
+        id: 'route-line-remaining',
+        type: 'line',
+        source: 'active-route-3d',
+        filter: ['!=', ['get', 'segment'], 'traveled'],
+        layout: {
+          'line-join': 'round',
+          'line-cap': 'round',
+        },
+        paint: {
+          'line-color': '#1A73E8',
+          'line-width': 6,
+          'line-opacity': 1.0,
         },
       });
 
@@ -348,25 +392,31 @@ export const Campus3DMap: React.FC<Campus3DMapProps> = ({
       buildingMarkersRef.current.push(marker);
     });
 
-    // 2b. Render Distinct Pedestrian Entrance Gate Markers (Separate from 3D extruded footprints)
+    // 2b. Render Distinct Pedestrian Entrance Gate Markers
     entranceMarkersRef.current.forEach((m) => m.remove());
     entranceMarkersRef.current = [];
 
     locations.forEach((loc) => {
-      const entrance = loc.entranceCoordinates || (loc.proposedEntrance ? { lat: loc.proposedEntrance.lat, lng: loc.proposedEntrance.lng } : null);
+      const entrance =
+        loc.entranceCoordinates ||
+        (loc.proposedEntrance ? { lat: loc.proposedEntrance.lat, lng: loc.proposedEntrance.lng } : null);
       if (!entrance) return;
 
       const isConfirmed = Boolean(loc.isEntranceConfirmed);
       const isSelected = selectedLocation?.id === loc.id;
 
       const el = document.createElement('div');
-      el.className = `group pointer-events-auto cursor-pointer transition-transform hover:scale-110 ${isSelected ? 'scale-125 z-30' : ''}`;
+      el.className = `group pointer-events-auto cursor-pointer transition-transform hover:scale-110 ${
+        isSelected ? 'scale-125 z-30' : ''
+      }`;
       el.innerHTML = `
         <div class="px-2.5 py-1 rounded-full ${
           isConfirmed
             ? 'bg-emerald-600 text-white shadow-lg ring-2 ring-emerald-400/60'
             : 'bg-amber-600 text-white shadow-lg ring-2 ring-amber-400/60'
-        } ${isSelected ? 'ring-4 ring-white shadow-emerald-600/50' : ''} flex items-center space-x-1.5 text-[10px] font-bold whitespace-nowrap">
+        } ${
+        isSelected ? 'ring-4 ring-white shadow-emerald-600/50' : ''
+      } flex items-center space-x-1.5 text-[10px] font-bold whitespace-nowrap">
           <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M13.8 12H3"/>
           </svg>
@@ -390,10 +440,10 @@ export const Campus3DMap: React.FC<Campus3DMapProps> = ({
     });
   }, [selectedCategory, locations, onSelectLocation, selectedLocation]);
 
-  // 3. Highlight Selected Building & Smooth 3D Camera Flight
+  // 3. Highlight Selected Building & Smooth 3D Camera Flight (Non-navigating mode)
   useEffect(() => {
     const map = mapRef.current;
-    if (!map) return;
+    if (!map || isNavigating) return;
 
     if (selectedFeatureIdRef.current) {
       try {
@@ -411,7 +461,6 @@ export const Campus3DMap: React.FC<Campus3DMapProps> = ({
       (f) => f.properties.id === selectedLocation.id
     );
 
-    // Frame both the building structure and the pedestrian entrance gate
     const targetCoords: [number, number] =
       selectedLocation.entranceCoordinates && matchedFeature
         ? [
@@ -443,9 +492,9 @@ export const Campus3DMap: React.FC<Campus3DMapProps> = ({
       curve: 1.4,
       essential: true,
     });
-  }, [selectedLocation]);
+  }, [selectedLocation, isNavigating]);
 
-  // 4. Synchronize Active Route Polyline in 3D
+  // 4. Synchronize Active Route Polyline (Traveled vs Remaining) and Destination Entrance Marker
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
@@ -458,41 +507,98 @@ export const Campus3DMap: React.FC<Campus3DMapProps> = ({
         type: 'FeatureCollection',
         features: [],
       });
+      if (destinationMarkerRef.current) {
+        destinationMarkerRef.current.remove();
+        destinationMarkerRef.current = null;
+      }
       return;
     }
 
-    const routeCoords: [number, number][] = activeRoute.pathCoordinates.map((c: { lng: number; lat: number }) => [c.lng, c.lat]);
+    const features: any[] = [];
+
+    // Traveled segment (behind user)
+    if (traveledCoords && traveledCoords.length > 1) {
+      features.push({
+        type: 'Feature',
+        properties: { segment: 'traveled' },
+        geometry: {
+          type: 'LineString',
+          coordinates: traveledCoords.map((c) => [c.lng, c.lat]),
+        },
+      });
+    }
+
+    // Remaining segment (ahead of user)
+    if (remainingCoords && remainingCoords.length > 1) {
+      features.push({
+        type: 'Feature',
+        properties: { segment: 'remaining' },
+        geometry: {
+          type: 'LineString',
+          coordinates: remainingCoords.map((c) => [c.lng, c.lat]),
+        },
+      });
+    } else {
+      features.push({
+        type: 'Feature',
+        properties: { segment: 'remaining' },
+        geometry: {
+          type: 'LineString',
+          coordinates: activeRoute.pathCoordinates.map((c) => [c.lng, c.lat]),
+        },
+      });
+    }
 
     source.setData({
       type: 'FeatureCollection',
-      features: [
-        {
-          type: 'Feature',
-          properties: {},
-          geometry: {
-            type: 'LineString',
-            coordinates: routeCoords,
-          },
-        },
-      ],
+      features,
     });
 
-    if (isNavigating && routeCoords.length > 1) {
-      const bounds = routeCoords.reduce(
-        (b, coord) => b.extend(coord),
-        new LngLatBounds(routeCoords[0], routeCoords[0])
+    // Destination Entrance Pin in 3D
+    const destEntrance =
+      activeRoute.destination.entranceCoordinates || activeRoute.destination.coordinates;
+    if (destEntrance) {
+      if (!destinationMarkerRef.current) {
+        const destEl = document.createElement('div');
+        destEl.className = 'flex flex-col items-center pointer-events-none select-none z-30 animate-bounce';
+        destEl.innerHTML = `
+          <div class="px-2.5 py-1 rounded-full bg-emerald-600 text-white font-extrabold text-[11px] shadow-2xl flex items-center gap-1 border-2 border-white">
+            <span>🏁</span>
+            <span>${activeRoute.destination.shortName || activeRoute.destination.name}</span>
+          </div>
+          <div class="w-1 h-3 bg-emerald-600 shadow-sm"></div>
+        `;
+        destinationMarkerRef.current = new maplibregl.Marker({
+          element: destEl,
+          anchor: 'bottom',
+        })
+          .setLngLat([destEntrance.lng, destEntrance.lat])
+          .addTo(map);
+      } else {
+        destinationMarkerRef.current.setLngLat([destEntrance.lng, destEntrance.lat]);
+      }
+    }
+
+    // On initial navigation launch, frame route preview
+    if (!isNavigating && activeRoute.pathCoordinates.length > 1) {
+      const bounds = activeRoute.pathCoordinates.reduce(
+        (b, coord) => b.extend([coord.lng, coord.lat]),
+        new LngLatBounds(
+          [activeRoute.pathCoordinates[0].lng, activeRoute.pathCoordinates[0].lat],
+          [activeRoute.pathCoordinates[0].lng, activeRoute.pathCoordinates[0].lat]
+        )
       );
 
       map.fitBounds(bounds, {
-        padding: { top: 120, bottom: 220, left: 60, right: 60 },
-        pitch: 50,
+        padding: { top: 100, bottom: 200, left: 60, right: 60 },
+        pitch: 45,
         maxZoom: 18,
         duration: 1000,
       });
     }
-  }, [activeRoute, isNavigating]);
+  }, [activeRoute, traveledCoords, remainingCoords, isNavigating]);
 
-  // 5. Live GPS Marker with Heading Cone in 3D
+  // 5. Google Maps Navigation Directional Arrow / Chevron Marker
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
@@ -501,35 +607,145 @@ export const Campus3DMap: React.FC<Campus3DMapProps> = ({
       if (userMarkerRef.current) {
         userMarkerRef.current.remove();
         userMarkerRef.current = null;
+        userMarkerElementRef.current = null;
       }
       return;
     }
 
-    const { latitude, longitude } = userPosition.coords;
-    const userLngLat: [number, number] = [longitude, latitude];
+    const { latitude, longitude, speed, heading: gpsHeading } = userPosition.coords;
+    const effectiveCoords = snappedCoords || { lat: latitude, lng: longitude };
+    const userLngLat: [number, number] = [effectiveCoords.lng, effectiveCoords.lat];
 
-    if (!userMarkerRef.current) {
-      const el = document.createElement('div');
-      el.className = 'relative flex items-center justify-center';
-      el.innerHTML = `
-        <div class="absolute w-8 h-8 rounded-full bg-blue-500/30 animate-ping"></div>
-        <div class="relative w-4 h-4 rounded-full bg-blue-600 border-2 border-white shadow-lg flex items-center justify-center">
-          <div class="w-1.5 h-1.5 rounded-full bg-white"></div>
-        </div>
-      `;
+    // Calculate reliable movement heading vs stationary stabilization
+    let reliableBearing = 0;
+    const isMovingAtSpeed = speed !== null && speed !== undefined && speed >= 0.8 && gpsHeading !== null && !isNaN(gpsHeading);
 
-      userMarkerRef.current = new maplibregl.Marker({
-        element: el,
-        anchor: 'center',
-      })
-        .setLngLat(userLngLat)
-        .addTo(map);
-    } else {
-      userMarkerRef.current.setLngLat(userLngLat);
+    if (isMovingAtSpeed) {
+      reliableBearing = gpsHeading!;
+    } else if (roadBearing !== undefined && !isNaN(roadBearing)) {
+      reliableBearing = roadBearing;
+    } else if (heading !== null && !isNaN(heading)) {
+      reliableBearing = heading;
     }
-  }, [userPosition, heading]);
 
-  // 6. Live Friend Marker in 3D (Meet My Friend - Phase 7)
+    if (isNavigating) {
+      // Navigation Mode: 3D Directional Blue Chevron with White Casing & Shadow
+      if (!userMarkerRef.current || !userMarkerElementRef.current?.classList.contains('nav-arrow-marker')) {
+        if (userMarkerRef.current) userMarkerRef.current.remove();
+
+        const el = document.createElement('div');
+        el.className = 'nav-arrow-marker relative flex items-center justify-center pointer-events-none select-none';
+        el.innerHTML = `
+          <!-- Accuracy Halo ring -->
+          <div class="absolute w-14 h-14 rounded-full bg-blue-500/15 border border-blue-400/30 animate-pulse"></div>
+          <!-- 3D Directional Navigation Chevron -->
+          <div class="relative w-10 h-10 flex items-center justify-center filter drop-shadow-[0_4px_10px_rgba(0,0,0,0.35)] transition-transform duration-200">
+            <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+              <!-- Crisp White Outer Casing -->
+              <path d="M20 3L35 34L20 27L5 34L20 3Z" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="2.5" stroke-linejoin="round"/>
+              <!-- Vibrant Google Maps Blue Chevron Left Wing -->
+              <path d="M20 5.5L32.5 32L20 26L7.5 32L20 5.5Z" fill="#1A73E8"/>
+              <!-- Shaded Right Wing for authentic 3D lighting -->
+              <path d="M20 5.5L32.5 32L20 26V5.5Z" fill="#1557B0" opacity="0.4"/>
+              <!-- Central core point -->
+              <circle cx="20" cy="20" r="2.5" fill="#FFFFFF" opacity="0.9"/>
+            </svg>
+          </div>
+        `;
+
+        userMarkerElementRef.current = el;
+        userMarkerRef.current = new maplibregl.Marker({
+          element: el,
+          anchor: 'center',
+          rotationAlignment: 'map', // Rotates natively in geographic coordinates
+        })
+          .setLngLat(userLngLat)
+          .setRotation(reliableBearing)
+          .addTo(map);
+      } else {
+        userMarkerRef.current.setLngLat(userLngLat);
+        userMarkerRef.current.setRotation(reliableBearing);
+      }
+    } else {
+      // Normal Browse Mode: Clean Apple Maps Pulsing Blue Location Dot
+      if (!userMarkerRef.current || userMarkerElementRef.current?.classList.contains('nav-arrow-marker')) {
+        if (userMarkerRef.current) userMarkerRef.current.remove();
+
+        const el = document.createElement('div');
+        el.className = 'browse-dot-marker relative flex items-center justify-center';
+        el.innerHTML = `
+          <div class="absolute w-8 h-8 rounded-full bg-blue-500/30 animate-ping"></div>
+          <div class="relative w-4 h-4 rounded-full bg-blue-600 border-2 border-white shadow-lg flex items-center justify-center">
+            <div class="w-1.5 h-1.5 rounded-full bg-white"></div>
+          </div>
+        `;
+
+        userMarkerElementRef.current = el;
+        userMarkerRef.current = new maplibregl.Marker({
+          element: el,
+          anchor: 'center',
+          rotationAlignment: 'viewport',
+        })
+          .setLngLat(userLngLat)
+          .addTo(map);
+      } else {
+        userMarkerRef.current.setLngLat(userLngLat);
+      }
+    }
+  }, [userPosition, heading, snappedCoords, roadBearing, isNavigating]);
+
+  // 6. Navigation Camera: Forward-Facing 3D Perspective Following (Google Maps Style)
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !isNavigating || !isFollowing) return;
+
+    const currentCoords = snappedCoords || (userPosition ? {
+      lat: userPosition.coords.latitude,
+      lng: userPosition.coords.longitude,
+    } : null);
+
+    if (!currentCoords) return;
+
+    // Determine reliable camera bearing:
+    // If North-Up mode, keep bearing = 0.
+    // If Heading-Up mode, rotate with reliable movement heading or road segment bearing.
+    let navBearing = 0;
+    if (!isNorthUp) {
+      const speed = userPosition?.coords.speed;
+      const gpsHeading = userPosition?.coords.heading;
+      if (speed !== null && speed !== undefined && speed >= 0.8 && gpsHeading !== null && gpsHeading !== undefined && !isNaN(gpsHeading)) {
+        navBearing = gpsHeading;
+      } else if (roadBearing !== undefined && !isNaN(roadBearing)) {
+        navBearing = roadBearing;
+      } else if (heading !== null && !isNaN(heading)) {
+        navBearing = heading;
+      }
+    }
+
+    // Offset camera padding so user is placed in lower-third of screen (~30% from bottom),
+    // presenting an expansive forward-facing view of the route ahead with 3D buildings.
+    map.easeTo({
+      center: [currentCoords.lng, currentCoords.lat],
+      pitch: isNorthUp ? 0 : 58,
+      bearing: isNorthUp ? 0 : navBearing,
+      zoom: 18.2,
+      padding: isNorthUp
+        ? { top: 0, bottom: 0, left: 0, right: 0 }
+        : { top: 60, bottom: 220, left: 20, right: 20 },
+      duration: 500,
+      easing: (t) => t,
+    });
+  }, [
+    isNavigating,
+    isFollowing,
+    snappedCoords,
+    userPosition,
+    roadBearing,
+    heading,
+    isNorthUp,
+  ]);
+
+  // 7. Live Friend Marker in 3D (Meet My Friend)
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
@@ -576,7 +792,7 @@ export const Campus3DMap: React.FC<Campus3DMapProps> = ({
     }
   }, [friendShare, onSelectFriend]);
 
-  // 7. Live Campus Events Markers in 3D
+  // 8. Live Campus Events Markers in 3D
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
@@ -612,19 +828,19 @@ export const Campus3DMap: React.FC<Campus3DMapProps> = ({
     });
   }, [events, onSelectEvent]);
 
-  // 8. Focus Camera on Selected Event in 3D
+  // 9. Focus Camera on Selected Event in 3D
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !selectedEvent || !selectedEvent.coordinates) return;
+    if (!map || !selectedEvent || !selectedEvent.coordinates || isNavigating) return;
     map.flyTo({
       center: [selectedEvent.coordinates.lng, selectedEvent.coordinates.lat],
       zoom: 17.5,
       pitch: 55,
       duration: 1000,
     });
-  }, [selectedEvent]);
+  }, [selectedEvent, isNavigating]);
 
-  // 9. Render Road Closures & Obstacles in 3D
+  // 10. Render Road Closures & Obstacles in 3D
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
@@ -658,15 +874,15 @@ export const Campus3DMap: React.FC<Campus3DMapProps> = ({
     });
   }, [roadClosures]);
 
-  // 10. Tactical Controls Handlers
+  // Tactical Controls Handlers
   const handleResetNorth = useCallback(() => {
     if (!mapRef.current) return;
     mapRef.current.easeTo({
       bearing: 0,
-      pitch: 60,
-      duration: 800,
+      pitch: isNavigating ? 0 : 60,
+      duration: 600,
     });
-  }, []);
+  }, [isNavigating]);
 
   const handleTogglePitch = useCallback(() => {
     if (!mapRef.current) return;
@@ -700,15 +916,24 @@ export const Campus3DMap: React.FC<Campus3DMapProps> = ({
 
   const handleRecenterGpsPosition = useCallback(() => {
     if (userPosition && mapRef.current) {
+      const coords = snappedCoords || {
+        lat: userPosition.coords.latitude,
+        lng: userPosition.coords.longitude,
+      };
       mapRef.current.flyTo({
-        center: [userPosition.coords.longitude, userPosition.coords.latitude],
-        zoom: 18,
-        pitch: 60,
-        duration: 1000,
+        center: [coords.lng, coords.lat],
+        zoom: 18.2,
+        pitch: isNavigating && !isNorthUp ? 58 : 60,
+        bearing: isNavigating && !isNorthUp ? (roadBearing || 0) : 0,
+        padding: isNavigating && !isNorthUp
+          ? { top: 60, bottom: 220, left: 20, right: 20 }
+          : { top: 0, bottom: 0, left: 0, right: 0 },
+        duration: 800,
       });
     }
+    if (onSetIsFollowing) onSetIsFollowing(true);
     if (onRecenterGps) onRecenterGps();
-  }, [userPosition, onRecenterGps]);
+  }, [userPosition, snappedCoords, isNavigating, isNorthUp, roadBearing, onSetIsFollowing, onRecenterGps]);
 
   return (
     <div className="relative w-full h-[100dvh] overflow-hidden select-none">
@@ -716,7 +941,7 @@ export const Campus3DMap: React.FC<Campus3DMapProps> = ({
       <div ref={mapContainerRef} className="w-full h-full" />
 
       {/* Floating Building Hover Pill */}
-      {hoveredBuildingName && (
+      {hoveredBuildingName && !isNavigating && (
         <div className="absolute top-24 left-1/2 -translate-x-1/2 z-20 pointer-events-none animate-in fade-in zoom-in-95 duration-200">
           <div className="bg-slate-900/85 text-white backdrop-blur-md px-3 py-1 rounded-full shadow-lg border border-slate-700/50 flex items-center space-x-1.5 text-xs font-medium">
             <Sparkles className="w-3.5 h-3.5 text-blue-400" />
@@ -725,51 +950,57 @@ export const Campus3DMap: React.FC<Campus3DMapProps> = ({
         </div>
       )}
 
-      {/* 1. Apple Maps Top Utility Capsule (Events, SOS, Share) */}
-      <div className="fixed top-28 right-3 sm:right-6 z-20 pointer-events-auto flex items-center gap-1.5 animate-in fade-in duration-300">
-        <div className="inline-flex items-center p-1 bg-white/85 dark:bg-slate-900/85 backdrop-blur-2xl rounded-full border border-black/[0.06] dark:border-white/[0.08] shadow-[0_4px_20px_rgba(0,0,0,0.06)]">
-          {/* Emergency Assistance SOS */}
-          {onOpenEmergencyModal && (
-            <button
-              onClick={onOpenEmergencyModal}
-              aria-label="Emergency SOS"
-              title="Campus Emergency Assistance & SOS"
-              className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 active:scale-95 transition-all"
-            >
-              <ShieldAlert className="w-3.5 h-3.5 text-rose-600" />
-              <span className="font-bold tracking-tight">SOS</span>
-            </button>
-          )}
+      {/* 1. Apple Maps Top Utility Capsule (Events, SOS, Share) - Hidden during Navigation */}
+      {!isNavigating && (
+        <div className="fixed top-28 right-3 sm:right-6 z-20 pointer-events-auto flex items-center gap-1.5 animate-in fade-in duration-300">
+          <div className="inline-flex items-center p-1 bg-white/85 dark:bg-slate-900/85 backdrop-blur-2xl rounded-full border border-black/[0.06] dark:border-white/[0.08] shadow-[0_4px_20px_rgba(0,0,0,0.06)]">
+            {/* Emergency Assistance SOS */}
+            {onOpenEmergencyModal && (
+              <button
+                onClick={onOpenEmergencyModal}
+                aria-label="Emergency SOS"
+                title="Campus Emergency Assistance & SOS"
+                className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 active:scale-95 transition-all"
+              >
+                <ShieldAlert className="w-3.5 h-3.5 text-rose-600" />
+                <span className="font-bold tracking-tight">SOS</span>
+              </button>
+            )}
 
-          {/* Campus Events */}
-          {onOpenEventsModal && (
-            <button
-              onClick={onOpenEventsModal}
-              aria-label="Campus Events"
-              title="Campus Events & Fests"
-              className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100/70 dark:hover:bg-slate-800/70 active:scale-95 transition-all"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-purple-600" />
-              <span>Events</span>
-            </button>
-          )}
+            {/* Campus Events */}
+            {onOpenEventsModal && (
+              <button
+                onClick={onOpenEventsModal}
+                aria-label="Campus Events"
+                title="Campus Events & Fests"
+                className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100/70 dark:hover:bg-slate-800/70 active:scale-95 transition-all"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-purple-600" />
+                <span>Events</span>
+              </button>
+            )}
 
-          {/* Share Live Location */}
-          {onOpenShareModal && (
-            <button
-              onClick={onOpenShareModal}
-              aria-label="Share Location"
-              title="Share Live Location via WhatsApp"
-              className="p-1.5 rounded-full text-slate-600 dark:text-slate-300 hover:text-blue-600 hover:bg-slate-100/70 dark:hover:bg-slate-800/70 active:scale-95 transition-all"
-            >
-              <Share2 className="w-3.5 h-3.5" />
-            </button>
-          )}
+            {/* Share Live Location */}
+            {onOpenShareModal && (
+              <button
+                onClick={onOpenShareModal}
+                aria-label="Share Location"
+                title="Share Live Location via WhatsApp"
+                className="p-1.5 rounded-full text-slate-600 dark:text-slate-300 hover:text-blue-600 hover:bg-slate-100/70 dark:hover:bg-slate-800/70 active:scale-95 transition-all"
+              >
+                <Share2 className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* 2. Apple Maps Unified Vertical 3D Navigation Capsule */}
-      <div className="fixed right-3 sm:right-6 bottom-20 md:bottom-8 z-30 pointer-events-auto transition-all duration-300 ease-out">
+      {/* 2. Apple Maps Unified Vertical 3D Navigation Capsule - Minimized when Navigating */}
+      <div
+        className={`fixed right-3 sm:right-6 ${
+          isNavigating ? 'bottom-28' : 'bottom-20 md:bottom-8'
+        } z-30 pointer-events-auto transition-all duration-300 ease-out`}
+      >
         <div className="w-10 sm:w-11 bg-white/85 dark:bg-slate-900/85 backdrop-blur-2xl rounded-2xl border border-black/[0.06] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.08)] flex flex-col items-center overflow-hidden py-1">
           {/* Compass with needle */}
           <button
@@ -783,24 +1014,27 @@ export const Campus3DMap: React.FC<Campus3DMapProps> = ({
             />
           </button>
 
-          <div className="w-6 h-px bg-black/[0.05] dark:bg-white/[0.08] my-0.5" />
+          {!isNavigating && (
+            <>
+              <div className="w-6 h-px bg-black/[0.05] dark:bg-white/[0.08] my-0.5" />
 
-          {/* 3D Tilt / Pitch Perspective */}
-          <button
-            onClick={handleTogglePitch}
-            className={`w-10 h-8 flex items-center justify-center text-xs font-semibold transition-all hover:bg-slate-100/60 dark:hover:bg-slate-800/60 active:scale-95 ${
-              pitch > 30 ? 'text-[#007AFF] font-bold' : 'text-slate-600 dark:text-slate-300'
-            }`}
-            title={`Perspective: ${pitch}° (Toggle 3D / 2D perspective)`}
-          >
-            <span>{pitch > 30 ? '3D' : '2D'}</span>
-          </button>
-
-          <div className="w-6 h-px bg-black/[0.05] dark:bg-white/[0.08] my-0.5" />
+              {/* 3D Tilt / Pitch Perspective */}
+              <button
+                onClick={handleTogglePitch}
+                className={`w-10 h-8 flex items-center justify-center text-xs font-semibold transition-all hover:bg-slate-100/60 dark:hover:bg-slate-800/60 active:scale-95 ${
+                  pitch > 30 ? 'text-[#007AFF] font-bold' : 'text-slate-600 dark:text-slate-300'
+                }`}
+                title={`Perspective: ${pitch}° (Toggle 3D / 2D perspective)`}
+              >
+                <span>{pitch > 30 ? '3D' : '2D'}</span>
+              </button>
+            </>
+          )}
 
           {/* Recenter User GPS */}
           {userPosition && (
             <>
+              <div className="w-6 h-px bg-black/[0.05] dark:bg-white/[0.08] my-0.5" />
               <button
                 onClick={handleRecenterGpsPosition}
                 className="w-10 h-10 flex items-center justify-center text-[#007AFF] hover:bg-slate-100/60 dark:hover:bg-slate-800/60 active:scale-95 transition-all focus:outline-none"
@@ -808,18 +1042,23 @@ export const Campus3DMap: React.FC<Campus3DMapProps> = ({
               >
                 <Crosshair className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
               </button>
-              <div className="w-6 h-px bg-black/[0.05] dark:bg-white/[0.08] my-0.5" />
             </>
           )}
 
-          {/* Recenter Campus Overview */}
-          <button
-            onClick={handleRecenterCampus}
-            className="w-10 h-10 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-slate-900 active:scale-95 transition-all hover:bg-slate-100/60 dark:hover:bg-slate-800/60 focus:outline-none"
-            title="Recenter LPU Campus"
-          >
-            <RotateCcw className="w-4 h-4 text-slate-600 dark:text-slate-400" />
-          </button>
+          {!isNavigating && (
+            <>
+              <div className="w-6 h-px bg-black/[0.05] dark:bg-white/[0.08] my-0.5" />
+
+              {/* Recenter Campus Overview */}
+              <button
+                onClick={handleRecenterCampus}
+                className="w-10 h-10 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-slate-900 active:scale-95 transition-all hover:bg-slate-100/60 dark:hover:bg-slate-800/60 focus:outline-none"
+                title="Recenter LPU Campus"
+              >
+                <RotateCcw className="w-4 h-4 text-slate-600 dark:text-slate-400" />
+              </button>
+            </>
+          )}
 
           <div className="w-6 h-px bg-black/[0.05] dark:bg-white/[0.08] my-0.5" />
 
@@ -845,11 +1084,13 @@ export const Campus3DMap: React.FC<Campus3DMapProps> = ({
         </div>
       </div>
 
-      {/* 3D Mode Visual Badge / Footprint Attribution */}
-      <div className="absolute bottom-20 left-3 z-20 pointer-events-none hidden sm:flex items-center space-x-1.5 px-3 py-1 rounded-full bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border border-black/[0.05] dark:border-white/[0.08] text-slate-500 dark:text-slate-400 text-[10px]">
-        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-        <span>3D WebGL • Pitch {pitch}° • Bearing {bearing}° • Zoom {zoom}</span>
-      </div>
+      {/* 3D Mode Visual Badge / Footprint Attribution (Hidden during Navigation) */}
+      {!isNavigating && (
+        <div className="absolute bottom-20 left-3 z-20 pointer-events-none hidden sm:flex items-center space-x-1.5 px-3 py-1 rounded-full bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border border-black/[0.05] dark:border-white/[0.08] text-slate-500 dark:text-slate-400 text-[10px]">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          <span>3D WebGL • Pitch {pitch}° • Bearing {bearing}° • Zoom {zoom}</span>
+        </div>
+      )}
     </div>
   );
 };

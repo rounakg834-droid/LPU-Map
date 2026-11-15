@@ -266,8 +266,8 @@ const nodesArray: CampusGraphNode[] = [
   // --- BOYS HOSTELS ---
   {
     id: 'n_bh1',
-    name: 'Boys Hostel 1 (BH-1)',
-    coords: { lat: 31.25320, lng: 75.70720 },
+    name: 'Boys Hostel 1 (BH-1) Gate',
+    coords: { lat: 31.25320, lng: 75.70700 },
     isEntrance: true,
     locationId: 'bh-1',
     hasStepFreeRamp: false, // Plinth steps pending ramp survey

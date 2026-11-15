@@ -131,6 +131,213 @@ export class RoutingService implements IRoutingService {
   }
 
   /**
+   * Forward bearing in degrees (0 to 360) between two geographic coordinates
+   */
+  public getBearing(from: Coordinates, to: Coordinates): number {
+    const lat1 = (from.lat * Math.PI) / 180;
+    const lat2 = (to.lat * Math.PI) / 180;
+    const dLng = ((to.lng - from.lng) * Math.PI) / 180;
+    const y = Math.sin(dLng) * Math.cos(lat2);
+    const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLng);
+    return (Math.round((Math.atan2(y, x) * 180) / Math.PI) + 360) % 360;
+  }
+
+  /**
+   * Project a GPS coordinate onto a polyline segment segA -> segB
+   */
+  public getClosestPointOnSegment(
+    point: Coordinates,
+    segA: Coordinates,
+    segB: Coordinates
+  ): { point: Coordinates; distanceMeters: number; fraction: number } {
+    const cosLat = Math.cos((((segA.lat + segB.lat) / 2) * Math.PI) / 180);
+    const dx = (segB.lng - segA.lng) * cosLat;
+    const dy = segB.lat - segA.lat;
+    const segLenSq = dx * dx + dy * dy;
+
+    if (segLenSq < 1e-12) {
+      return {
+        point: segA,
+        distanceMeters: this.calculateStraightLineMeters(point, segA),
+        fraction: 0,
+      };
+    }
+
+    const px = (point.lng - segA.lng) * cosLat;
+    const py = point.lat - segA.lat;
+    const t = Math.max(0, Math.min(1, (px * dx + py * dy) / segLenSq));
+
+    const closestPoint: Coordinates = {
+      lat: Number((segA.lat + t * (segB.lat - segA.lat)).toFixed(7)),
+      lng: Number((segA.lng + t * (segB.lng - segA.lng)).toFixed(7)),
+    };
+
+    return {
+      point: closestPoint,
+      distanceMeters: this.calculateStraightLineMeters(point, closestPoint),
+      fraction: t,
+    };
+  }
+
+  /**
+   * Snaps GPS position onto active route polyline within maxSnapMeters.
+   * Computes the forward segment bearing and perpendicular deviation.
+   */
+  public snapPointToPolyline(
+    point: Coordinates,
+    polyline: Coordinates[],
+    maxSnapMeters = 35
+  ): {
+    snappedPoint: Coordinates;
+    segmentIndex: number;
+    distanceToRoute: number;
+    isOffRoute: boolean;
+    fraction: number;
+    bearing: number;
+  } {
+    if (polyline.length === 0) {
+      return {
+        snappedPoint: point,
+        segmentIndex: 0,
+        distanceToRoute: 0,
+        isOffRoute: false,
+        fraction: 0,
+        bearing: 0,
+      };
+    }
+    if (polyline.length === 1) {
+      const dist = this.calculateStraightLineMeters(point, polyline[0]);
+      return {
+        snappedPoint: polyline[0],
+        segmentIndex: 0,
+        distanceToRoute: dist,
+        isOffRoute: dist > maxSnapMeters,
+        fraction: 0,
+        bearing: 0,
+      };
+    }
+
+    let minDistance = Infinity;
+    let bestSnapped = polyline[0];
+    let bestSegment = 0;
+    let bestFraction = 0;
+
+    for (let i = 0; i < polyline.length - 1; i++) {
+      const segA = polyline[i];
+      const segB = polyline[i + 1];
+      const { point: proj, distanceMeters, fraction } = this.getClosestPointOnSegment(point, segA, segB);
+      if (distanceMeters < minDistance) {
+        minDistance = distanceMeters;
+        bestSnapped = proj;
+        bestSegment = i;
+        bestFraction = fraction;
+      }
+    }
+
+    const nextIndex = Math.min(bestSegment + 1, polyline.length - 1);
+    const bearing = this.getBearing(polyline[bestSegment], polyline[nextIndex]);
+
+    return {
+      snappedPoint: bestSnapped,
+      segmentIndex: bestSegment,
+      distanceToRoute: Math.round(minDistance),
+      isOffRoute: minDistance > maxSnapMeters,
+      fraction: bestFraction,
+      bearing,
+    };
+  }
+
+  /**
+   * Accurate remaining distance along polyline geometry from current user position,
+   * split into traveled and remaining route coordinates for Google Maps styling.
+   */
+  public calculateRemainingDistanceAlongRoute(
+    currentCoords: Coordinates | null,
+    plan: RoutePlan
+  ): {
+    remainingMeters: number;
+    snappedCoords: Coordinates | null;
+    isOffRoute: boolean;
+    traveledCoords: Coordinates[];
+    remainingCoords: Coordinates[];
+    nextStepIndex: number;
+    distanceToNextManeuver: number;
+    roadBearing: number;
+  } {
+    if (!plan || plan.pathCoordinates.length < 2) {
+      return {
+        remainingMeters: 0,
+        snappedCoords: currentCoords,
+        isOffRoute: false,
+        traveledCoords: [],
+        remainingCoords: plan?.pathCoordinates || [],
+        nextStepIndex: 0,
+        distanceToNextManeuver: 0,
+        roadBearing: 0,
+      };
+    }
+
+    const polyline = plan.pathCoordinates;
+
+    if (!currentCoords) {
+      const initialBearing = this.getBearing(polyline[0], polyline[1]);
+      return {
+        remainingMeters: plan.distanceMeters,
+        snappedCoords: polyline[0],
+        isOffRoute: false,
+        traveledCoords: [],
+        remainingCoords: polyline,
+        nextStepIndex: 0,
+        distanceToNextManeuver: plan.instructions[0]?.distanceMeters || 0,
+        roadBearing: initialBearing,
+      };
+    }
+
+    const snap = this.snapPointToPolyline(currentCoords, polyline, 35);
+    const segIdx = snap.segmentIndex;
+    const snapped = snap.snappedPoint;
+
+    // Remaining distance along polyline from snapped point to destination
+    let remaining = this.calculateStraightLineMeters(snapped, polyline[segIdx + 1]);
+    for (let i = segIdx + 1; i < polyline.length - 1; i++) {
+      remaining += this.calculateStraightLineMeters(polyline[i], polyline[i + 1]);
+    }
+
+    // Traveled vs Remaining Coordinates
+    const traveled: Coordinates[] = [...polyline.slice(0, segIdx + 1), snapped];
+    const remainingLine: Coordinates[] = [snapped, ...polyline.slice(segIdx + 1)];
+
+    // Dynamically advance maneuver instruction based on proximity to turn waypoints
+    let activeStepIdx = 0;
+    for (let j = 0; j < plan.instructions.length; j++) {
+      const inst = plan.instructions[j];
+      const distToInst = this.calculateStraightLineMeters(snapped, inst.coordinates);
+      if (distToInst < 18 && j < plan.instructions.length - 1) {
+        activeStepIdx = j + 1;
+        break;
+      } else if (distToInst < 40) {
+        activeStepIdx = j;
+      }
+    }
+
+    const nextInst = plan.instructions[activeStepIdx];
+    const distanceToNext = nextInst
+      ? this.calculateStraightLineMeters(snapped, nextInst.coordinates)
+      : 0;
+
+    return {
+      remainingMeters: Math.max(0, Math.round(remaining)),
+      snappedCoords: snapped,
+      isOffRoute: snap.isOffRoute,
+      traveledCoords: traveled,
+      remainingCoords: remainingLine,
+      nextStepIndex: activeStepIdx,
+      distanceToNextManeuver: Math.round(distanceToNext),
+      roadBearing: snap.bearing,
+    };
+  }
+
+  /**
    * Find closest graph node to a geographic coordinate
    */
   public findNearestNode(
@@ -437,6 +644,39 @@ export class RoutingService implements IRoutingService {
       };
     }
 
+    // 0. Immediate Arrival Check (Fixes BH-1 794m bug when standing at gate)
+    const targetCoord = destination.entranceCoordinates || destination.coordinates;
+    if (origin && targetCoord) {
+      const directDist = this.calculateStraightLineMeters(origin, targetCoord);
+      if (directDist <= 35) {
+        return {
+          origin,
+          destination,
+          mode,
+          status: 'available',
+          distanceMeters: 0,
+          estimatedTimeMinutes: 0,
+          pathCoordinates: [origin, targetCoord],
+          instructions: [
+            {
+              id: 'inst_arrived_now',
+              instruction: `You have arrived at ${destination.shortName || destination.name}!`,
+              maneuver: 'arrive',
+              distanceMeters: 0,
+              durationSeconds: 0,
+              coordinates: targetCoord,
+              pathName: `${destination.shortName || destination.name} Entrance`,
+            },
+          ],
+          isVerifiedRoute: true,
+          notes: 'You are already at this destination entrance.',
+          isAlreadyAtDestination: true,
+        };
+      }
+    }
+
+    const isFallbackOrigin = !origin;
+
     // If no origin GPS is provided or user is off campus, snap origin to Main Gate 1
     let effectiveOrigin: Coordinates = origin || {
       lat: 31.25230,
@@ -639,6 +879,7 @@ export class RoutingService implements IRoutingService {
           ? 'Route verified step-free on paved campus boulevard with entrance ramp.'
           : undefined,
       roadClosureNotice: closureNotice,
+      isFallbackOrigin,
     };
   }
 

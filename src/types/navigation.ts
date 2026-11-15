@@ -61,6 +61,8 @@ export interface RoutePlan {
   accessibilityNotice?: string;
   unreachableReason?: string;
   roadClosureNotice?: string;
+  isFallbackOrigin?: boolean;
+  isAlreadyAtDestination?: boolean;
 }
 
 export interface NavigationModeConfig {

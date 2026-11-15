@@ -54,6 +54,7 @@ function CampusNavigatorView({ navigate }: { navigate: (path: string) => void })
 
   // Navigation states
   const [isNavigating, setIsNavigating] = useState<boolean>(false);
+  const [isNorthUp, setIsNorthUp] = useState<boolean>(false);
   const [hasArrived, setHasArrived] = useState<boolean>(false);
   const [activeRoute, setActiveRoute] = useState<RoutePlan | null>(null);
   const [currentInstructionIndex, setCurrentInstructionIndex] = useState<number>(0);
@@ -324,17 +325,20 @@ function CampusNavigatorView({ navigate }: { navigate: (path: string) => void })
       setActiveRoute(plan);
       setCurrentInstructionIndex(0);
       setIsNavigating(true);
-      setHasArrived(false);
+      setHasArrived(Boolean(plan.isAlreadyAtDestination));
       setSelectedLocation(null);
       setSelectedEvent(null);
       setIsFollowing(true);
+      setIsNorthUp(false);
       startTracking();
-      if (mapMode === '3d') {
-        setMapMode('2d');
-        showToast('Switched to 2D view for optimal turn-by-turn guidance', 'info');
+      // Ensure 3D WebGL mode is active for Google Maps forward-facing perspective camera
+      if (isWebGLSupported() && mapMode !== '3d') {
+        setMapMode('3d');
       }
       showToast(
-        `Navigation started to ${plan.destination.shortName || plan.destination.name}`,
+        plan.isAlreadyAtDestination
+          ? `You are already at ${plan.destination.shortName || plan.destination.name} entrance!`
+          : `Navigation started to ${plan.destination.shortName || plan.destination.name}`,
         'success'
       );
     },
@@ -349,6 +353,7 @@ function CampusNavigatorView({ navigate }: { navigate: (path: string) => void })
     setActiveRoute(null);
     setIsStepsModalOpen(false);
     setCurrentInstructionIndex(0);
+    setIsNorthUp(false);
     showToast('Navigation ended', 'info');
   }, [showToast]);
 
@@ -443,23 +448,46 @@ function CampusNavigatorView({ navigate }: { navigate: (path: string) => void })
     }
   }, [friendShare?.revoked, friendShare?.creatorDisplayName, isNavigatingToFriend, showToast]);
 
-  // Turn progress tracking: advance to next turn if user is within 15 meters of current maneuver waypoint
-  useEffect(() => {
-    if (!isNavigating || !activeRoute || !position) return;
-    const instructions = activeRoute.instructions;
-    if (currentInstructionIndex < instructions.length - 1) {
-      const nextTurnCoords = instructions[currentInstructionIndex + 1].coordinates;
-      const distToTurn = routingService.calculateStraightLineMeters(
-        { lat: position.coords.latitude, lng: position.coords.longitude },
-        nextTurnCoords
-      );
-      if (distToTurn <= 15) {
-        setCurrentInstructionIndex((prev) => Math.min(prev + 1, instructions.length - 1));
-      }
-    }
-  }, [isNavigating, activeRoute, position, currentInstructionIndex]);
+  // 6. Navigation real-time geometric calculation along active polyline
+  const navigationRouteDetails = useMemo(() => {
+    if (!activeRoute) return null;
+    const userCoord = position
+      ? { lat: position.coords.latitude, lng: position.coords.longitude }
+      : null;
+    return routingService.calculateRemainingDistanceAlongRoute(userCoord, activeRoute);
+  }, [activeRoute, position]);
 
-  // Off-route dynamic recalculation
+  // Dynamically advance step index based on user progress along polyline
+  useEffect(() => {
+    if (isNavigating && navigationRouteDetails) {
+      setCurrentInstructionIndex(navigationRouteDetails.nextStepIndex);
+    }
+  }, [isNavigating, navigationRouteDetails?.nextStepIndex]);
+
+  // Fallback origin recovery (Requirement 7 & BH-1 fix):
+  // If the initial route was calculated using fallback origin (e.g. Main Gate 1) because GPS
+  // was acquiring, automatically recalculate from user's true GPS position once acquired!
+  useEffect(() => {
+    if (activeRoute?.isFallbackOrigin && position && isNavigating) {
+      const userCoord = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+      };
+      routingService
+        .calculateRoute(userCoord, activeRoute.destination, activeRoute.mode)
+        .then((newPlan) => {
+          if (newPlan.status === 'available') {
+            setActiveRoute(newPlan);
+            if (newPlan.isAlreadyAtDestination) {
+              setHasArrived(true);
+            }
+            showToast('Route updated to your live GPS position', 'info');
+          }
+        });
+    }
+  }, [position, activeRoute?.isFallbackOrigin, isNavigating, showToast]);
+
+  // Off-route dynamic recalculation (>35m deviation from active polyline)
   const lastRecalculationTime = useRef<number>(0);
   const isRecalculating = useRef<boolean>(false);
 
@@ -468,20 +496,19 @@ function CampusNavigatorView({ navigate }: { navigate: (path: string) => void })
     if (position.coords.accuracy > 35) return; // Ignore noisy GPS jitter
 
     const now = Date.now();
-    if (now - lastRecalculationTime.current < 8000) return; // 8s debounce
+    if (now - lastRecalculationTime.current < 6000) return; // 6s debounce
 
     const userCoord = {
       lat: position.coords.latitude,
       lng: position.coords.longitude,
     };
 
-    const distFromRoute = routingService.getDistanceFromRoute(
-      userCoord,
-      activeRoute.pathCoordinates
-    );
+    const isOffRoute =
+      navigationRouteDetails?.isOffRoute ??
+      routingService.getDistanceFromRoute(userCoord, activeRoute.pathCoordinates) > 35;
 
-    // If user is > 45 meters away from active path polyline within campus, recalculate
-    if (distFromRoute > 45 && routingService.isWithinCampus(userCoord)) {
+    // If user is > 35 meters away from active path polyline within campus, recalculate
+    if (isOffRoute && routingService.isWithinCampus(userCoord)) {
       isRecalculating.current = true;
       lastRecalculationTime.current = now;
       showToast('Off active route. Recalculating path...', 'info');
@@ -499,11 +526,16 @@ function CampusNavigatorView({ navigate }: { navigate: (path: string) => void })
           isRecalculating.current = false;
         });
     }
-  }, [isNavigating, activeRoute, position, showToast]);
+  }, [isNavigating, activeRoute, position, navigationRouteDetails?.isOffRoute, showToast]);
 
   // Accuracy-aware arrival detection at destination entrance (Requirement 10)
   useEffect(() => {
     if (!isNavigating || !activeRoute || !position || hasArrived) return;
+
+    if (activeRoute.isAlreadyAtDestination) {
+      setHasArrived(true);
+      return;
+    }
 
     const target =
       activeRoute.destination.entranceCoordinates || activeRoute.destination.coordinates;
@@ -531,6 +563,9 @@ function CampusNavigatorView({ navigate }: { navigate: (path: string) => void })
   // Real-time remaining metrics along actual route geometry
   const remainingDistanceMeters = useMemo(() => {
     if (!activeRoute) return 0;
+    if (navigationRouteDetails) {
+      return navigationRouteDetails.remainingMeters;
+    }
     const userCoord = position
       ? { lat: position.coords.latitude, lng: position.coords.longitude }
       : null;
@@ -539,7 +574,7 @@ function CampusNavigatorView({ navigate }: { navigate: (path: string) => void })
       activeRoute,
       currentInstructionIndex
     );
-  }, [activeRoute, position, currentInstructionIndex]);
+  }, [activeRoute, navigationRouteDetails, position, currentInstructionIndex]);
 
   const remainingMinutes = useMemo(() => {
     if (!activeRoute) return 0;
@@ -583,7 +618,7 @@ function CampusNavigatorView({ navigate }: { navigate: (path: string) => void })
   return (
     <div className="relative w-full h-full h-screen-dvh overflow-hidden bg-slate-100 flex flex-col">
       {/* 2D Leaflet Campus Map OR 3D MapLibre WebGL Campus Map */}
-      {mapMode === '2d' ? (
+      {mapMode === '2d' && !isNavigating ? (
         <CampusMap
           locations={displayedLocations}
           selectedLocation={selectedLocation}
@@ -622,6 +657,14 @@ function CampusNavigatorView({ navigate }: { navigate: (path: string) => void })
           selectedCategory={selectedCategory}
           activeRoute={activeRoute}
           isNavigating={isNavigating}
+          isFollowing={isFollowing}
+          onSetIsFollowing={setIsFollowing}
+          snappedCoords={navigationRouteDetails?.snappedCoords}
+          roadBearing={navigationRouteDetails?.roadBearing}
+          traveledCoords={navigationRouteDetails?.traveledCoords}
+          remainingCoords={navigationRouteDetails?.remainingCoords}
+          isNorthUp={isNorthUp}
+          onToggleNorthUp={() => setIsNorthUp(!isNorthUp)}
           events={events}
           selectedEvent={selectedEvent}
           onSelectEvent={handleSelectEvent}
@@ -635,13 +678,15 @@ function CampusNavigatorView({ navigate }: { navigate: (path: string) => void })
         />
       )}
 
-      {/* Floating 2D / 3D Mode Selector Pill */}
-      <div className="fixed top-28 left-3 sm:left-6 z-20 pointer-events-auto">
-        <MapModeToggle
-          mode={mapMode}
-          onChangeMode={handleToggleMapMode}
-        />
-      </div>
+      {/* Floating 2D / 3D Mode Selector Pill (Hidden during active Navigation) */}
+      {!isNavigating && (
+        <div className="fixed top-28 left-3 sm:left-6 z-20 pointer-events-auto">
+          <MapModeToggle
+            mode={mapMode}
+            onChangeMode={handleToggleMapMode}
+          />
+        </div>
+      )}
 
       {/* Floating Active Location Broadcasting Indicator */}
       {activeMyShare && !activeMyShare.revoked && (
@@ -748,6 +793,7 @@ function CampusNavigatorView({ navigate }: { navigate: (path: string) => void })
           nextInstruction={activeRoute.instructions[currentInstructionIndex + 1] || null}
           totalDistanceMeters={remainingDistanceMeters}
           destinationName={activeRoute.destination.shortName || activeRoute.destination.name}
+          distanceToNextManeuver={navigationRouteDetails?.distanceToNextManeuver}
         />
       )}
 
@@ -763,6 +809,8 @@ function CampusNavigatorView({ navigate }: { navigate: (path: string) => void })
           onStopNavigation={handleStopNavigation}
           onToggleDirectionsList={() => setIsStepsModalOpen(!isStepsModalOpen)}
           isListOpen={isStepsModalOpen}
+          isNorthUp={isNorthUp}
+          onToggleNorthUp={() => setIsNorthUp(!isNorthUp)}
         />
       )}
 

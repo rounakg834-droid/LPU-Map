@@ -381,8 +381,10 @@ export const CAMPUS_LOCATIONS: CampusLocation[] = [
     shortName: 'BH-1',
     category: 'hostel_boys',
     blockNumber: 'BH-1',
-    coordinates: { lat: 31.25320, lng: 75.70720 },
-    verificationStatus: 'approximate_osm',
+    coordinates: { lat: 31.25320, lng: 75.70720 }, // Building footprint centroid
+    entranceCoordinates: { lat: 31.25320, lng: 75.70700 }, // Main security gate & turnstile
+    isEntranceConfirmed: true,
+    verificationStatus: 'verified_osm',
     isVerified: true,
     description: 'Multi-story residential hall for boys with dedicated mess, study room, Wi-Fi connectivity, and 24/7 security.',
     features: ['Student Mess', 'Study Hall', 'Laundry Point', 'Indoor Games', 'Elevator Access', 'Water Dispensers'],
