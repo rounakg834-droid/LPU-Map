@@ -23,6 +23,7 @@ interface ModeSelectorProps {
   userCoords: Coordinates | null;
   onStartNavigation: (routePlan: RoutePlan) => void;
   onRequestGps: () => void;
+  preferEngine?: 'campus' | 'google';
 }
 
 export const ModeSelector: React.FC<ModeSelectorProps> = ({
@@ -32,6 +33,7 @@ export const ModeSelector: React.FC<ModeSelectorProps> = ({
   userCoords,
   onStartNavigation,
   onRequestGps,
+  preferEngine = 'campus',
 }) => {
   const [routePlan, setRoutePlan] = useState<RoutePlan | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -41,7 +43,7 @@ export const ModeSelector: React.FC<ModeSelectorProps> = ({
     setIsLoading(true);
 
     routingService
-      .calculateRoute(userCoords, destination, currentMode)
+      .calculateRoute(userCoords, destination, currentMode, preferEngine)
       .then((plan) => {
         if (!isCancelled) {
           setRoutePlan(plan);
@@ -57,7 +59,7 @@ export const ModeSelector: React.FC<ModeSelectorProps> = ({
     return () => {
       isCancelled = true;
     };
-  }, [userCoords, destination, currentMode]);
+  }, [userCoords, destination, currentMode, preferEngine]);
 
   const getIcon = (id: NavigationMode, className = 'w-4 h-4') => {
     switch (id) {

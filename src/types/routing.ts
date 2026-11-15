@@ -47,7 +47,8 @@ export interface IRoutingService {
   calculateRoute(
     origin: Coordinates | null,
     destination: CampusLocation,
-    mode: NavigationMode
+    mode: NavigationMode,
+    preferEngine?: 'campus' | 'google'
   ): Promise<RoutePlan>;
   generateInstructions(
     pathNodes: CampusGraphNode[],

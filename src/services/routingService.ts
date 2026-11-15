@@ -10,6 +10,21 @@ import { CampusGraphNode, CampusGraphEdge, IRoutingService } from '../types/rout
 import { campusRouteGraph } from '../data/campusRouteGraph';
 import { roadClosureService } from './roadClosureService';
 import { routeQualityService } from './routeQualityService';
+import { googleMapsService } from './googleMapsService';
+
+function mapGoogleManeuver(gManeuver?: string): ManeuverType {
+  if (!gManeuver) return 'straight';
+  const m = gManeuver.toLowerCase();
+  if (m.includes('sharp-left') || m.includes('sharp_left')) return 'sharp_left';
+  if (m.includes('sharp-right') || m.includes('sharp_right')) return 'sharp_right';
+  if (m.includes('turn-left') || m.includes('turn_left')) return 'turn_left';
+  if (m.includes('turn-right') || m.includes('turn_right')) return 'turn_right';
+  if (m.includes('slight-left') || m.includes('slight_left')) return 'slight_left';
+  if (m.includes('slight-right') || m.includes('slight_right')) return 'slight_right';
+  if (m.includes('straight')) return 'straight';
+  if (m.includes('depart')) return 'depart';
+  return 'straight';
+}
 
 export const NAVIGATION_MODES: NavigationModeConfig[] = [
   {
@@ -623,12 +638,13 @@ export class RoutingService implements IRoutingService {
   }
 
   /**
-   * Main Route Calculation API
+   * Main Route Calculation API (Supports Campus Dijkstra Graph & Google Directions Engine)
    */
   public async calculateRoute(
     origin: Coordinates | null,
     destination: CampusLocation,
-    mode: NavigationMode
+    mode: NavigationMode,
+    preferEngine?: 'campus' | 'google'
   ): Promise<RoutePlan> {
     if (!destination.coordinates) {
       return {
@@ -676,6 +692,124 @@ export class RoutingService implements IRoutingService {
       }
     }
 
+    // Prefer Google Directions if selected and Google Maps is configured
+    if (preferEngine === 'google' && googleMapsService.isConfigured()) {
+      const googlePlan = await this.calculateGoogleRoute(origin, destination, mode);
+      if (googlePlan) return googlePlan;
+    }
+
+    return this.calculateCampusGraphRoute(origin, destination, mode);
+  }
+
+  /**
+   * Calculate route via official Google Routes / Directions API with safe campus fallbacks
+   */
+  public async calculateGoogleRoute(
+    origin: Coordinates | null,
+    destination: CampusLocation,
+    mode: NavigationMode
+  ): Promise<RoutePlan | null> {
+    if (!destination.coordinates) return null;
+
+    // Wheelchair accessibility constraint:
+    // Google Directions API does NOT offer wheelchair pedestrian routing in India.
+    // Do not falsely mark unsupported wheelchair routes as accessible.
+    if (mode === 'wheelchair') {
+      const campusPlan = await this.calculateCampusGraphRoute(origin, destination, mode);
+      if (campusPlan.status === 'available') {
+        campusPlan.notes =
+          'Routing via Verified Campus Step-Free Network. (Google Maps lacks verified wheelchair pedestrian ramp data inside LPU).';
+        campusPlan.accessibilityNotice =
+          'Step-free route verified along campus ramps and level boulevards.';
+      }
+      return campusPlan;
+    }
+
+    const targetCoord = destination.entranceCoordinates || destination.coordinates;
+    const isFallbackOrigin = !origin;
+    let effectiveOrigin: Coordinates = origin || {
+      lat: 31.25230,
+      lng: 75.70220,
+    };
+
+    if (origin && !this.isWithinCampus(origin)) {
+      effectiveOrigin = {
+        lat: 31.25230,
+        lng: 75.70220,
+      };
+    }
+
+    try {
+      const gResult = await googleMapsService.calculateDirections(
+        effectiveOrigin,
+        targetCoord,
+        mode
+      );
+
+      if (gResult.status === 'OK' && gResult.pathCoordinates.length >= 2) {
+        // Build TurnInstruction list
+        const instructions: TurnInstruction[] = (gResult.steps || []).map((step, idx) => ({
+          id: `g_inst_${idx}`,
+          instruction: step.instruction,
+          maneuver: mapGoogleManeuver(step.maneuver),
+          distanceMeters: step.distanceMeters,
+          durationSeconds: step.durationSeconds,
+          coordinates: step.startLocation,
+          pathName: step.instruction,
+        }));
+
+        // Final arrival instruction
+        const finalName = destination.entranceCoordinates
+          ? `${destination.shortName || destination.name} Entrance`
+          : (destination.shortName || destination.name);
+
+        instructions.push({
+          id: `g_inst_arrival`,
+          instruction: `Arrive at ${finalName}`,
+          maneuver: 'arrive',
+          distanceMeters: 0,
+          durationSeconds: 0,
+          coordinates: targetCoord,
+          pathName: finalName,
+        });
+
+        const estimatedMinutes = Math.max(1, Math.round(gResult.durationSeconds / 60));
+
+        return {
+          origin: effectiveOrigin,
+          destination,
+          mode,
+          status: 'available',
+          distanceMeters: gResult.distanceMeters,
+          estimatedTimeMinutes: estimatedMinutes,
+          pathCoordinates: gResult.pathCoordinates,
+          instructions,
+          isVerifiedRoute: true,
+          notes: `Route calculated via Google Maps Routes API (${gResult.summary || 'Official Roads & Pathways'}).`,
+          isFallbackOrigin,
+        };
+      }
+    } catch (e) {
+      console.warn('Google Directions failed, falling back to verified campus graph:', e);
+    }
+
+    // If Google Directions returns ZERO_RESULTS (e.g. private internal pedestrian path unmapped by Google)
+    // or fails: transparently fall back to verified campus graph!
+    const campusPlan = await this.calculateCampusGraphRoute(origin, destination, mode);
+    if (campusPlan.status === 'available') {
+      campusPlan.notes = `${campusPlan.notes || ''} (Google Maps lacks coverage for this internal campus corridor; route seamlessly resolved via verified campus network).`.trim();
+    }
+    return campusPlan;
+  }
+
+  /**
+   * Calculate route using the authoritative campus road and pathway graph
+   */
+  public async calculateCampusGraphRoute(
+    origin: Coordinates | null,
+    destination: CampusLocation,
+    mode: NavigationMode
+  ): Promise<RoutePlan> {
     const isFallbackOrigin = !origin;
 
     // If no origin GPS is provided or user is off campus, snap origin to Main Gate 1

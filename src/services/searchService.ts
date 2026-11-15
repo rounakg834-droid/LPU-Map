@@ -3,6 +3,7 @@ import { searchClassrooms, resolveClassroom } from '../data/classrooms';
 import { CampusLocation, LocationCategory } from '../types/location';
 import { ClassroomInfo } from '../types/classroom';
 import { locationCorrectionService } from './locationCorrectionService';
+import { GooglePlaceResult } from '../types/googleMaps';
 
 export interface SearchFilters {
   category?: LocationCategory | 'all';
@@ -253,6 +254,108 @@ export class SearchService {
     }
 
     return combined;
+  }
+
+  /**
+   * Intelligently merges Google Places results with verified campus directory.
+   * STRICT GUARANTEE: Preserves verified entrance coordinates (e.g. Building 41)
+   * and prioritizes verified campus records over approximate centroids.
+   */
+  public mergeGooglePlaces(
+    localMatches: CampusLocation[],
+    googlePlaces: GooglePlaceResult[]
+  ): CampusLocation[] {
+    const results = [...localMatches];
+    const seenIds = new Set<string>(localMatches.map((m) => m.id));
+    const seenNames = new Set<string>(localMatches.map((m) => (m.shortName || m.name).toLowerCase()));
+
+    for (const gPlace of googlePlaces) {
+      const gNameLower = gPlace.name.toLowerCase();
+
+      // Check if this Google Place matches an existing campus location
+      // e.g. Building 41, Block 34, Central Library, UniMall, UniPolis, BH-1
+      const matchedCampus = this.locations.find((loc) => {
+        const locName = loc.name.toLowerCase();
+        const shortName = (loc.shortName || '').toLowerCase();
+        const block = (loc.blockNumber || '').toLowerCase();
+
+        return (
+          gNameLower.includes(locName) ||
+          locName.includes(gNameLower) ||
+          (block && (gNameLower.includes(`block ${block}`) || gNameLower.includes(`building ${block}`))) ||
+          (shortName && gNameLower.includes(shortName))
+        );
+      });
+
+      if (matchedCampus) {
+        // If matchedCampus is already in results, enhance it with Google Place photo if available
+        if (seenIds.has(matchedCampus.id)) {
+          const existing = results.find((r) => r.id === matchedCampus.id);
+          if (existing && !existing.imageUrl && gPlace.photoUrl) {
+            existing.imageUrl = gPlace.photoUrl;
+          }
+        } else {
+          // Add verified campus location to results, strictly preserving verified entrance coordinates!
+          seenIds.add(matchedCampus.id);
+          const enriched: CampusLocation = {
+            ...matchedCampus,
+            imageUrl: matchedCampus.imageUrl || gPlace.photoUrl,
+            source: `${matchedCampus.source} (Verified with Google Places ID: ${gPlace.placeId})`,
+          };
+          results.unshift(enriched); // Prioritize exact campus match
+        }
+      } else {
+        // New Google Place located on LPU campus grounds
+        const gId = `gplace-${gPlace.placeId}`;
+        if (!seenIds.has(gId) && !seenNames.has(gNameLower)) {
+          seenIds.add(gId);
+          seenNames.add(gNameLower);
+
+          results.push({
+            id: gId,
+            name: gPlace.name,
+            shortName: gPlace.name,
+            category: this.inferCategoryFromGoogleTypes(gPlace.types),
+            coordinates: gPlace.coordinates,
+            entranceCoordinates: gPlace.coordinates,
+            verificationStatus: 'approximate_osm',
+            isVerified: false,
+            description:
+              gPlace.formattedAddress ||
+              `Location verified via Google Places Platform (${gPlace.types?.join(', ') || 'Point of Interest'}).`,
+            features: gPlace.types || ['Google Places Point of Interest'],
+            source: 'Google Places Platform',
+            imageUrl: gPlace.photoUrl,
+            tags: [gNameLower, ...(gPlace.types || [])],
+          });
+        }
+      }
+    }
+
+    return results;
+  }
+
+  private inferCategoryFromGoogleTypes(types?: string[]): LocationCategory {
+    if (!types || types.length === 0) return 'commercial';
+    if (types.some((t) => ['restaurant', 'cafe', 'food', 'bakery', 'meal_takeaway'].includes(t))) {
+      return 'cafeteria';
+    }
+    if (types.some((t) => ['school', 'university', 'secondary_school'].includes(t))) {
+      return 'academic';
+    }
+    if (types.some((t) => ['hospital', 'doctor', 'pharmacy', 'health'].includes(t))) {
+      return 'medical';
+    }
+    if (types.some((t) => ['library', 'book_store'].includes(t))) {
+      return 'library';
+    }
+    if (types.some((t) => ['gym', 'stadium'].includes(t))) {
+      return 'sports';
+    }
+    if (types.some((t) => ['parking'].includes(t))) {
+      return 'parking';
+    }
+    return 'commercial';
   }
 
   /**

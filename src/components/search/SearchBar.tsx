@@ -5,6 +5,7 @@ import { SearchSuggestions } from './SearchSuggestions';
 import { CategoryPills } from './CategoryPills';
 import { searchService } from '../../services/searchService';
 import { storageService } from '../../services/storageService';
+import { googleMapsService } from '../../services/googleMapsService';
 
 interface SearchBarProps {
   onSelectLocation: (location: CampusLocation) => void;
@@ -35,12 +36,34 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     setRecentSearches(storageService.getRecentSearches());
   }, []);
 
-  // Update search results on query or category change
+  // Update search results on query or category change (Campus Directory + Google Places Platform)
   useEffect(() => {
-    const matched = searchService.search(query, {
-      category: selectedCategory,
-    });
-    setResults(matched);
+    let isCancelled = false;
+
+    const runSearch = async () => {
+      const matched = searchService.search(query, {
+        category: selectedCategory,
+      });
+      setResults(matched);
+
+      // Enrich with Google Places if configured and search term is non-trivial
+      if (query.trim().length >= 2 && googleMapsService.isConfigured()) {
+        try {
+          const googlePlaces = await googleMapsService.searchPlaces(query);
+          if (!isCancelled && googlePlaces.length > 0) {
+            const merged = searchService.mergeGooglePlaces(matched, googlePlaces);
+            setResults(merged);
+          }
+        } catch {
+          // Gracefully retain local campus results
+        }
+      }
+    };
+
+    runSearch();
+    return () => {
+      isCancelled = true;
+    };
   }, [query, selectedCategory]);
 
   // Handle outside click to close suggestions

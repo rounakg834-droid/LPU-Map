@@ -13,7 +13,8 @@ import {
   LogOut,
   Lock,
   Layers,
-  Box
+  Box,
+  Globe
 } from 'lucide-react';
 import { authService } from '../../services/authService';
 import { StudentAuthProfile } from '../../types/events';
@@ -30,8 +31,9 @@ interface NavigationMenuDrawerProps {
   onOpenReportClosure: () => void;
   savedCount: number;
   isSharingActive: boolean;
-  mapMode?: '2d' | '3d';
-  onToggleMapMode?: (mode: '2d' | '3d') => void;
+  mapMode?: '2d' | '3d' | 'google';
+  onToggleMapMode?: (mode: '2d' | '3d' | 'google') => void;
+  onOpenGoogleConfig?: () => void;
 }
 
 export const NavigationMenuDrawer: React.FC<NavigationMenuDrawerProps> = ({
@@ -48,6 +50,7 @@ export const NavigationMenuDrawer: React.FC<NavigationMenuDrawerProps> = ({
   isSharingActive,
   mapMode = '2d',
   onToggleMapMode,
+  onOpenGoogleConfig,
 }) => {
   const [currentUser, setCurrentUser] = useState<StudentAuthProfile | null>(
     authService.getCurrentUser()
@@ -181,7 +184,7 @@ export const NavigationMenuDrawer: React.FC<NavigationMenuDrawerProps> = ({
             <button
               onClick={() => {
                 onNavigateHome();
-                if (onToggleMapMode) onToggleMapMode(mapMode === '3d' ? '2d' : '3d');
+                if (onToggleMapMode) onToggleMapMode('3d');
                 onClose();
               }}
               className={`w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-left font-medium text-sm transition ${
@@ -200,6 +203,34 @@ export const NavigationMenuDrawer: React.FC<NavigationMenuDrawerProps> = ({
                     </span>
                   </div>
                   <p className="text-[11px] text-slate-400">Building extrusions, pitch & tilt</p>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-slate-400" />
+            </button>
+
+            {/* Google Maps Platform Mode */}
+            <button
+              onClick={() => {
+                onNavigateHome();
+                if (onToggleMapMode) onToggleMapMode('google');
+                onClose();
+              }}
+              className={`w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-left font-medium text-sm transition ${
+                mapMode === 'google' ? 'bg-blue-50/90 text-blue-900' : 'text-slate-700 hover:bg-slate-100'
+              }`}
+            >
+              <div className="flex items-center space-x-3">
+                <div className={`p-2 rounded-lg ${mapMode === 'google' ? 'bg-blue-600 text-white shadow-sm' : 'bg-blue-50 text-blue-600'}`}>
+                  <Globe className="w-4 h-4" />
+                </div>
+                <div>
+                  <div className="flex items-center space-x-1.5">
+                    <span className="text-slate-800 font-semibold">Google Maps Engine</span>
+                    <span className="px-1.5 py-0.2 text-[9px] font-bold bg-blue-100 text-blue-800 rounded-full">
+                      NEW
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-400">Official Google roads & Places</p>
                 </div>
               </div>
               <ChevronRight className="w-4 h-4 text-slate-400" />
@@ -363,6 +394,30 @@ export const NavigationMenuDrawer: React.FC<NavigationMenuDrawerProps> = ({
                   </div>
                   <p className="text-[11px] text-slate-500">
                     {isAdmin ? 'Manage events, reports & closures' : 'Dedicated /admin route portal'}
+                  </p>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-slate-400" />
+            </button>
+
+            {/* Google Maps Platform Setup */}
+            <button
+              onClick={() => {
+                if (onOpenGoogleConfig) onOpenGoogleConfig();
+                onClose();
+              }}
+              className="w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-left bg-slate-50 border border-slate-200/60 text-slate-700 hover:bg-slate-100 font-medium text-sm transition"
+            >
+              <div className="flex items-center space-x-3">
+                <div className="p-2 rounded-lg bg-blue-50 text-blue-600">
+                  <Globe className="w-4 h-4" />
+                </div>
+                <div>
+                  <div className="flex items-center space-x-1.5">
+                    <span className="font-bold text-slate-900">Google Maps Platform</span>
+                  </div>
+                  <p className="text-[11px] text-slate-500">
+                    API key, referrers & live cloud settings
                   </p>
                 </div>
               </div>

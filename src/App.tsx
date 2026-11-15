@@ -5,6 +5,8 @@ import { AdminDashboardPage } from './pages/AdminDashboardPage';
 import { NavigationMenuDrawer } from './components/common/NavigationMenuDrawer';
 import { CampusMap } from './components/map/CampusMap';
 import { Campus3DMap } from './components/map/Campus3DMap';
+import { GoogleCampusMap } from './components/map/GoogleCampusMap';
+import { GoogleMapsConfigModal } from './components/admin/GoogleMapsConfigModal';
 import { MapModeToggle, MapDisplayMode } from './components/map/MapModeToggle';
 import { isWebGLSupported } from './utils/webglSupport';
 import { SearchBar } from './components/search/SearchBar';
@@ -49,6 +51,7 @@ function CampusNavigatorView({ navigate }: { navigate: (path: string) => void })
   const [selectedCategory, setSelectedCategory] = useState<LocationCategory | 'all'>('all');
   const [isSavedModalOpen, setIsSavedModalOpen] = useState<boolean>(false);
   const [isNavMenuOpen, setIsNavMenuOpen] = useState<boolean>(false);
+  const [isGoogleConfigOpen, setIsGoogleConfigOpen] = useState<boolean>(false);
   const [mapMode, setMapMode] = useState<MapDisplayMode>('2d');
   const [toasts, setToasts] = useState<ToastProps[]>([]);
 
@@ -301,7 +304,7 @@ function CampusNavigatorView({ navigate }: { navigate: (path: string) => void })
     ? { lat: position.coords.latitude, lng: position.coords.longitude }
     : null;
 
-  // Handle 2D / 3D Map Mode Transition
+  // Handle 2D / 3D / Google Map Mode Transition
   const handleToggleMapMode = useCallback(
     (newMode: MapDisplayMode) => {
       if (newMode === '3d' && !isWebGLSupported()) {
@@ -309,12 +312,13 @@ function CampusNavigatorView({ navigate }: { navigate: (path: string) => void })
         return;
       }
       setMapMode(newMode);
-      showToast(
-        newMode === '3d'
-          ? '🏢 3D Explore: Tilt, rotate & view building extrusions'
-          : '🗺️ 2D Navigation: Turn-by-turn routing & GPS guidance',
-        'info'
-      );
+      if (newMode === 'google') {
+        showToast('🌐 Google Maps Platform: Official roads, labels & Places API', 'info');
+      } else if (newMode === '3d') {
+        showToast('🏢 3D Explore: Tilt, rotate & view building extrusions', 'info');
+      } else {
+        showToast('🗺️ 2D Navigation: Turn-by-turn routing & GPS guidance', 'info');
+      }
     },
     [showToast]
   );
@@ -617,8 +621,30 @@ function CampusNavigatorView({ navigate }: { navigate: (path: string) => void })
 
   return (
     <div className="relative w-full h-full h-screen-dvh overflow-hidden bg-slate-100 flex flex-col">
-      {/* 2D Leaflet Campus Map OR 3D MapLibre WebGL Campus Map */}
-      {mapMode === '2d' && !isNavigating ? (
+      {/* Google Maps Platform OR 2D Leaflet Campus Map OR 3D MapLibre WebGL Campus Map */}
+      {mapMode === 'google' ? (
+        <GoogleCampusMap
+          locations={displayedLocations}
+          selectedLocation={selectedLocation}
+          onSelectLocation={handleSelectLocation}
+          userPosition={position}
+          heading={heading}
+          selectedCategory={selectedCategory}
+          activeRoute={activeRoute}
+          isNavigating={isNavigating}
+          isFollowing={isFollowing}
+          onSetIsFollowing={setIsFollowing}
+          isNorthUp={isNorthUp}
+          onToggleNorthUp={() => setIsNorthUp(!isNorthUp)}
+          events={events}
+          selectedEvent={selectedEvent}
+          onSelectEvent={handleSelectEvent}
+          friendShare={friendShare}
+          onSelectFriend={() => setIsFriendSheetOpen(true)}
+          roadClosures={roadClosures}
+          onOpenConfigModal={() => setIsGoogleConfigOpen(true)}
+        />
+      ) : mapMode === '2d' && !isNavigating ? (
         <CampusMap
           locations={displayedLocations}
           selectedLocation={selectedLocation}
@@ -719,6 +745,7 @@ function CampusNavigatorView({ navigate }: { navigate: (path: string) => void })
         isSharingActive={Boolean(activeMyShare && !activeMyShare.revoked)}
         mapMode={mapMode}
         onToggleMapMode={handleToggleMapMode}
+        onOpenGoogleConfig={() => setIsGoogleConfigOpen(true)}
       />
 
       {/* Floating Search Bar (hidden during active turn-by-turn navigation) */}
@@ -836,6 +863,7 @@ function CampusNavigatorView({ navigate }: { navigate: (path: string) => void })
           onStartNavigation={handleStartNavigation}
           onRequestGps={startTracking}
           onAddEvent={handleOpenAddEventFromLocation}
+          preferEngine={mapMode === 'google' ? 'google' : 'campus'}
         />
       )}
 
@@ -974,6 +1002,15 @@ function CampusNavigatorView({ navigate }: { navigate: (path: string) => void })
         isOpen={isAdminModalOpen}
         onClose={() => setIsAdminModalOpen(false)}
         onShowToast={showToast}
+      />
+
+      {/* Google Maps Platform Configuration & Setup Guide Modal */}
+      <GoogleMapsConfigModal
+        isOpen={isGoogleConfigOpen}
+        onClose={() => setIsGoogleConfigOpen(false)}
+        onKeyUpdated={() => {
+          showToast('Google Maps Platform configuration updated', 'success');
+        }}
       />
 
       {/* Notification Toast Stack */}

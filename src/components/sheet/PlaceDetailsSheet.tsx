@@ -33,6 +33,7 @@ interface PlaceDetailsSheetProps {
   onStartNavigation?: (plan: import('../../types/navigation').RoutePlan) => void;
   onRequestGps?: () => void;
   onAddEvent?: (locationId: string) => void;
+  preferEngine?: 'campus' | 'google';
 }
 
 export const PlaceDetailsSheet: React.FC<PlaceDetailsSheetProps> = ({
@@ -45,6 +46,7 @@ export const PlaceDetailsSheet: React.FC<PlaceDetailsSheetProps> = ({
   onStartNavigation,
   onRequestGps,
   onAddEvent,
+  preferEngine = 'campus',
 }) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [showDirections, setShowDirections] = useState<boolean>(false);
@@ -502,6 +504,7 @@ export const PlaceDetailsSheet: React.FC<PlaceDetailsSheetProps> = ({
             onSelectMode={(mode) => setCurrentMode(mode)}
             destination={location}
             userCoords={userCoords}
+            preferEngine={preferEngine}
             onStartNavigation={(plan) => {
               if (onStartNavigation) {
                 onStartNavigation(plan);

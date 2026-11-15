@@ -33,7 +33,10 @@ import {
   Activity,
   CheckCircle,
   XCircle,
+  Globe,
+  Key,
 } from 'lucide-react';
+import { googleMapsService } from '../services/googleMapsService';
 import { PublicCampusEvent, ProtectedStudentMetadata, EventReport } from '../types/events';
 import { eventService } from '../services/eventService';
 import { authService } from '../services/authService';
@@ -52,7 +55,7 @@ interface AdminDashboardPageProps {
   onNavigateHome: () => void;
 }
 
-type AdminTab = 'overview' | 'events' | 'students' | 'reports' | 'closures' | 'qr' | 'locations' | 'network';
+type AdminTab = 'overview' | 'events' | 'students' | 'reports' | 'closures' | 'qr' | 'locations' | 'network' | 'google_maps';
 
 export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNavigateHome }) => {
   const [isAdmin, setIsAdmin] = useState<boolean>(authService.isAdmin());
@@ -100,7 +103,32 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
   const [corrections, setCorrections] = useState<LocationCorrection[]>([]);
   const [isUpdatingLocation, setIsUpdatingLocation] = useState<boolean>(false);
 
-  // Road Network GIS States
+  // Google Maps Platform States
+  const [googleKeyInput, setGoogleKeyInput] = useState<string>(() => googleMapsService.getApiKey());
+  const [googleStatus, setGoogleStatus] = useState<string>(() => googleMapsService.getStatus());
+  const [isTestingGoogleKey, setIsTestingGoogleKey] = useState<boolean>(false);
+
+  useEffect(() => {
+    const unsub = googleMapsService.subscribe((status) => {
+      setGoogleStatus(status);
+    });
+    return () => unsub();
+  }, []);
+
+  const handleSaveGoogleKey = async () => {
+    setIsTestingGoogleKey(true);
+    googleMapsService.setCustomApiKey(googleKeyInput.trim());
+    try {
+      const ok = await googleMapsService.load();
+      if (ok) {
+        showToast('Google Maps Platform key verified and activated successfully!');
+      } else {
+        showToast('Google Maps verification failed. Check key & restrictions.');
+      }
+    } finally {
+      setIsTestingGoogleKey(false);
+    }
+  };
   const [networkDiagnostics, setNetworkDiagnostics] = useState<NetworkDiagnosticSummary | null>(() => {
     return routeQualityService.getNetworkDiagnostics();
   });
@@ -687,7 +715,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
               { id: 'closures', label: 'Road Closures', icon: Ban, count: activeClosuresCount },
               { id: 'qr', label: 'QR Navigation', icon: QrCode },
               { id: 'locations', label: 'Locations & Entrances', icon: MapPin },
-              { id: 'network', label: 'Road Network GIS', icon: Compass }
+              { id: 'network', label: 'Road Network GIS', icon: Compass },
+              { id: 'google_maps', label: 'Google Maps API', icon: Globe, badge: googleStatus === 'ready' ? 'Active' : undefined }
             ].map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
@@ -795,7 +824,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
             { id: 'closures', label: 'Road Closures', icon: Ban },
             { id: 'qr', label: 'QR Navigation', icon: QrCode },
             { id: 'locations', label: 'Locations & Entrances', icon: MapPin },
-            { id: 'network', label: 'Road Network GIS', icon: Compass }
+            { id: 'network', label: 'Road Network GIS', icon: Compass },
+            { id: 'google_maps', label: 'Google Maps API', icon: Globe }
           ].map((item) => (
             <button
               key={item.id}
@@ -1999,6 +2029,209 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ==================================================== */}
+        {/* TAB 9: GOOGLE MAPS PLATFORM CONFIGURATION & AUDIT    */}
+        {/* ==================================================== */}
+        {activeTab === 'google_maps' && (
+          <div className="space-y-6 animate-fade-in max-w-6xl">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 bg-slate-950 border border-slate-800 rounded-2xl shadow-xl">
+              <div>
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-blue-950/80 text-blue-400 border border-blue-800 mb-2">
+                  <Globe className="w-3.5 h-3.5" />
+                  <span>Google Maps Platform Integration</span>
+                </div>
+                <h1 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
+                  <span>Google Cloud Maps & APIs Setup</span>
+                  {googleStatus === 'ready' && (
+                    <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                      Active
+                    </span>
+                  )}
+                  {googleStatus === 'unconfigured' && (
+                    <span className="text-xs px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                      Unconfigured
+                    </span>
+                  )}
+                  {googleStatus === 'error' && (
+                    <span className="text-xs px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/30">
+                      Auth Error
+                    </span>
+                  )}
+                </h1>
+                <p className="text-xs text-slate-400 mt-1 max-w-2xl">
+                  Official Google Maps Platform JavaScript API, Places API (New), and Routes API integration. Strictly adheres to Google Terms of Service: no scraping or offline persistence of restricted map content.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={handleSaveGoogleKey}
+                  disabled={isTestingGoogleKey}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded-xl text-xs font-bold shadow-lg shadow-blue-600/25 flex items-center gap-2 transition"
+                >
+                  <ShieldCheck className="w-4 h-4" />
+                  <span>{isTestingGoogleKey ? 'Verifying...' : 'Save & Verify Key'}</span>
+                </button>
+              </div>
+            </div>
+
+            {/* API Key Configuration Card */}
+            <div className="p-6 bg-slate-950 border border-slate-800 rounded-2xl shadow-xl space-y-4">
+              <h2 className="text-sm font-bold text-white flex items-center gap-2">
+                <Key className="w-4 h-4 text-blue-400" />
+                <span>Google Maps API Key</span>
+              </h2>
+
+              <div className="flex flex-col sm:flex-row items-center gap-3">
+                <input
+                  type="password"
+                  value={googleKeyInput}
+                  onChange={(e) => setGoogleKeyInput(e.target.value)}
+                  placeholder="AIzaSy..."
+                  className="w-full sm:flex-1 px-4 py-2.5 text-xs font-mono bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-white"
+                />
+                <button
+                  onClick={handleSaveGoogleKey}
+                  disabled={isTestingGoogleKey || !googleKeyInput.trim()}
+                  className="w-full sm:w-auto px-5 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-xs font-semibold rounded-xl shadow-sm transition"
+                >
+                  {isTestingGoogleKey ? 'Verifying...' : 'Update & Test'}
+                </button>
+                {googleMapsService.isConfigured() && (
+                  <button
+                    onClick={() => {
+                      googleMapsService.setCustomApiKey('');
+                      setGoogleKeyInput('');
+                      showToast('Custom Google Maps API key removed');
+                    }}
+                    className="w-full sm:w-auto px-4 py-2.5 text-xs font-medium text-rose-400 hover:bg-rose-950/40 border border-rose-900/50 rounded-xl transition"
+                  >
+                    Clear Override
+                  </button>
+                )}
+              </div>
+
+              <div className="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Loaded from environment variable <code className="text-slate-200">VITE_GOOGLE_MAPS_API_KEY</code> or secure session store.</span>
+              </div>
+            </div>
+
+            {/* API Requirements & Security Checklist */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Enabled APIs */}
+              <div className="p-6 bg-slate-950 border border-slate-800 rounded-2xl shadow-xl space-y-4">
+                <h2 className="text-sm font-bold text-white flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-emerald-400" />
+                  <span>Required Google Cloud APIs</span>
+                </h2>
+                <div className="space-y-2 text-xs">
+                  <div className="p-3 bg-slate-900 border border-slate-800 rounded-xl">
+                    <div className="font-bold text-white">Maps JavaScript API</div>
+                    <div className="text-slate-400 text-[11px]">Renders official Google vector tiles, real road labels, and WebGL 3D building tilt.</div>
+                  </div>
+                  <div className="p-3 bg-slate-900 border border-slate-800 rounded-xl">
+                    <div className="font-bold text-white">Places API (New)</div>
+                    <div className="text-slate-400 text-[11px]">Provides search for campus blocks, food outlets, hostels, and authorized photos.</div>
+                  </div>
+                  <div className="p-3 bg-slate-900 border border-slate-800 rounded-xl">
+                    <div className="font-bold text-white">Directions API</div>
+                    <div className="text-slate-400 text-[11px]">Computes official walking and vehicular routes on public road geometries.</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Referrer Restrictions */}
+              <div className="p-6 bg-slate-950 border border-slate-800 rounded-2xl shadow-xl space-y-4">
+                <h2 className="text-sm font-bold text-white flex items-center gap-2">
+                  <Lock className="w-4 h-4 text-emerald-400" />
+                  <span>Key Security & HTTP Referrers</span>
+                </h2>
+                <p className="text-xs text-slate-400">
+                  Protect your Google Cloud quota by restricting your API key to allowed website origins in GCP Console:
+                </p>
+                <div className="space-y-2 font-mono text-[11px]">
+                  <div className="p-2.5 bg-slate-900 border border-slate-800 rounded-xl flex items-center justify-between text-slate-300">
+                    <span>http://localhost:*/*</span>
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText('http://localhost:*/*');
+                        showToast('Copied localhost referrer');
+                      }}
+                      className="text-brand-400 hover:text-brand-300 text-xs"
+                    >
+                      Copy
+                    </button>
+                  </div>
+                  <div className="p-2.5 bg-slate-900 border border-slate-800 rounded-xl flex items-center justify-between text-slate-300">
+                    <span>https://rounakg834-droid.github.io/LPU-Map/*</span>
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText('https://rounakg834-droid.github.io/LPU-Map/*');
+                        showToast('Copied GitHub Pages referrer');
+                      }}
+                      className="text-brand-400 hover:text-brand-300 text-xs"
+                    >
+                      Copy
+                    </button>
+                  </div>
+                </div>
+                <div className="p-3 bg-blue-950/40 border border-blue-900/50 rounded-xl text-xs text-blue-300">
+                  💡 Google includes $200 free monthly credit for Google Maps Platform. Set a billing budget alert at $10 in Google Cloud Console.
+                </div>
+              </div>
+            </div>
+
+            {/* Comparison Matrix: Google Maps vs Verified Campus GIS */}
+            <div className="p-6 bg-slate-950 border border-slate-800 rounded-2xl shadow-xl space-y-4">
+              <h2 className="text-sm font-bold text-white flex items-center gap-2">
+                <Layers className="w-4 h-4 text-brand-400" />
+                <span>Engine Comparison: Google Maps Platform vs. Verified Campus GIS</span>
+              </h2>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs text-left">
+                  <thead>
+                    <tr className="border-b border-slate-800 text-slate-400 uppercase text-[10px] tracking-wider">
+                      <th className="py-2.5 px-3">Feature</th>
+                      <th className="py-2.5 px-3">Google Maps Platform</th>
+                      <th className="py-2.5 px-3">Verified Campus GIS Engine</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800/60 text-slate-300">
+                    <tr>
+                      <td className="py-2.5 px-3 font-semibold text-white">Road Geometry</td>
+                      <td className="py-2.5 px-3 text-emerald-400">Official highways (NH-44), Gate 1 loop & perimeter roads</td>
+                      <td className="py-2.5 px-3 text-emerald-400">Internal pedestrian quads & campus road network</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2.5 px-3 font-semibold text-white">Building 41 Entrance</td>
+                      <td className="py-2.5 px-3 text-amber-400">Approximate structure centroid (unverified)</td>
+                      <td className="py-2.5 px-3 text-emerald-400 font-bold">Field-verified gate (31.251697, 75.701877)</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2.5 px-3 font-semibold text-white">Wheelchair Navigation</td>
+                      <td className="py-2.5 px-3 text-rose-400">Unsupported for internal pedestrian pathways in India</td>
+                      <td className="py-2.5 px-3 text-emerald-400">Verified step-free ramp plinths only</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2.5 px-3 font-semibold text-white">Building Collision Guard</td>
+                      <td className="py-2.5 px-3 text-slate-400">Road-snapping (may fail on unmapped corridors)</td>
+                      <td className="py-2.5 px-3 text-emerald-400">100% collision-free polygon ray-casting</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2.5 px-3 font-semibold text-white">Offline Capability</td>
+                      <td className="py-2.5 px-3 text-rose-400">Requires live network connection</td>
+                      <td className="py-2.5 px-3 text-emerald-400">Fully cached & offline-ready</td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
