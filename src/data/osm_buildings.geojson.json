@@ -1,16 +1,17 @@
 {
   "type": "FeatureCollection",
+  "version": "2026.11.OSM_CAMPUS",
+  "summary": {
+    "totalBuildings": 186,
+    "namedCount": 24,
+    "withHouseNumberCount": 0,
+    "withAmenityCount": 1,
+    "unnamedCount": 161
+  },
   "features": [
     {
       "type": "Feature",
-      "id": "osm_bld_354743583",
-      "properties": {
-        "osmId": "354743583",
-        "name": "Lovely Institute Of Management",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-354743583",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -129,18 +130,31 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-354743583",
+        "osmId": "354743583",
+        "name": "Lovely Institute Of Management",
+        "hasOsmName": true,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70885993214286,
+          31.258602085714283
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "5",
+          "name": "Lovely Institute Of Management"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_354755644",
-      "properties": {
-        "osmId": "354755644",
-        "name": "Lovely Institute of Technology",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-354755644",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -211,18 +225,31 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-354755644",
+        "osmId": "354755644",
+        "name": "Lovely Institute of Technology",
+        "hasOsmName": true,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.706885425,
+          31.257892243750003
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "7",
+          "name": "Lovely Institute of Technology"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_354830243",
-      "properties": {
-        "osmId": "354830243",
-        "name": "Lovely Institute of Pharmacy",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-354830243",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -321,18 +348,31 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-354830243",
+        "osmId": "354830243",
+        "name": "Lovely Institute of Pharmacy",
+        "hasOsmName": true,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70726827391304,
+          31.25761963478261
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "5",
+          "name": "Lovely Institute of Pharmacy"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422323508",
-      "properties": {
-        "osmId": "422323508",
-        "name": "Building 422323508",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422323508",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -431,18 +471,31 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422323508",
+        "osmId": "422323508",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70320539565216,
+          31.248670530434786
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10",
+          "building:material": "brick"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422437885",
-      "properties": {
-        "osmId": "422437885",
-        "name": "Building 422437885",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422437885",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -501,18 +554,31 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422437885",
+        "osmId": "422437885",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70499794615385,
+          31.25571616923077
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10",
+          "building:part": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422437887",
-      "properties": {
-        "osmId": "422437887",
-        "name": "Building 422437887",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422437887",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -543,18 +609,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422437887",
+        "osmId": "422437887",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70563916666666,
+          31.254472783333338
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "11"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422437888",
-      "properties": {
-        "osmId": "422437888",
-        "name": "Building 422437888",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422437888",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -581,18 +659,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422437888",
+        "osmId": "422437888",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.705696,
+          31.254249599999998
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422437890",
-      "properties": {
-        "osmId": "422437890",
-        "name": "Building 422437890",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422437890",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -691,18 +781,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422437890",
+        "osmId": "422437890",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70331243043479,
+          31.255268373913054
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "6"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422437894",
-      "properties": {
-        "osmId": "422437894",
-        "name": "Building 422437894",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422437894",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -729,18 +831,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422437894",
+        "osmId": "422437894",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70250674,
+          31.25147032
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422437895",
-      "properties": {
-        "osmId": "422437895",
-        "name": "Building 422437895",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422437895",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -767,18 +881,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422437895",
+        "osmId": "422437895",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70197448,
+          31.251895940000004
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422437896",
-      "properties": {
-        "osmId": "422437896",
-        "name": "Building 422437896",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422437896",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -805,18 +931,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422437896",
+        "osmId": "422437896",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70168024,
+          31.25189158
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422437897",
-      "properties": {
-        "osmId": "422437897",
-        "name": "Building 422437897",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422437897",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -875,18 +1013,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422437897",
+        "osmId": "422437897",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70120222307692,
+          31.25184763076923
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422437898",
-      "properties": {
-        "osmId": "422437898",
-        "name": "Building 422437898",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422437898",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -1021,18 +1171,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422437898",
+        "osmId": "422437898",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.704665925,
+          31.256288181250007
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422437899",
-      "properties": {
-        "osmId": "422437899",
-        "name": "Building 422437899",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422437899",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -1071,18 +1233,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422437899",
+        "osmId": "422437899",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70393362499999,
+          31.2560661875
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "8"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422437900",
-      "properties": {
-        "osmId": "422437900",
-        "name": "Building 422437900",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422437900",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -1133,18 +1307,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422437900",
+        "osmId": "422437900",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.7047192,
+          31.256864690909094
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422437901",
-      "properties": {
-        "osmId": "422437901",
-        "name": "Building 422437901",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422437901",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -1195,18 +1381,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422437901",
+        "osmId": "422437901",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70464444545455,
+          31.256633045454546
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422437902",
-      "properties": {
-        "osmId": "422437902",
-        "name": "Building 422437902",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422437902",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -1257,18 +1455,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422437902",
+        "osmId": "422437902",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70565361818181,
+          31.256524945454547
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422437904",
-      "properties": {
-        "osmId": "422437904",
-        "name": "Building 422437904",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422437904",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -1327,18 +1537,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422437904",
+        "osmId": "422437904",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70543141538461,
+          31.256921876923077
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422437906",
-      "properties": {
-        "osmId": "422437906",
-        "name": "Building 422437906",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422437906",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -1381,18 +1603,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422437906",
+        "osmId": "422437906",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70570041111111,
+          31.257050500000005
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422437908",
-      "properties": {
-        "osmId": "422437908",
-        "name": "Building 422437908",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422437908",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -1435,18 +1669,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422437908",
+        "osmId": "422437908",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.7056931888889,
+          31.256863811111113
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422439516",
-      "properties": {
-        "osmId": "422439516",
-        "name": "Building 422439516",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422439516",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -1517,18 +1763,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422439516",
+        "osmId": "422439516",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70749273125,
+          31.259990481250004
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "3"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422439519",
-      "properties": {
-        "osmId": "422439519",
-        "name": "Building 422439519",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422439519",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -1567,18 +1825,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422439519",
+        "osmId": "422439519",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70773332499999,
+          31.260085337499998
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "2"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422439521",
-      "properties": {
-        "osmId": "422439521",
-        "name": "Building 422439521",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422439521",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -1629,18 +1899,31 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422439521",
+        "osmId": "422439521",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70777373636362,
+          31.259934381818184
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "2",
+          "layer": "1"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422547035",
-      "properties": {
-        "osmId": "422547035",
-        "name": "Building 422547035",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422547035",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -1727,18 +2010,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422547035",
+        "osmId": "422547035",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70786896499999,
+          31.259092199999998
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "2"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422547443",
-      "properties": {
-        "osmId": "422547443",
-        "name": "Building 422547443",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422547443",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -1797,18 +2092,31 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422547443",
+        "osmId": "422547443",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70360285384615,
+          31.248347684615382
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10",
+          "building:material": "brick"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422547444",
-      "properties": {
-        "osmId": "422547444",
-        "name": "Building 422547444",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422547444",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -1851,18 +2159,31 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422547444",
+        "osmId": "422547444",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70383702222222,
+          31.248602233333333
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10",
+          "building:material": "brick"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422547445",
-      "properties": {
-        "osmId": "422547445",
-        "name": "Building 422547445",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422547445",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -1889,18 +2210,31 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422547445",
+        "osmId": "422547445",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70342722000001,
+          31.24850362
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10",
+          "building:material": "brick"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422547446",
-      "properties": {
-        "osmId": "422547446",
-        "name": "Building 422547446",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422547446",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -1943,18 +2277,31 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422547446",
+        "osmId": "422547446",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70385415555556,
+          31.24799946666667
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10",
+          "building:material": "brick"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422547447",
-      "properties": {
-        "osmId": "422547447",
-        "name": "Building 422547447",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422547447",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -2077,18 +2424,31 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422547447",
+        "osmId": "422547447",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70327835172414,
+          31.247934862068963
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10",
+          "building:material": "brick"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422548297",
-      "properties": {
-        "osmId": "422548297",
-        "name": "Building 422548297",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422548297",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -2275,18 +2635,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422548297",
+        "osmId": "422548297",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70023835555554,
+          31.249653993333347
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422548298",
-      "properties": {
-        "osmId": "422548298",
-        "name": "Building 422548298",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422548298",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -2441,18 +2813,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422548298",
+        "osmId": "422548298",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69945673243244,
+          31.248693864864865
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422548299",
-      "properties": {
-        "osmId": "422548299",
-        "name": "Building 422548299",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422548299",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -2511,18 +2895,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422548299",
+        "osmId": "422548299",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69834960769232,
+          31.249496861538464
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "9"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422548300",
-      "properties": {
-        "osmId": "422548300",
-        "name": "Building 422548300",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422548300",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -2613,18 +3009,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422548300",
+        "osmId": "422548300",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69999296190475,
+          31.25136923809524
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422548301",
-      "properties": {
-        "osmId": "422548301",
-        "name": "Building 422548301",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422548301",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -2691,18 +3099,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422548301",
+        "osmId": "422548301",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.7006301,
+          31.2536687
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422548302",
-      "properties": {
-        "osmId": "422548302",
-        "name": "Building 422548302",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422548302",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -2745,18 +3165,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422548302",
+        "osmId": "422548302",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70088184444444,
+          31.25387997777778
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422548303",
-      "properties": {
-        "osmId": "422548303",
-        "name": "Building 422548303",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422548303",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -2815,18 +3247,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422548303",
+        "osmId": "422548303",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70086426153847,
+          31.25335697692308
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422548304",
-      "properties": {
-        "osmId": "422548304",
-        "name": "Building 422548304",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422548304",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -2893,18 +3337,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422548304",
+        "osmId": "422548304",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70115618,
+          31.25365984
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422548305",
-      "properties": {
-        "osmId": "422548305",
-        "name": "Building 422548305",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422548305",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -2939,18 +3395,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422548305",
+        "osmId": "422548305",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70042578571429,
+          31.25389954285714
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422548306",
-      "properties": {
-        "osmId": "422548306",
-        "name": "Building 422548306",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422548306",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -2985,18 +3453,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422548306",
+        "osmId": "422548306",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70042332857143,
+          31.253666442857142
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422548307",
-      "properties": {
-        "osmId": "422548307",
-        "name": "Building 422548307",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422548307",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -3031,18 +3511,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422548307",
+        "osmId": "422548307",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70041532857144,
+          31.253424714285718
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422548308",
-      "properties": {
-        "osmId": "422548308",
-        "name": "Building 422548308",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422548308",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -3077,18 +3569,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422548308",
+        "osmId": "422548308",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70133017142858,
+          31.253884714285714
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422548309",
-      "properties": {
-        "osmId": "422548309",
-        "name": "Building 422548309",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422548309",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -3123,18 +3627,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422548309",
+        "osmId": "422548309",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70132100000001,
+          31.253650085714288
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422548310",
-      "properties": {
-        "osmId": "422548310",
-        "name": "Building 422548310",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422548310",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -3169,18 +3685,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422548310",
+        "osmId": "422548310",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70132152857141,
+          31.253416499999997
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422548311",
-      "properties": {
-        "osmId": "422548311",
-        "name": "Building 422548311",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422548311",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -3207,18 +3735,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422548311",
+        "osmId": "422548311",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70052228,
+          31.253655080000005
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422548312",
-      "properties": {
-        "osmId": "422548312",
-        "name": "Building 422548312",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422548312",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -3245,18 +3785,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422548312",
+        "osmId": "422548312",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70052594,
+          31.2538958
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422548313",
-      "properties": {
-        "osmId": "422548313",
-        "name": "Building 422548313",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422548313",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -3283,18 +3835,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422548313",
+        "osmId": "422548313",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70076132,
+          31.25388664
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422548314",
-      "properties": {
-        "osmId": "422548314",
-        "name": "Building 422548314",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422548314",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -3321,18 +3885,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422548314",
+        "osmId": "422548314",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70051312,
+          31.25341684
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422548315",
-      "properties": {
-        "osmId": "422548315",
-        "name": "Building 422548315",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422548315",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -3359,18 +3935,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422548315",
+        "osmId": "422548315",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70075578000001,
+          31.2534148
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422548316",
-      "properties": {
-        "osmId": "422548316",
-        "name": "Building 422548316",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422548316",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -3397,18 +3985,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422548316",
+        "osmId": "422548316",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70099480000002,
+          31.253412019999995
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422548317",
-      "properties": {
-        "osmId": "422548317",
-        "name": "Building 422548317",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422548317",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -3435,18 +4035,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422548317",
+        "osmId": "422548317",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70125562000001,
+          31.253407460000005
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422548318",
-      "properties": {
-        "osmId": "422548318",
-        "name": "Building 422548318",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422548318",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -3473,18 +4085,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422548318",
+        "osmId": "422548318",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70101842,
+          31.25388102
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422548319",
-      "properties": {
-        "osmId": "422548319",
-        "name": "Building 422548319",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422548319",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -3511,18 +4135,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422548319",
+        "osmId": "422548319",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70126512,
+          31.253874740000004
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422548320",
-      "properties": {
-        "osmId": "422548320",
-        "name": "Building 422548320",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422548320",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -3549,18 +4185,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422548320",
+        "osmId": "422548320",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70125828,
+          31.253642680000002
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422548856",
-      "properties": {
-        "osmId": "422548856",
-        "name": "Building 422548856",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422548856",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -3635,18 +4283,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422548856",
+        "osmId": "422548856",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70099058235294,
+          31.254692841176475
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422548857",
-      "properties": {
-        "osmId": "422548857",
-        "name": "Building 422548857",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422548857",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -3705,18 +4365,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422548857",
+        "osmId": "422548857",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70145678461539,
+          31.255044553846155
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422548858",
-      "properties": {
-        "osmId": "422548858",
-        "name": "Building 422548858",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422548858",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -3791,18 +4463,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422548858",
+        "osmId": "422548858",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70136735882353,
+          31.254738517647056
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422556249",
-      "properties": {
-        "osmId": "422556249",
-        "name": "Building 422556249",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422556249",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -3921,18 +4605,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422556249",
+        "osmId": "422556249",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70386981785714,
+          31.251959260714283
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422556250",
-      "properties": {
-        "osmId": "422556250",
-        "name": "Building 422556250",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422556250",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -4051,18 +4747,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422556250",
+        "osmId": "422556250",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70409693214286,
+          31.25205762142858
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "4"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422556253",
-      "properties": {
-        "osmId": "422556253",
-        "name": "Building 422556253",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422556253",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -4109,18 +4817,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422556253",
+        "osmId": "422556253",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70426434,
+          31.252175580000007
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "1"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422732974",
-      "properties": {
-        "osmId": "422732974",
-        "name": "Building 422732974",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422732974",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -4215,18 +4935,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422732974",
+        "osmId": "422732974",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70809895909092,
+          31.25847034545455
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "0.2"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422737297",
-      "properties": {
-        "osmId": "422737297",
-        "name": "Building 422737297",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422737297",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -4253,18 +4985,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422737297",
+        "osmId": "422737297",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70135348,
+          31.250871580000002
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422738863",
-      "properties": {
-        "osmId": "422738863",
-        "name": "Building 422738863",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422738863",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -4291,18 +5034,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422738863",
+        "osmId": "422738863",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70049834,
+          31.248748720000002
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "2"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422738883",
-      "properties": {
-        "osmId": "422738883",
-        "name": "Building 422738883",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422738883",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -4329,18 +5084,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422738883",
+        "osmId": "422738883",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70130534,
+          31.25409578
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "2"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422738888",
-      "properties": {
-        "osmId": "422738888",
-        "name": "Building 422738888",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422738888",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -4367,18 +5134,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422738888",
+        "osmId": "422738888",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70016790000001,
+          31.254744119999998
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "1"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422738889",
-      "properties": {
-        "osmId": "422738889",
-        "name": "Building 422738889",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422738889",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -4405,18 +5184,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422738889",
+        "osmId": "422738889",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70051144,
+          31.25508206
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "3"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422738890",
-      "properties": {
-        "osmId": "422738890",
-        "name": "Building 422738890",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422738890",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -4443,18 +5234,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422738890",
+        "osmId": "422738890",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70071599999999,
+          31.25535106
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "1"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422738891",
-      "properties": {
-        "osmId": "422738891",
-        "name": "Building 422738891",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422738891",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -4481,18 +5284,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422738891",
+        "osmId": "422738891",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70086606,
+          31.255372240000003
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "1"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422738892",
-      "properties": {
-        "osmId": "422738892",
-        "name": "Building 422738892",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422738892",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -4519,18 +5334,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422738892",
+        "osmId": "422738892",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70066632000001,
+          31.25555094
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "1"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422738893",
-      "properties": {
-        "osmId": "422738893",
-        "name": "Building 422738893",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422738893",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -4557,18 +5384,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422738893",
+        "osmId": "422738893",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70076482,
+          31.255082119999997
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "2"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422738894",
-      "properties": {
-        "osmId": "422738894",
-        "name": "Building 422738894",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422738894",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -4595,18 +5434,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422738894",
+        "osmId": "422738894",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70080346,
+          31.25556166
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "2"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422738980",
-      "properties": {
-        "osmId": "422738980",
-        "name": "Building 422738980",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422738980",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -4633,18 +5484,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422738980",
+        "osmId": "422738980",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70788496,
+          31.2574214
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "1"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422820537",
-      "properties": {
-        "osmId": "422820537",
-        "name": "Building 422820537",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422820537",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -4671,18 +5534,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422820537",
+        "osmId": "422820537",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70023466,
+          31.250451320000003
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "1"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422820538",
-      "properties": {
-        "osmId": "422820538",
-        "name": "Building 422820538",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422820538",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -4709,18 +5584,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422820538",
+        "osmId": "422820538",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70054688,
+          31.250634780000002
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "1"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422820545",
-      "properties": {
-        "osmId": "422820545",
-        "name": "Building 422820545",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422820545",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -4763,18 +5650,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422820545",
+        "osmId": "422820545",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70377177777779,
+          31.249371033333336
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "3"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422823418",
-      "properties": {
-        "osmId": "422823418",
-        "name": "Building 422823418",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422823418",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -4817,18 +5716,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422823418",
+        "osmId": "422823418",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70474057777778,
+          31.251020377777778
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "2"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422823419",
-      "properties": {
-        "osmId": "422823419",
-        "name": "Building 422823419",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422823419",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -4855,18 +5766,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422823419",
+        "osmId": "422823419",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70480402,
+          31.251057859999996
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "1"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422823420",
-      "properties": {
-        "osmId": "422823420",
-        "name": "Building 422823420",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422823420",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -4997,18 +5920,31 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422823420",
+        "osmId": "422823420",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.7047870451613,
+          31.251856493548388
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10",
+          "layer": "-1"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422823421",
-      "properties": {
-        "osmId": "422823421",
-        "name": "Building 422823421",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422823421",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -5163,18 +6099,31 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422823421",
+        "osmId": "422823421",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70329324594594,
+          31.252625151351356
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10",
+          "layer": "1"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422823423",
-      "properties": {
-        "osmId": "422823423",
-        "name": "Building 422823423",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422823423",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -5213,18 +6162,31 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422823423",
+        "osmId": "422823423",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70466258750001,
+          31.252530049999994
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10",
+          "layer": "1"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422823424",
-      "properties": {
-        "osmId": "422823424",
-        "name": "Building 422823424",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422823424",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -5275,18 +6237,31 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422823424",
+        "osmId": "422823424",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70483815454546,
+          31.252700545454545
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "6",
+          "layer": "2"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422823425",
-      "properties": {
-        "osmId": "422823425",
-        "name": "Building 422823425",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422823425",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -5333,18 +6308,31 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422823425",
+        "osmId": "422823425",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70499335000001,
+          31.25268049
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "6",
+          "layer": "2"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422823426",
-      "properties": {
-        "osmId": "422823426",
-        "name": "Building 422823426",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422823426",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -5387,18 +6375,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422823426",
+        "osmId": "422823426",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.7049093888889,
+          31.252672755555555
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "1"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422823427",
-      "properties": {
-        "osmId": "422823427",
-        "name": "Building 422823427",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422823427",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -5433,18 +6433,31 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422823427",
+        "osmId": "422823427",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70490757142856,
+          31.252630957142856
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "3",
+          "layer": "3"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422823428",
-      "properties": {
-        "osmId": "422823428",
-        "name": "Building 422823428",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422823428",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -5471,18 +6484,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422823428",
+        "osmId": "422823428",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70490482,
+          31.25259418
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "5"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422823430",
-      "properties": {
-        "osmId": "422823430",
-        "name": "Building 422823430",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422823430",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -5509,18 +6534,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422823430",
+        "osmId": "422823430",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70561933999998,
+          31.251094320000004
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "4"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422823431",
-      "properties": {
-        "osmId": "422823431",
-        "name": "Building 422823431",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422823431",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -5551,18 +6588,31 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422823431",
+        "osmId": "422823431",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.7047046,
+          31.255102583333336
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "4",
+          "building:min_level": "3.75"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422823980",
-      "properties": {
-        "osmId": "422823980",
-        "name": "Building 422823980",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422823980",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -5605,18 +6655,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422823980",
+        "osmId": "422823980",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70777486666665,
+          31.259309444444447
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "2"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422823981",
-      "properties": {
-        "osmId": "422823981",
-        "name": "Building 422823981",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422823981",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -5663,18 +6725,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422823981",
+        "osmId": "422823981",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70893304,
+          31.25935640000001
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "2"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422886524",
-      "properties": {
-        "osmId": "422886524",
-        "name": "Building 422886524",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422886524",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -5837,18 +6911,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422886524",
+        "osmId": "422886524",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70281825641023,
+          31.251316025641035
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "5"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422886525",
-      "properties": {
-        "osmId": "422886525",
-        "name": "Building 422886525",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422886525",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -5951,18 +7037,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422886525",
+        "osmId": "422886525",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70284557083335,
+          31.251306025
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "5"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422886528",
-      "properties": {
-        "osmId": "422886528",
-        "name": "Building 422886528",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422886528",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -6133,18 +7231,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422886528",
+        "osmId": "422886528",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70280925365854,
+          31.25151936585365
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "5"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422886529",
-      "properties": {
-        "osmId": "422886529",
-        "name": "Building 422886529",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422886529",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -6175,18 +7285,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422886529",
+        "osmId": "422886529",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70288661666666,
+          31.25152375
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "5"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422886530",
-      "properties": {
-        "osmId": "422886530",
-        "name": "Building 422886530",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422886530",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -6217,18 +7339,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422886530",
+        "osmId": "422886530",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70278676666668,
+          31.25151775
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "5"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422886532",
-      "properties": {
-        "osmId": "422886532",
-        "name": "Building 422886532",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422886532",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -6319,18 +7453,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422886532",
+        "osmId": "422886532",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70300678095239,
+          31.251389776190482
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "1"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422886533",
-      "properties": {
-        "osmId": "422886533",
-        "name": "Building 422886533",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422886533",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -6389,18 +7535,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422886533",
+        "osmId": "422886533",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70300476923077,
+          31.251373369230766
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "1"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422886546",
-      "properties": {
-        "osmId": "422886546",
-        "name": "Building 422886546",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422886546",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -6475,18 +7633,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422886546",
+        "osmId": "422886546",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.7032533,
+          31.251401617647055
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "1"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_422886547",
-      "properties": {
-        "osmId": "422886547",
-        "name": "Building 422886547",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-422886547",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -6537,18 +7707,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-422886547",
+        "osmId": "422886547",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70325133636364,
+          31.251386299999993
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "1"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_425699179",
-      "properties": {
-        "osmId": "425699179",
-        "name": "Building 425699179",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-425699179",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -6575,18 +7757,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-425699179",
+        "osmId": "425699179",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70403689999999,
+          31.25523372
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "4"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_425716257",
-      "properties": {
-        "osmId": "425716257",
-        "name": "Building 425716257",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-425716257",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -6613,18 +7807,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-425716257",
+        "osmId": "425716257",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70557300000002,
+          31.256809240000003
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_425716258",
-      "properties": {
-        "osmId": "425716258",
-        "name": "Building 425716258",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-425716258",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -6651,18 +7857,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-425716258",
+        "osmId": "425716258",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70558697999999,
+          31.257099400000005
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_425716259",
-      "properties": {
-        "osmId": "425716259",
-        "name": "Building 425716259",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-425716259",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -6689,18 +7907,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-425716259",
+        "osmId": "425716259",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70576693999999,
+          31.256966499999997
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "10"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_425717556",
-      "properties": {
-        "osmId": "425717556",
-        "name": "Building 425717556",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-425717556",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -6727,18 +7957,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-425717556",
+        "osmId": "425717556",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70685266000001,
+          31.25619274
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_425717558",
-      "properties": {
-        "osmId": "425717558",
-        "name": "Building 425717558",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-425717558",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -6769,18 +8010,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-425717558",
+        "osmId": "425717558",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.7070043,
+          31.256213099999997
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_426283204",
-      "properties": {
-        "osmId": "426283204",
-        "name": "Building 426283204",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-426283204",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -6815,18 +8067,31 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-426283204",
+        "osmId": "426283204",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70691624285715,
+          31.258074999999995
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "7",
+          "building:min_level": "6"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_426284154",
-      "properties": {
-        "osmId": "426284154",
-        "name": "Building 426284154",
-        "buildingType": "roof",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-426284154",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -6869,18 +8134,32 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-426284154",
+        "osmId": "426284154",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "roof",
+        "category": "academic",
+        "centroid": [
+          75.70490660000002,
+          31.252507800000004
+        ],
+        "tags": {
+          "building": "roof",
+          "layer": "1",
+          "roof:levels": "9",
+          "roof:shape": "skillion"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_427330237",
-      "properties": {
-        "osmId": "427330237",
-        "name": "Building 427330237",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-427330237",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -6947,18 +8226,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-427330237",
+        "osmId": "427330237",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70790072,
+          31.258194573333334
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "2"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_427330238",
-      "properties": {
-        "osmId": "427330238",
-        "name": "Building 427330238",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-427330238",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -7041,18 +8332,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-427330238",
+        "osmId": "427330238",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70790388947368,
+          31.258403226315785
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "0.2"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_427333650",
-      "properties": {
-        "osmId": "427333650",
-        "name": "Building 427333650",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-427333650",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -7079,18 +8382,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-427333650",
+        "osmId": "427333650",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70491214,
+          31.253068640000002
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "2"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_675395630",
-      "properties": {
-        "osmId": "675395630",
-        "name": "Building 675395630",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-675395630",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -7189,18 +8504,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-675395630",
+        "osmId": "675395630",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70331243043479,
+          31.255268373913054
+        ],
+        "tags": {
+          "building": "yes",
+          "education": "educational_institution"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1299137613",
-      "properties": {
-        "osmId": "1299137613",
-        "name": "Elem apartment",
-        "buildingType": "apartments",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1299137613",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -7231,18 +8558,34 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1299137613",
+        "osmId": "1299137613",
+        "name": "Elem apartment",
+        "hasOsmName": true,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "apartments",
+        "category": "hostel_boys",
+        "centroid": [
+          75.69885236666667,
+          31.252038116666665
+        ],
+        "tags": {
+          "addr:city": "Phagwara",
+          "addr:district": "kapurthala",
+          "addr:postcode": "144411",
+          "building": "apartments",
+          "name": "Elem apartment",
+          "tourism": "hostel"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1299447331",
-      "properties": {
-        "osmId": "1299447331",
-        "name": "prime apartment 2",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1299447331",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -7269,18 +8612,36 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1299447331",
+        "osmId": "1299447331",
+        "name": "prime apartment 2",
+        "hasOsmName": true,
+        "houseNumber": "nea diya apartemnt",
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "hostel_boys",
+        "centroid": [
+          75.6986001,
+          31.2521779
+        ],
+        "tags": {
+          "addr:city": "Phagwara",
+          "addr:district": "kapurthala",
+          "addr:housenumber": "nea diya apartemnt",
+          "addr:postcode": "144411",
+          "addr:street": "law gate rd, opp green valley",
+          "building": "yes",
+          "name": "prime apartment 2",
+          "tourism": "hostel"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1299447332",
-      "properties": {
-        "osmId": "1299447332",
-        "name": "Diya apartment",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1299447332",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -7307,18 +8668,36 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1299447332",
+        "osmId": "1299447332",
+        "name": "Diya apartment",
+        "hasOsmName": true,
+        "houseNumber": "opp green valley",
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "hostel_boys",
+        "centroid": [
+          75.69859364,
+          31.252284120000002
+        ],
+        "tags": {
+          "addr:city": "Phagwara",
+          "addr:district": "kapurthala",
+          "addr:housenumber": "opp green valley",
+          "addr:postcode": "144411",
+          "addr:street": "law gate rd",
+          "building": "yes",
+          "name": "Diya apartment",
+          "tourism": "hostel"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1299813019",
-      "properties": {
-        "osmId": "1299813019",
-        "name": "desi &amp; delicious",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1299813019",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -7341,18 +8720,35 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1299813019",
+        "osmId": "1299813019",
+        "name": "desi &amp; delicious",
+        "hasOsmName": true,
+        "houseNumber": null,
+        "amenity": "restaurant",
+        "shop": null,
+        "buildingType": "yes",
+        "category": "cafeteria",
+        "centroid": [
+          75.69851335,
+          31.254881975000004
+        ],
+        "tags": {
+          "addr:city": "Phagwara",
+          "addr:district": "kapurthala",
+          "addr:postcode": "144411",
+          "addr:street": "near golden gym , law gate rd",
+          "amenity": "restaurant",
+          "building": "yes",
+          "name": "desi &amp; delicious"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300687852",
-      "properties": {
-        "osmId": "1300687852",
-        "name": "Dimple Apartment",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300687852",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -7379,18 +8775,31 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300687852",
+        "osmId": "1300687852",
+        "name": "Dimple Apartment",
+        "hasOsmName": true,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "hostel_boys",
+        "centroid": [
+          75.69901805999999,
+          31.252234000000005
+        ],
+        "tags": {
+          "building": "yes",
+          "name": "Dimple Apartment",
+          "tourism": "apartment"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300687853",
-      "properties": {
-        "osmId": "1300687853",
-        "name": "Avjot PG",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300687853",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -7417,18 +8826,31 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300687853",
+        "osmId": "1300687853",
+        "name": "Avjot PG",
+        "hasOsmName": true,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "hostel_boys",
+        "centroid": [
+          75.69890432,
+          31.252222800000006
+        ],
+        "tags": {
+          "building": "yes",
+          "name": "Avjot PG",
+          "tourism": "apartment"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300687854",
-      "properties": {
-        "osmId": "1300687854",
-        "name": "Building 1300687854",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300687854",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -7471,18 +8893,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300687854",
+        "osmId": "1300687854",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69877527777777,
+          31.252269688888887
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300687855",
-      "properties": {
-        "osmId": "1300687855",
-        "name": "Building 1300687855",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300687855",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -7509,18 +8942,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300687855",
+        "osmId": "1300687855",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69861148,
+          31.25208122
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300687856",
-      "properties": {
-        "osmId": "1300687856",
-        "name": "Building 1300687856",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300687856",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -7547,18 +8991,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300687856",
+        "osmId": "1300687856",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69891036,
+          31.2520447
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300687857",
-      "properties": {
-        "osmId": "1300687857",
-        "name": "Building 1300687857",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300687857",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -7585,18 +9040,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300687857",
+        "osmId": "1300687857",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69904818,
+          31.25207034
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300687858",
-      "properties": {
-        "osmId": "1300687858",
-        "name": "Building 1300687858",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300687858",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -7623,18 +9089,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300687858",
+        "osmId": "1300687858",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69914495999998,
+          31.2522202
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300687859",
-      "properties": {
-        "osmId": "1300687859",
-        "name": "Building 1300687859",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300687859",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -7661,18 +9138,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300687859",
+        "osmId": "1300687859",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69920166,
+          31.25222432
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300687860",
-      "properties": {
-        "osmId": "1300687860",
-        "name": "karan pg 1",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300687860",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -7699,18 +9187,31 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300687860",
+        "osmId": "1300687860",
+        "name": "karan pg 1",
+        "hasOsmName": true,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "hostel_boys",
+        "centroid": [
+          75.69925436,
+          31.252229699999997
+        ],
+        "tags": {
+          "building": "yes",
+          "name": "karan pg 1",
+          "tourism": "apartment"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300687861",
-      "properties": {
-        "osmId": "1300687861",
-        "name": "the grand castle",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300687861",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -7737,18 +9238,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300687861",
+        "osmId": "1300687861",
+        "name": "the grand castle",
+        "hasOsmName": true,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69961368,
+          31.252113079999997
+        ],
+        "tags": {
+          "building": "yes",
+          "name": "the grand castle"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300687862",
-      "properties": {
-        "osmId": "1300687862",
-        "name": "pheonix apartment",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300687862",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -7775,18 +9288,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300687862",
+        "osmId": "1300687862",
+        "name": "pheonix apartment",
+        "hasOsmName": true,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "hostel_boys",
+        "centroid": [
+          75.69950242,
+          31.25210206
+        ],
+        "tags": {
+          "building": "yes",
+          "name": "pheonix apartment"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300687863",
-      "properties": {
-        "osmId": "1300687863",
-        "name": "Building 1300687863",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300687863",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -7813,18 +9338,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300687863",
+        "osmId": "1300687863",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69914544,
+          31.252076900000002
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300687864",
-      "properties": {
-        "osmId": "1300687864",
-        "name": "victoria apartment",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300687864",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -7851,18 +9387,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300687864",
+        "osmId": "1300687864",
+        "name": "victoria apartment",
+        "hasOsmName": true,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "hostel_boys",
+        "centroid": [
+          75.69920572,
+          31.25208004
+        ],
+        "tags": {
+          "building": "yes",
+          "name": "victoria apartment"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300687865",
-      "properties": {
-        "osmId": "1300687865",
-        "name": "Sanamdeep Apartments",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300687865",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -7889,18 +9437,31 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300687865",
+        "osmId": "1300687865",
+        "name": "Sanamdeep Apartments",
+        "hasOsmName": true,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "hostel_boys",
+        "centroid": [
+          75.69931568,
+          31.252091319999998
+        ],
+        "tags": {
+          "building": "yes",
+          "name": "Sanamdeep Apartments",
+          "tourism": "apartment"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300687866",
-      "properties": {
-        "osmId": "1300687866",
-        "name": "Sanamdeep apartment",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300687866",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -7927,18 +9488,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300687866",
+        "osmId": "1300687866",
+        "name": "Sanamdeep apartment",
+        "hasOsmName": true,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "hostel_boys",
+        "centroid": [
+          75.69925839999999,
+          31.252084099999998
+        ],
+        "tags": {
+          "building": "yes",
+          "name": "Sanamdeep apartment"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300687868",
-      "properties": {
-        "osmId": "1300687868",
-        "name": "Building 1300687868",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300687868",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -7965,18 +9538,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300687868",
+        "osmId": "1300687868",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69964822,
+          31.25239462
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300687869",
-      "properties": {
-        "osmId": "1300687869",
-        "name": "Building 1300687869",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300687869",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -8003,18 +9587,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300687869",
+        "osmId": "1300687869",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69956134,
+          31.25238276
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300687870",
-      "properties": {
-        "osmId": "1300687870",
-        "name": "Building 1300687870",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300687870",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -8041,18 +9636,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300687870",
+        "osmId": "1300687870",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69947458,
+          31.25237144
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300687871",
-      "properties": {
-        "osmId": "1300687871",
-        "name": "karan pg 2",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300687871",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -8079,18 +9685,31 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300687871",
+        "osmId": "1300687871",
+        "name": "karan pg 2",
+        "hasOsmName": true,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "hostel_boys",
+        "centroid": [
+          75.6992707,
+          31.252242680000002
+        ],
+        "tags": {
+          "building": "yes",
+          "name": "karan pg 2",
+          "tourism": "apartment"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300687872",
-      "properties": {
-        "osmId": "1300687872",
-        "name": "Building 1300687872",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300687872",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -8117,18 +9736,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300687872",
+        "osmId": "1300687872",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69931885999999,
+          31.25224952
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300687873",
-      "properties": {
-        "osmId": "1300687873",
-        "name": "Building 1300687873",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300687873",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -8155,18 +9785,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300687873",
+        "osmId": "1300687873",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69918265999999,
+          31.25234112
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300687874",
-      "properties": {
-        "osmId": "1300687874",
-        "name": "Building 1300687874",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300687874",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -8193,18 +9834,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300687874",
+        "osmId": "1300687874",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69929792,
+          31.2523548
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300687875",
-      "properties": {
-        "osmId": "1300687875",
-        "name": "Building 1300687875",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300687875",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -8239,18 +9891,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300687875",
+        "osmId": "1300687875",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69852162857144,
+          31.252401799999998
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300687876",
-      "properties": {
-        "osmId": "1300687876",
-        "name": "Building 1300687876",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300687876",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -8277,18 +9940,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300687876",
+        "osmId": "1300687876",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69878018,
+          31.252764860000003
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300687877",
-      "properties": {
-        "osmId": "1300687877",
-        "name": "Building 1300687877",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300687877",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -8315,18 +9989,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300687877",
+        "osmId": "1300687877",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69920784000001,
+          31.252523280000002
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300687879",
-      "properties": {
-        "osmId": "1300687879",
-        "name": "Building 1300687879",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300687879",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -8365,18 +10050,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300687879",
+        "osmId": "1300687879",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.698022875,
+          31.251812512500003
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300687880",
-      "properties": {
-        "osmId": "1300687880",
-        "name": "Building 1300687880",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300687880",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -8403,18 +10099,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300687880",
+        "osmId": "1300687880",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69817728000001,
+          31.2518615
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300687925",
-      "properties": {
-        "osmId": "1300687925",
-        "name": "Ssj Complex",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300687925",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -8441,18 +10148,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300687925",
+        "osmId": "1300687925",
+        "name": "Ssj Complex",
+        "hasOsmName": true,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69903000000001,
+          31.2536582
+        ],
+        "tags": {
+          "building": "yes",
+          "name": "Ssj Complex"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300687926",
-      "properties": {
-        "osmId": "1300687926",
-        "name": "dogra dhaba",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300687926",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -8479,18 +10198,31 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300687926",
+        "osmId": "1300687926",
+        "name": "dogra dhaba",
+        "hasOsmName": true,
+        "houseNumber": null,
+        "amenity": "restaurant",
+        "shop": null,
+        "buildingType": "yes",
+        "category": "cafeteria",
+        "centroid": [
+          75.69973972,
+          31.2541135
+        ],
+        "tags": {
+          "amenity": "restaurant",
+          "building": "yes",
+          "name": "dogra dhaba"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300687927",
-      "properties": {
-        "osmId": "1300687927",
-        "name": "Lally apartment",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300687927",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -8517,18 +10249,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300687927",
+        "osmId": "1300687927",
+        "name": "Lally apartment",
+        "hasOsmName": true,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "hostel_boys",
+        "centroid": [
+          75.69936036,
+          31.25392112
+        ],
+        "tags": {
+          "building": "yes",
+          "name": "Lally apartment"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300687928",
-      "properties": {
-        "osmId": "1300687928",
-        "name": "Building 1300687928",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300687928",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -8555,18 +10299,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300687928",
+        "osmId": "1300687928",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69941806,
+          31.25399852
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300687929",
-      "properties": {
-        "osmId": "1300687929",
-        "name": "Building 1300687929",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300687929",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -8597,18 +10352,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300687929",
+        "osmId": "1300687929",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69929131666667,
+          31.254038366666666
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300687930",
-      "properties": {
-        "osmId": "1300687930",
-        "name": "Building 1300687930",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300687930",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -8635,18 +10401,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300687930",
+        "osmId": "1300687930",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.699347,
+          31.25403478
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300687931",
-      "properties": {
-        "osmId": "1300687931",
-        "name": "Ten2Nine",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300687931",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -8673,18 +10450,31 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300687931",
+        "osmId": "1300687931",
+        "name": "Ten2Nine",
+        "hasOsmName": true,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": "bakery",
+        "buildingType": "yes",
+        "category": "cafeteria",
+        "centroid": [
+          75.69950468,
+          31.25436946
+        ],
+        "tags": {
+          "building": "yes",
+          "name": "Ten2Nine",
+          "shop": "bakery"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300687932",
-      "properties": {
-        "osmId": "1300687932",
-        "name": "Building 1300687932",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300687932",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -8711,18 +10501,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300687932",
+        "osmId": "1300687932",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69920404,
+          31.254516360000004
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300700284",
-      "properties": {
-        "osmId": "1300700284",
-        "name": "Building 1300700284",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300700284",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -8749,18 +10550,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300700284",
+        "osmId": "1300700284",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69803402,
+          31.253141640000003
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300700285",
-      "properties": {
-        "osmId": "1300700285",
-        "name": "Building 1300700285",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300700285",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -8787,18 +10599,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300700285",
+        "osmId": "1300700285",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69801930000001,
+          31.253293660000004
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300700286",
-      "properties": {
-        "osmId": "1300700286",
-        "name": "Building 1300700286",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300700286",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -8825,18 +10648,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300700286",
+        "osmId": "1300700286",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69802193999999,
+          31.253371379999997
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300700296",
-      "properties": {
-        "osmId": "1300700296",
-        "name": "Building 1300700296",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300700296",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -8871,18 +10705,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300700296",
+        "osmId": "1300700296",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69921211428571,
+          31.25394398571429
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300700297",
-      "properties": {
-        "osmId": "1300700297",
-        "name": "Building 1300700297",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300700297",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -8925,18 +10770,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300700297",
+        "osmId": "1300700297",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69908285555556,
+          31.254010777777783
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300700298",
-      "properties": {
-        "osmId": "1300700298",
-        "name": "Building 1300700298",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300700298",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -8963,18 +10819,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300700298",
+        "osmId": "1300700298",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.6991519,
+          31.254121140000002
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300700299",
-      "properties": {
-        "osmId": "1300700299",
-        "name": "Building 1300700299",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300700299",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -9001,18 +10868,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300700299",
+        "osmId": "1300700299",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69904816,
+          31.25414344
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300700300",
-      "properties": {
-        "osmId": "1300700300",
-        "name": "Building 1300700300",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300700300",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -9039,18 +10917,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300700300",
+        "osmId": "1300700300",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69888968000001,
+          31.254220299999997
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300700301",
-      "properties": {
-        "osmId": "1300700301",
-        "name": "Simar Land Promoters",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300700301",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -9077,18 +10966,31 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300700301",
+        "osmId": "1300700301",
+        "name": "Simar Land Promoters",
+        "hasOsmName": true,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69960610000001,
+          31.254266480000002
+        ],
+        "tags": {
+          "building": "yes",
+          "name": "Simar Land Promoters",
+          "office": "property_management"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300700302",
-      "properties": {
-        "osmId": "1300700302",
-        "name": "Kulhad Masti",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300700302",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -9115,18 +11017,31 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300700302",
+        "osmId": "1300700302",
+        "name": "Kulhad Masti",
+        "hasOsmName": true,
+        "houseNumber": null,
+        "amenity": "cafe",
+        "shop": null,
+        "buildingType": "yes",
+        "category": "cafeteria",
+        "centroid": [
+          75.69953364,
+          31.2542932
+        ],
+        "tags": {
+          "amenity": "cafe",
+          "building": "yes",
+          "name": "Kulhad Masti"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300700303",
-      "properties": {
-        "osmId": "1300700303",
-        "name": "Ghost Shooter",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300700303",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -9153,18 +11068,31 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300700303",
+        "osmId": "1300700303",
+        "name": "Ghost Shooter",
+        "hasOsmName": true,
+        "houseNumber": null,
+        "amenity": "restaurant",
+        "shop": null,
+        "buildingType": "yes",
+        "category": "cafeteria",
+        "centroid": [
+          75.69941968,
+          31.25441386
+        ],
+        "tags": {
+          "amenity": "restaurant",
+          "building": "yes",
+          "name": "Ghost Shooter"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300700304",
-      "properties": {
-        "osmId": "1300700304",
-        "name": "Building 1300700304",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300700304",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -9191,18 +11119,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300700304",
+        "osmId": "1300700304",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69933,
+          31.25446144
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300700305",
-      "properties": {
-        "osmId": "1300700305",
-        "name": "Building 1300700305",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300700305",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -9229,18 +11168,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300700305",
+        "osmId": "1300700305",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69909498,
+          31.254574100000003
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300700306",
-      "properties": {
-        "osmId": "1300700306",
-        "name": "Majlis Restaurant",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300700306",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -9267,18 +11217,31 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300700306",
+        "osmId": "1300700306",
+        "name": "Majlis Restaurant",
+        "hasOsmName": true,
+        "houseNumber": null,
+        "amenity": "restaurant",
+        "shop": null,
+        "buildingType": "yes",
+        "category": "cafeteria",
+        "centroid": [
+          75.69898928,
+          31.2546265
+        ],
+        "tags": {
+          "amenity": "restaurant",
+          "building": "yes",
+          "name": "Majlis Restaurant"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300700307",
-      "properties": {
-        "osmId": "1300700307",
-        "name": "Building 1300700307",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300700307",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -9305,18 +11268,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300700307",
+        "osmId": "1300700307",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69808612,
+          31.254671960000003
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300700308",
-      "properties": {
-        "osmId": "1300700308",
-        "name": "Building 1300700308",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300700308",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -9347,18 +11321,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300700308",
+        "osmId": "1300700308",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69820691666666,
+          31.25466855
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300700309",
-      "properties": {
-        "osmId": "1300700309",
-        "name": "Building 1300700309",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300700309",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -9385,18 +11370,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300700309",
+        "osmId": "1300700309",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.6982812,
+          31.25474166
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300700310",
-      "properties": {
-        "osmId": "1300700310",
-        "name": "Building 1300700310",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300700310",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -9423,18 +11419,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300700310",
+        "osmId": "1300700310",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69811062,
+          31.25478628
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300700311",
-      "properties": {
-        "osmId": "1300700311",
-        "name": "Building 1300700311",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300700311",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -9461,18 +11468,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300700311",
+        "osmId": "1300700311",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69864246,
+          31.25404408
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300700312",
-      "properties": {
-        "osmId": "1300700312",
-        "name": "Building 1300700312",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300700312",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -9499,18 +11517,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300700312",
+        "osmId": "1300700312",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69857388,
+          31.253999439999994
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300700313",
-      "properties": {
-        "osmId": "1300700313",
-        "name": "Building 1300700313",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300700313",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -9537,18 +11566,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300700313",
+        "osmId": "1300700313",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69870388,
+          31.2542847
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300700314",
-      "properties": {
-        "osmId": "1300700314",
-        "name": "Building 1300700314",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300700314",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -9575,18 +11615,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300700314",
+        "osmId": "1300700314",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69861152000001,
+          31.254358860000004
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300700315",
-      "properties": {
-        "osmId": "1300700315",
-        "name": "Building 1300700315",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300700315",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -9613,18 +11664,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300700315",
+        "osmId": "1300700315",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69829018,
+          31.25434176
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300700316",
-      "properties": {
-        "osmId": "1300700316",
-        "name": "Building 1300700316",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300700316",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -9651,18 +11713,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300700316",
+        "osmId": "1300700316",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69831556,
+          31.25415152
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300700317",
-      "properties": {
-        "osmId": "1300700317",
-        "name": "Building 1300700317",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300700317",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -9693,18 +11766,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300700317",
+        "osmId": "1300700317",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69809920000002,
+          31.25393495
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300700318",
-      "properties": {
-        "osmId": "1300700318",
-        "name": "Building 1300700318",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300700318",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -9731,18 +11815,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300700318",
+        "osmId": "1300700318",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69810552,
+          31.25401652
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300700324",
-      "properties": {
-        "osmId": "1300700324",
-        "name": "Building 1300700324",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300700324",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -9769,18 +11864,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300700324",
+        "osmId": "1300700324",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69802004,
+          31.254403680000003
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300700325",
-      "properties": {
-        "osmId": "1300700325",
-        "name": "Building 1300700325",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300700325",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -9807,18 +11913,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300700325",
+        "osmId": "1300700325",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69785064,
+          31.253982559999997
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300762561",
-      "properties": {
-        "osmId": "1300762561",
-        "name": "Building 1300762561",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300762561",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -9845,18 +11962,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300762561",
+        "osmId": "1300762561",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69804186,
+          31.24814286
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300762562",
-      "properties": {
-        "osmId": "1300762562",
-        "name": "Building 1300762562",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300762562",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -9883,18 +12011,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300762562",
+        "osmId": "1300762562",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69828992000001,
+          31.2480793
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1300762564",
-      "properties": {
-        "osmId": "1300762564",
-        "name": "Building 1300762564",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1300762564",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -9921,18 +12060,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1300762564",
+        "osmId": "1300762564",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69801086,
+          31.24835434
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1303020182",
-      "properties": {
-        "osmId": "1303020182",
-        "name": "Building 1303020182",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1303020182",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -9959,18 +12109,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1303020182",
+        "osmId": "1303020182",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.69826464,
+          31.253742340000002
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1550425052",
-      "properties": {
-        "osmId": "1550425052",
-        "name": "Building 1550425052",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1550425052",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -10021,18 +12182,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1550425052",
+        "osmId": "1550425052",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": "restaurant",
+        "shop": null,
+        "buildingType": "yes",
+        "category": "cafeteria",
+        "centroid": [
+          75.70185078181818,
+          31.252283
+        ],
+        "tags": {
+          "amenity": "restaurant",
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1566888543",
-      "properties": {
-        "osmId": "1566888543",
-        "name": "Building 1566888543",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1566888543",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -10123,18 +12296,29 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1566888543",
+        "osmId": "1566888543",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70420578571428,
+          31.252131133333332
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1566888545",
-      "properties": {
-        "osmId": "1566888545",
-        "name": "Building 1566888545",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1566888545",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -10165,18 +12349,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1566888545",
+        "osmId": "1566888545",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70297476666666,
+          31.251514450000002
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "5"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1566888547",
-      "properties": {
-        "osmId": "1566888547",
-        "name": "Building 1566888547",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1566888547",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -10347,18 +12543,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1566888547",
+        "osmId": "1566888547",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70299725365854,
+          31.251516065853654
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "5"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1566888548",
-      "properties": {
-        "osmId": "1566888548",
-        "name": "Building 1566888548",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1566888548",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -10389,18 +12597,30 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1566888548",
+        "osmId": "1566888548",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70307461666667,
+          31.25152045
+        ],
+        "tags": {
+          "building": "yes",
+          "building:levels": "5"
+        }
       }
     },
     {
       "type": "Feature",
-      "id": "osm_bld_1566888553",
-      "properties": {
-        "osmId": "1566888553",
-        "name": "Building 1566888553",
-        "buildingType": "yes",
-        "isRealFootprint": true,
-        "geometrySource": "verified_osm"
-      },
+      "id": "osm-bld-1566888553",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -10427,6 +12647,24 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "id": "osm-bld-1566888553",
+        "osmId": "1566888553",
+        "name": null,
+        "hasOsmName": false,
+        "houseNumber": null,
+        "amenity": null,
+        "shop": null,
+        "buildingType": "yes",
+        "category": "academic",
+        "centroid": [
+          75.70303294,
+          31.251294280000003
+        ],
+        "tags": {
+          "building": "yes"
+        }
       }
     }
   ]
