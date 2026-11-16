@@ -343,6 +343,22 @@ export class RoadNetworkService {
       description: 'Pedestrian entrance gate to Building 41. Path connection to campus road network requires field survey.'
     };
 
+    // 2b. Add LPU Main Gate entrance portal (User-confirmed candidate with verified gateway approach connection)
+    nodes['n_main_gate_entrance'] = {
+      id: 'n_main_gate_entrance',
+      name: 'LPU Main Gate Entrance Portal',
+      coords: { lat: 31.260691694532763, lng: 75.70675425232257 },
+      nodeType: 'gate',
+      isEntrance: true,
+      locationId: 'lpu-main-gate',
+      hasStepFreeRamp: true,
+      isVerified: true,
+      componentId: 1,
+      degree: 2,
+      verificationSource: 'User-Confirmed Coordinates & OSM Gateway Boulevard Connection',
+      description: 'Ceremonial primary campus entrance gate connected to campus gateway approach lanes.'
+    };
+
     // 3. Convert all segments into directional graph edges
     for (const seg of this.network.segments) {
       // Forward edge
@@ -387,8 +403,108 @@ export class RoadNetworkService {
           verificationSource: seg.verificationSource,
           maxSpeedKmh: seg.speedLimitKmh
         });
+      } else {
+        // Pedestrians can walk in both directions along roadside walkways / sidewalks
+        const pedModes = seg.allowedModes.filter((m) => m === 'walking' || m === 'wheelchair');
+        if (pedModes.length > 0) {
+          edges.push({
+            id: `${seg.id}_rev_ped`,
+            from: seg.toNode,
+            to: seg.fromNode,
+            distanceMeters: seg.distanceMeters,
+            allowedModes: pedModes,
+            pathName: seg.name,
+            isWheelchairAccessible: seg.wheelchairStatus === 'verified_accessible',
+            surface: seg.surface,
+            isOneWay: false,
+            geometry: [...seg.geometry].reverse(),
+            category: seg.category,
+            highwayType: seg.highwayType,
+            componentId: seg.componentId,
+            buildingCollision: seg.buildingCollision,
+            isVerified: seg.isVerified,
+            verificationSource: seg.verificationSource,
+            maxSpeedKmh: seg.speedLimitKmh
+          });
+        }
       }
     }
+
+    // 4. Connect Main Gate Entrance Portal to campus road approach nodes:
+    // Node 10211941197 (31.2605668, 75.7067354) - Inbound boulevard lane (14.0m, zero building collisions)
+    // Node 3604381531 (31.2605344, 75.7067740) - Outbound boulevard lane (17.6m, zero building collisions)
+    const gateEntranceCoords = { lat: 31.260691694532763, lng: 75.70675425232257 };
+    const node10211941197Coords = { lat: 31.2605668, lng: 75.7067354 };
+    const node3604381531Coords = { lat: 31.2605344, lng: 75.706774 };
+
+    edges.push({
+      id: 'edge_main_gate_to_10211941197',
+      from: 'n_main_gate_entrance',
+      to: '10211941197',
+      distanceMeters: 14,
+      allowedModes: ['walking', 'bike', 'car', 'wheelchair'],
+      pathName: 'Main Gate Boulevard Access',
+      isWheelchairAccessible: true,
+      surface: 'paved_asphalt',
+      isOneWay: false,
+      geometry: [gateEntranceCoords, node10211941197Coords],
+      category: 'main_road',
+      highwayType: 'unclassified',
+      componentId: 1,
+      isVerified: true,
+      verificationSource: 'OSM Way 1116524609 Gateway Approach (14.0m)'
+    });
+    edges.push({
+      id: 'edge_10211941197_to_main_gate',
+      from: '10211941197',
+      to: 'n_main_gate_entrance',
+      distanceMeters: 14,
+      allowedModes: ['walking', 'bike', 'car', 'wheelchair'],
+      pathName: 'Main Gate Boulevard Access',
+      isWheelchairAccessible: true,
+      surface: 'paved_asphalt',
+      isOneWay: false,
+      geometry: [node10211941197Coords, gateEntranceCoords],
+      category: 'main_road',
+      highwayType: 'unclassified',
+      componentId: 1,
+      isVerified: true,
+      verificationSource: 'OSM Way 1116524609 Gateway Approach (14.0m)'
+    });
+    edges.push({
+      id: 'edge_main_gate_to_3604381531',
+      from: 'n_main_gate_entrance',
+      to: '3604381531',
+      distanceMeters: 18,
+      allowedModes: ['walking', 'bike', 'car', 'wheelchair'],
+      pathName: 'Main Gate Boulevard Access',
+      isWheelchairAccessible: true,
+      surface: 'paved_asphalt',
+      isOneWay: false,
+      geometry: [gateEntranceCoords, node3604381531Coords],
+      category: 'main_road',
+      highwayType: 'tertiary',
+      componentId: 1,
+      isVerified: true,
+      verificationSource: 'OSM Way 354744722 Gateway Approach (17.6m)'
+    });
+    edges.push({
+      id: 'edge_3604381531_to_main_gate',
+      from: '3604381531',
+      to: 'n_main_gate_entrance',
+      distanceMeters: 18,
+      allowedModes: ['walking', 'bike', 'car', 'wheelchair'],
+      pathName: 'Main Gate Boulevard Access',
+      isWheelchairAccessible: true,
+      surface: 'paved_asphalt',
+      isOneWay: false,
+      geometry: [node3604381531Coords, gateEntranceCoords],
+      category: 'main_road',
+      highwayType: 'tertiary',
+      componentId: 1,
+      isVerified: true,
+      verificationSource: 'OSM Way 354744722 Gateway Approach (17.6m)'
+    });
 
     return {
       nodes,

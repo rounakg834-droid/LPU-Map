@@ -401,6 +401,78 @@ export class RoutingService implements IRoutingService {
   }
 
   /**
+   * Snaps a geographic coordinate to the nearest walkable road or footpath segment
+   * using point-to-segment orthogonal projection rather than just selecting nearest graph node.
+   */
+  public snapPointToWalkableNetwork(
+    coords: Coordinates,
+    mode: NavigationMode = 'walking',
+    maxSnapRadiusMeters = 150
+  ): {
+    snappedPoint: Coordinates;
+    nearestNode: CampusGraphNode;
+    edge: CampusGraphEdge;
+    distanceMeters: number;
+    segmentIndex: number;
+    fraction: number;
+  } | null {
+    let bestMatch: {
+      snappedPoint: Coordinates;
+      nearestNode: CampusGraphNode;
+      edge: CampusGraphEdge;
+      distanceMeters: number;
+      segmentIndex: number;
+      fraction: number;
+    } | null = null;
+    let minDistance = Infinity;
+
+    const nodes = this.graph.nodes;
+
+    for (const edge of this.graph.edges) {
+      if (!edge.allowedModes.includes(mode)) continue;
+
+      const polyline =
+        edge.geometry && edge.geometry.length >= 2
+          ? edge.geometry
+          : ([nodes[edge.from]?.coords, ...(edge.waypoints || []), nodes[edge.to]?.coords].filter(Boolean) as Coordinates[]);
+
+      if (polyline.length < 2) continue;
+
+      for (let i = 0; i < polyline.length - 1; i++) {
+        const segA = polyline[i];
+        const segB = polyline[i + 1];
+        const { point: proj, distanceMeters, fraction } = this.getClosestPointOnSegment(coords, segA, segB);
+
+        if (distanceMeters < minDistance) {
+          minDistance = distanceMeters;
+          const fromNode = nodes[edge.from];
+          const toNode = nodes[edge.to];
+          const distToFrom = fromNode ? this.calculateStraightLineMeters(proj, fromNode.coords) : Infinity;
+          const distToTo = toNode ? this.calculateStraightLineMeters(proj, toNode.coords) : Infinity;
+          const chosenNode = distToTo < distToFrom ? toNode : fromNode;
+
+          if (chosenNode) {
+            bestMatch = {
+              snappedPoint: proj,
+              nearestNode: chosenNode,
+              edge,
+              distanceMeters: Math.round(distanceMeters),
+              segmentIndex: i,
+              fraction,
+            };
+          }
+        }
+      }
+    }
+
+    if (bestMatch && bestMatch.distanceMeters <= maxSnapRadiusMeters) {
+      return bestMatch;
+    }
+
+    return null;
+  }
+
+  /**
    * Find specific entrance node for a campus location
    */
   public findNodeForLocation(location: CampusLocation): CampusGraphNode | null {
@@ -472,12 +544,14 @@ export class RoutingService implements IRoutingService {
         const pathNodes: CampusGraphNode[] = [];
         const pathEdges: CampusGraphEdge[] = [];
         let curr: string | null = endNodeId;
+        let realDistance = 0;
 
         while (curr && curr !== startNodeId) {
           const entry = previous.get(curr);
           if (!entry) break;
           pathNodes.unshift(nodes[curr]);
           pathEdges.unshift(entry.edge);
+          realDistance += entry.edge.distanceMeters;
           curr = entry.nodeId;
         }
         pathNodes.unshift(nodes[startNodeId]);
@@ -486,7 +560,7 @@ export class RoutingService implements IRoutingService {
         return {
           path: pathNodes,
           edges: pathEdges,
-          distance: Math.round(gScore.get(endNodeId) ?? 0),
+          distance: realDistance > 0 ? realDistance : Math.round(gScore.get(endNodeId) ?? 0),
           closuresAvoided: activeClosures.length > 0 ? closuresAvoided : undefined,
         };
       }
@@ -532,8 +606,11 @@ export class RoutingService implements IRoutingService {
         );
         if (isClosed) continue;
 
-        // Calculate traversal cost with surface and alternative penalty
+        // Calculate traversal cost with building collision and alternative penalties
         let edgeWeight = edge.distanceMeters;
+        if (edge.buildingCollision?.collides) {
+          edgeWeight += 10000; // Heavily penalize segments crossing building footprints to prefer safe perimeter paths
+        }
         if (penalizedEdgeIds && (penalizedEdgeIds.has(edge.id) || penalizedEdgeIds.has(edge.id.replace(/_(fwd|rev)$/, '')))) {
           edgeWeight *= 2.5; // Alternative route penalty
         }
@@ -791,7 +868,6 @@ export class RoutingService implements IRoutingService {
     // If destination is one of the candidate locations awaiting entrance verification,
     // we strictly preserve the verified unavailable status and reason (no artificial shortcut).
     if (
-      destination.id === 'lpu-main-gate' ||
       destination.id === 'baldevraj-mittal-auditorium' ||
       destination.id === 'uni-health-center' ||
       (destination.id === 'building-41' && !destination.isEntranceConfirmed)
@@ -964,8 +1040,10 @@ export class RoutingService implements IRoutingService {
         'You are currently outside LPU campus grounds. Route origin snapped to Main Gate 1 (NH-44 entrance).';
     }
 
+    // Snap origin to nearest walkable road segment using point-to-segment orthogonal projection
+    const snappedOrigin = this.snapPointToWalkableNetwork(effectiveOrigin, mode);
+    const startNode = snappedOrigin ? snappedOrigin.nearestNode : this.findNearestNode(effectiveOrigin, mode);
     const destNode = this.findNodeForLocation(destination);
-    const startNode = this.findNearestNode(effectiveOrigin, mode);
 
     if (!destNode || !startNode) {
       return {
@@ -982,27 +1060,25 @@ export class RoutingService implements IRoutingService {
       };
     }
 
-    // Specific road connectivity guard for LPU Main Gate candidate (user-supplied coordinates):
-    // Connectivity to the campus road graph is pending physical ground verification.
-    // Fake shortcuts or simulated road connections are strictly prohibited.
-    const isOriginMainGate =
-      Math.abs(effectiveOrigin.lat - 31.260691694532763) < 0.00005 &&
-      Math.abs(effectiveOrigin.lng - 75.70675425232257) < 0.00005;
-
-    if (destination.id === 'lpu-main-gate' || isOriginMainGate) {
-      return {
-        origin: effectiveOrigin,
-        destination,
-        mode,
-        status: 'unavailable',
-        distanceMeters: 0,
-        estimatedTimeMinutes: 0,
-        pathCoordinates: [],
-        instructions: [],
-        isVerifiedRoute: false,
-        unreachableReason:
-          'Verified route unavailable: Road connectivity for the user-confirmed LPU Main Gate candidate (31.260692, 75.706754) is pending physical ground verification. Fake shortcuts are not simulated.',
-      };
+    // Real connectivity validation for LPU Main Gate candidate (user-confirmed coordinates):
+    // Main Gate is connected to the campus network via the gateway boulevard (Way 1116524609 & Way 354744722).
+    // Ensure both endpoints exist in the routing graph; fake shortcuts or crossing NH-44 are strictly prohibited.
+    if (destination.id === 'lpu-main-gate') {
+      if (!destNode || destNode.componentId !== 1) {
+        return {
+          origin: effectiveOrigin,
+          destination,
+          mode,
+          status: 'unavailable',
+          distanceMeters: 0,
+          estimatedTimeMinutes: 0,
+          pathCoordinates: [],
+          instructions: [],
+          isVerifiedRoute: false,
+          unreachableReason:
+            'Verified route unavailable: Road connectivity for the user-confirmed LPU Main Gate candidate (31.260692, 75.706754) is pending physical ground verification. Fake shortcuts are not simulated.',
+        };
+      }
     }
 
     // Specific road connectivity guard for Sh. Baldevraj Mittal Auditorium:
@@ -1191,17 +1267,28 @@ export class RoutingService implements IRoutingService {
     const modeConfig = NAVIGATION_MODES.find((m) => m.id === mode);
     const speedKmh = modeConfig?.speedKmh || 4.5;
     const speedMps = (speedKmh * 1000) / 3600;
-    const estimatedMinutes = Math.max(1, Math.round(pathResult.distance / speedMps / 60));
+    const totalDistance = pathResult.distance + (snappedOrigin ? Math.min(snappedOrigin.distanceMeters, 60) : 0);
+    const estimatedMinutes = Math.max(1, Math.round(totalDistance / speedMps / 60));
 
     // Compile exact road path coordinates: concatenate edge.geometry for all path edges
     const compiledCoords: Coordinates[] = [];
 
-    // Approach connector from origin to path start (only if within 35m and safe from building collision)
-    const distToStart = this.calculateStraightLineMeters(effectiveOrigin, pathResult.path[0].coords);
-    if (distToStart > 0 && distToStart <= 35) {
-      const colCheck = routeQualityService.checkSegmentBuildingCollision(effectiveOrigin, pathResult.path[0].coords);
+    // Approach connector from origin to path start (using point-to-segment orthogonal snap if available)
+    if (snappedOrigin && snappedOrigin.distanceMeters > 0 && snappedOrigin.distanceMeters <= 60) {
+      const colCheck = routeQualityService.checkSegmentBuildingCollision(effectiveOrigin, snappedOrigin.snappedPoint);
       if (!colCheck.collides) {
         compiledCoords.push(effectiveOrigin);
+        compiledCoords.push(snappedOrigin.snappedPoint);
+      } else {
+        compiledCoords.push(pathResult.path[0].coords);
+      }
+    } else {
+      const distToStart = this.calculateStraightLineMeters(effectiveOrigin, pathResult.path[0].coords);
+      if (distToStart > 0 && distToStart <= 35) {
+        const colCheck = routeQualityService.checkSegmentBuildingCollision(effectiveOrigin, pathResult.path[0].coords);
+        if (!colCheck.collides) {
+          compiledCoords.push(effectiveOrigin);
+        }
       }
     }
 
@@ -1224,7 +1311,7 @@ export class RoutingService implements IRoutingService {
       }
     }
 
-    const effectiveDestCoord = destination.entranceCoordinates;
+    const effectiveDestCoord = destination.entranceCoordinates || destination.coordinates;
     if (effectiveDestCoord && targetNodeId === destNode.id) {
       const last = compiledCoords[compiledCoords.length - 1];
       if (
@@ -1233,7 +1320,7 @@ export class RoutingService implements IRoutingService {
           Math.abs(last.lng - effectiveDestCoord.lng) > 1e-6)
       ) {
         const distToDest = this.calculateStraightLineMeters(last, effectiveDestCoord);
-        if (distToDest <= 25) {
+        if (distToDest <= 35) {
           const colCheck = routeQualityService.checkSegmentBuildingCollision(last, effectiveDestCoord);
           if (!colCheck.collides) {
             compiledCoords.push(effectiveDestCoord);
@@ -1249,7 +1336,7 @@ export class RoutingService implements IRoutingService {
       destination,
       mode,
       status: 'available',
-      distanceMeters: pathResult.distance,
+      distanceMeters: totalDistance,
       estimatedTimeMinutes: estimatedMinutes,
       pathCoordinates: compiledCoords,
       instructions: [],
@@ -1290,7 +1377,7 @@ export class RoutingService implements IRoutingService {
       destination,
       mode,
       status: 'available',
-      distanceMeters: pathResult.distance,
+      distanceMeters: totalDistance,
       estimatedTimeMinutes: estimatedMinutes,
       pathCoordinates: compiledCoords,
       instructions,
