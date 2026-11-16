@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "test": "node scripts/test-road-network-engine.cjs && node scripts/test-main-gate.cjs && node scripts/test-road-verification-point.cjs",
+    "test": "node scripts/test-road-network-engine.cjs && node scripts/test-main-gate.cjs && node scripts/test-road-verification-point.cjs && node scripts/test-uni-health-center.cjs",
     "postbuild": "node scripts/postbuild.cjs",
     "preview": "vite preview"
   },

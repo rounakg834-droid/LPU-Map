@@ -397,6 +397,50 @@ export const CAMPUS_LOCATIONS: CampusLocation[] = [
 
   // --- MEDICAL & HEALTH ---
   {
+    id: 'uni-health-center',
+    name: 'Uni Health Center',
+    shortName: 'Uni Health Center',
+    category: 'medical',
+    coordinates: { lat: 31.258118286319235, lng: 75.70678342134359 },
+    isEntranceConfirmed: false,
+    verificationStatus: 'user_confirmed_candidate',
+    isVerified: true,
+    minZoom: 14,
+    roadConnectivityStatus: 'pending_verification',
+    description:
+      'LPU campus primary medical and outpatient health clinic providing first aid, routine consultations, dispensary services, and emergency stabilization.',
+    features: [
+      'Primary Healthcare & OPD',
+      'First Aid & Triage',
+      'Doctor Consultations',
+      'Basic Medical Dispensary',
+      'User-Supplied Coordinates'
+    ],
+    totalFloors: 1,
+    hasElevator: false,
+    hasRestrooms: true,
+    hasWaterDispenser: true,
+    departments: ['LPU Medical Services', 'Student Health & Wellness'],
+    source: 'User-supplied coordinates (building entrance awaiting physical survey)',
+    tags: [
+      'uni health center',
+      'lpu health center',
+      'health center',
+      'uni health',
+      'medical center',
+      'dispensary',
+      'clinic',
+      'first aid',
+      'doctor',
+      'opd',
+      'medical'
+    ],
+    gateAccess:
+      'Located along northern campus sector (31.258118, 75.706783). Physical building entrance alignment and pedestrian route awaiting separate field verification.',
+    accessibilityNotes:
+      'Ground ramp accessibility survey pending separate on-ground entrance verification.'
+  },
+  {
     id: 'unihospital',
     name: 'UniHospital & Campus Health Clinic',
     shortName: 'UniHospital',

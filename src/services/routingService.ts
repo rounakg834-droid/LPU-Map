@@ -982,6 +982,35 @@ export class RoutingService implements IRoutingService {
       };
     }
 
+    // Specific road connectivity guard for Uni Health Center:
+    // (Coordinates: 31.258118, 75.706783)
+    // Physical entrance awaiting separate verification. Automatic walking connection is barred.
+    const isOriginHealthCenter =
+      Math.abs(effectiveOrigin.lat - 31.258118286319235) < 0.00005 &&
+      Math.abs(effectiveOrigin.lng - 75.70678342134359) < 0.00005;
+
+    const isDestHealthCenter =
+      destination.id === 'uni-health-center' ||
+      (destination.coordinates &&
+        Math.abs(destination.coordinates.lat - 31.258118286319235) < 0.00005 &&
+        Math.abs(destination.coordinates.lng - 75.70678342134359) < 0.00005);
+
+    if (isOriginHealthCenter || isDestHealthCenter) {
+      return {
+        origin: effectiveOrigin,
+        destination,
+        mode,
+        status: 'unavailable',
+        distanceMeters: 0,
+        estimatedTimeMinutes: 0,
+        pathCoordinates: [],
+        instructions: [],
+        isVerifiedRoute: false,
+        unreachableReason:
+          'Verified route unavailable: Physical entrance for Uni Health Center is awaiting separate on-ground verification. Fake walking shortcuts are not simulated.',
+      };
+    }
+
     // Specific verification guard for Building 41 (field coordinates):
     // Requires administrator confirmation and restricts to verified pedestrian walkway
     if (destination.id === 'building-41') {

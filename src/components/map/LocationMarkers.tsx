@@ -45,6 +45,7 @@ function getPinLabel(loc: CampusLocation): string {
   if (loc.id === 'block-30-admin') return 'ADM';
   if (loc.id === 'building-41') return 'B41';
   if (loc.id === 'baldevraj-mittal-auditorium') return 'BMA';
+  if (loc.id === 'uni-health-center') return 'HLTH';
 
   if (loc.blockNumber) {
     // BH-1 -> B1, GH-2 -> G2, Block 34 -> 34
@@ -82,7 +83,7 @@ export const LocationMarkers: React.FC<LocationMarkersProps> = ({
   const visibleLocations = useMemo(() => {
     const list: CampusLocation[] = [];
 
-    // Include user-confirmed candidates: LPU Main Gate and Sh. Baldevraj Mittal Auditorium
+    // Include user-confirmed candidates: LPU Main Gate, Sh. Baldevraj Mittal Auditorium, and Uni Health Center
     const sourceList = locations && locations.length > 0 ? locations : CAMPUS_LOCATIONS;
     const mainGate = sourceList.find((l) => l.id === 'lpu-main-gate');
     if (mainGate && mainGate.coordinates) {
@@ -94,11 +95,17 @@ export const LocationMarkers: React.FC<LocationMarkersProps> = ({
       list.push(auditorium);
     }
 
+    const healthCenter = sourceList.find((l) => l.id === 'uni-health-center');
+    if (healthCenter && healthCenter.coordinates) {
+      list.push(healthCenter);
+    }
+
     // Include user-selected location if active and not already added
     if (selectedLocation && selectedLocation.coordinates) {
       if (
         selectedLocation.id !== 'lpu-main-gate' &&
-        selectedLocation.id !== 'baldevraj-mittal-auditorium'
+        selectedLocation.id !== 'baldevraj-mittal-auditorium' &&
+        selectedLocation.id !== 'uni-health-center'
       ) {
         // Preserve Building 41 in DB, but hide public marker until approved
         if (selectedLocation.id !== 'building-41' || selectedLocation.isEntranceConfirmed) {
@@ -176,6 +183,34 @@ export const LocationMarkers: React.FC<LocationMarkersProps> = ({
       });
     }
 
+    // Specialized prominent red badge marker for Uni Health Center
+    if (loc.id === 'uni-health-center') {
+      const html = `
+        <div class="relative group cursor-pointer flex flex-col items-center justify-center transition-transform duration-200">
+          ${isSelected ? `<div class="absolute -inset-2 rounded-full bg-red-500/35 animate-ping"></div>` : ''}
+          <div style="background-color: #dc2626;" 
+               class="px-2.5 py-1 rounded-full shadow-[0_4px_14px_rgba(220,38,38,0.5)] border-[1.5px] border-white flex items-center gap-1.5 text-white font-bold transition-all duration-150 transform group-hover:scale-105 ${
+                 isSelected ? 'scale-110 ring-4 ring-red-400/50 shadow-red-600/50' : ''
+               }">
+            <svg class="w-3.5 h-3.5 text-white flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 6v12"/>
+              <path d="M6 12h12"/>
+            </svg>
+            <span class="text-[11px] font-sans font-bold tracking-tight whitespace-nowrap leading-none">Uni Health Center</span>
+          </div>
+          <div style="border-top-color: #dc2626;" class="w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[5px] -mt-[0.5px]"></div>
+        </div>
+      `;
+
+      return L.divIcon({
+        html,
+        className: 'health-center-candidate-marker',
+        iconSize: [146, 32],
+        iconAnchor: [73, 31],
+        tooltipAnchor: [0, -30],
+      });
+    }
+
     const color = CATEGORY_COLORS[loc.category] || '#2563eb';
     const label = getPinLabel(loc);
 
@@ -243,7 +278,9 @@ export const LocationMarkers: React.FC<LocationMarkersProps> = ({
               <Tooltip
                 direction="top"
                 offset={
-                  loc.id === 'lpu-main-gate' || loc.id === 'baldevraj-mittal-auditorium'
+                  loc.id === 'lpu-main-gate' ||
+                  loc.id === 'baldevraj-mittal-auditorium' ||
+                  loc.id === 'uni-health-center'
                     ? [0, -28]
                     : [0, -20]
                 }
@@ -256,7 +293,11 @@ export const LocationMarkers: React.FC<LocationMarkersProps> = ({
                   </span>
                   <span className={`text-[10px] font-semibold capitalize ${
                     loc.verificationStatus === 'user_confirmed_candidate'
-                      ? loc.category === 'auditorium_events' ? 'text-purple-600' : 'text-emerald-600'
+                      ? loc.category === 'auditorium_events'
+                        ? 'text-purple-600'
+                        : loc.category === 'medical'
+                        ? 'text-red-600'
+                        : 'text-emerald-600'
                       : 'text-slate-500'
                   }`}>
                     {loc.verificationStatus === 'user_confirmed_candidate'
