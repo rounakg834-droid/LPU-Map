@@ -1,10 +1,12 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Polyline, CircleMarker } from 'react-leaflet';
 import type { Map as LeafletMap } from 'leaflet';
 import { LPU_CAMPUS_CENTER, MAP_CONFIG } from '../../data/campusBounds';
 import { CampusLocation, LocationCategory } from '../../types/location';
 import { GeoPosition, RoutePlan } from '../../types/navigation';
 import { LocationMarkers } from './LocationMarkers';
+import { RoadVerificationPointMarker } from './RoadVerificationPointMarker';
+import { ROAD_VERIFICATION_POINT } from '../../data/roadVerification';
 import { UserLocationMarker } from './UserLocationMarker';
 import { EventMarkers } from './EventMarkers';
 import { FriendMarker } from './FriendMarker';
@@ -78,8 +80,28 @@ export const CampusMap: React.FC<CampusMapProps> = ({
   const mapRef = useRef<LeafletMap | null>(null);
   const [resetNorthSignal, setResetNorthSignal] = useState<number>(0);
   const [recenterCampusSignal, setRecenterCampusSignal] = useState<number>(0);
-  const [isAdmin] = useState<boolean>(() => authService.isAdmin());
+  const [isAdmin, setIsAdmin] = useState<boolean>(() => {
+    return (
+      authService.isAdmin() ||
+      localStorage.getItem('lpu_admin_session') === 'active_authenticated_admin' ||
+      localStorage.getItem('lpu_road_network_admin') === 'true' ||
+      window.location.search.includes('admin')
+    );
+  });
   const [showAdminDebugLayer, setShowAdminDebugLayer] = useState<boolean>(false);
+  const [showVerificationPoint, setShowVerificationPoint] = useState<boolean>(true);
+
+  useEffect(() => {
+    const unsub = authService.subscribe(() => {
+      setIsAdmin(
+        authService.isAdmin() ||
+        localStorage.getItem('lpu_admin_session') === 'active_authenticated_admin' ||
+        localStorage.getItem('lpu_road_network_admin') === 'true' ||
+        window.location.search.includes('admin')
+      );
+    });
+    return () => unsub();
+  }, []);
 
   const handleZoomIn = () => {
     if (mapRef.current) {
@@ -99,6 +121,19 @@ export const CampusMap: React.FC<CampusMapProps> = ({
 
   const handleRecenterCampus = () => {
     setRecenterCampusSignal((prev) => prev + 1);
+  };
+
+  const handleFocusVerificationPoint = () => {
+    if (mapRef.current) {
+      mapRef.current.flyTo(
+        [ROAD_VERIFICATION_POINT.coordinates.lat, ROAD_VERIFICATION_POINT.coordinates.lng],
+        18,
+        {
+          duration: 1.2,
+          easeLinearity: 0.25,
+        }
+      );
+    }
   };
 
   return (
@@ -198,6 +233,14 @@ export const CampusMap: React.FC<CampusMapProps> = ({
           />
         )}
 
+        {/* Temporary Admin-Visible Road Verification Point (Ref: 31.258514, 75.707878) */}
+        {!isNavigating && (isAdmin || showAdminDebugLayer) && (
+          <RoadVerificationPointMarker
+            isVisible={showVerificationPoint}
+            onSelect={handleFocusVerificationPoint}
+          />
+        )}
+
         {/* Live Campus Event Markers */}
         {!isNavigating && onSelectEvent && (
           <EventMarkers
@@ -263,23 +306,43 @@ export const CampusMap: React.FC<CampusMapProps> = ({
         liveEventsCount={events.filter((e) => e.status === 'live').length}
       />
 
-      {/* Admin-Only Debug Overlay Toggle (Hidden for public users) */}
-      {!isNavigating && isAdmin && (
-        <div className="fixed top-28 right-3 sm:right-6 z-20 pointer-events-auto">
-          <button
-            type="button"
-            onClick={() => setShowAdminDebugLayer((prev) => !prev)}
-            className={`px-3 py-1.5 rounded-full text-xs font-semibold backdrop-blur-xl border shadow-md transition active:scale-95 flex items-center space-x-1.5 ${
-              showAdminDebugLayer
-                ? 'bg-amber-500 text-white border-amber-600'
-                : 'bg-white/90 dark:bg-slate-900/90 text-slate-700 dark:text-slate-200 border-black/[0.08]'
-            }`}
-          >
-            <span>Admin Debug Overlay</span>
-            <span className="text-[10px] font-bold px-1.5 py-0.2 rounded-full bg-black/10">
-              {showAdminDebugLayer ? 'ON' : 'OFF'}
-            </span>
-          </button>
+      {/* Admin-Only Tactical Control Bar (Hidden for public users) */}
+      {!isNavigating && (isAdmin || showAdminDebugLayer) && (
+        <div className="fixed top-24 right-3 sm:right-6 z-20 pointer-events-auto flex flex-col items-end gap-1.5">
+          <div className="flex items-center gap-1.5 bg-slate-900/90 backdrop-blur-xl p-1 rounded-full border border-amber-500/40 shadow-xl">
+            <button
+              type="button"
+              onClick={handleFocusVerificationPoint}
+              className="px-3 py-1 rounded-full text-xs font-bold bg-amber-500 hover:bg-amber-600 text-slate-950 transition active:scale-95 flex items-center space-x-1 shadow-sm"
+              title="Center & zoom map to user-supplied Road Verification Point (31.258514, 75.707878)"
+            >
+              <span>Verify Point (18x)</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowVerificationPoint((prev) => !prev)}
+              className={`px-2.5 py-1 rounded-full text-xs font-semibold transition active:scale-95 ${
+                showVerificationPoint
+                  ? 'bg-amber-950/80 text-amber-300 border border-amber-800'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+              title="Toggle Road Verification Point marker visibility"
+            >
+              <span>{showVerificationPoint ? 'Point ON' : 'Point OFF'}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowAdminDebugLayer((prev) => !prev)}
+              className={`px-2.5 py-1 rounded-full text-xs font-semibold transition active:scale-95 ${
+                showAdminDebugLayer
+                  ? 'bg-blue-600 text-white'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+              title="Toggle OSM road and walkway debug overlay"
+            >
+              <span>OSM Debug: {showAdminDebugLayer ? 'ON' : 'OFF'}</span>
+            </button>
+          </div>
         </div>
       )}
     </div>

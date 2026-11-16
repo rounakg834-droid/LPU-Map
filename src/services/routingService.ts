@@ -952,6 +952,35 @@ export class RoutingService implements IRoutingService {
       };
     }
 
+    // Specific road connectivity guard for temporary Road Verification Point:
+    // (Coordinates: 31.258514, 75.707878)
+    // Arbitrary connection without physical access verification is strictly prohibited.
+    const isOriginVerificationPoint =
+      Math.abs(effectiveOrigin.lat - 31.258513739139417) < 0.00005 &&
+      Math.abs(effectiveOrigin.lng - 75.70787809596429) < 0.00005;
+
+    const isDestVerificationPoint =
+      destination.id === 'road-ref-point-1' ||
+      (destination.coordinates &&
+        Math.abs(destination.coordinates.lat - 31.258513739139417) < 0.00005 &&
+        Math.abs(destination.coordinates.lng - 75.70787809596429) < 0.00005);
+
+    if (isOriginVerificationPoint || isDestVerificationPoint) {
+      return {
+        origin: effectiveOrigin,
+        destination,
+        mode,
+        status: 'unavailable',
+        distanceMeters: 0,
+        estimatedTimeMinutes: 0,
+        pathCoordinates: [],
+        instructions: [],
+        isVerifiedRoute: false,
+        unreachableReason:
+          'Verified route unavailable: Road Verification Point (31.258514, 75.707878) is a temporary administrative reference coordinate. Connecting to the active road network requires physical ground survey.',
+      };
+    }
+
     // Specific verification guard for Building 41 (field coordinates):
     // Requires administrator confirmation and restricts to verified pedestrian walkway
     if (destination.id === 'building-41') {

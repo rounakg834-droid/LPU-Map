@@ -445,6 +445,10 @@ class AuthService {
       this.listeners.delete(callback);
     };
   }
+
+  public subscribe(callback: (user: StudentAuthProfile | null) => void): () => void {
+    return this.onAuthStateChanged(callback);
+  }
 }
 
 export const authService = new AuthService();

@@ -55,6 +55,19 @@ export interface NetworkDiagnosticReport {
     hasVerifiedPathConnection: boolean;
     recommendation: string;
   };
+  roadVerificationPointStatus: {
+    coordinates: Coordinates;
+    nearestRoadSegmentName: string;
+    nearestRoadSegmentWayId: string;
+    distanceToNearestRoadMeters: number;
+    nearestJunctionNodeId: string;
+    nearestJunctionDegree: number;
+    distanceToNearestJunctionMeters: number;
+    distanceToMainGateMeters: number;
+    nearestDisconnectedComponentId: number;
+    hasVerifiedPathConnection: boolean;
+    policyNote: string;
+  };
 }
 
 const STORAGE_KEY_CUSTOM_NETWORK = 'lpu_custom_road_network';
@@ -277,6 +290,20 @@ export class RoadNetworkService {
         hasVerifiedPathConnection: false,
         recommendation:
           'Building 41 entrance is 30.2m from OSM Footway 1550425051. Requires on-ground GPS field survey of the connecting sidewalk before enabling pedestrian routing.'
+      },
+      roadVerificationPointStatus: {
+        coordinates: { lat: 31.258513739139417, lng: 75.70787809596429 },
+        nearestRoadSegmentName: 'Pedestrian Promenade',
+        nearestRoadSegmentWayId: '1551038399',
+        distanceToNearestRoadMeters: 2.2,
+        nearestJunctionNodeId: '14107324490',
+        nearestJunctionDegree: 6,
+        distanceToNearestJunctionMeters: 10.0,
+        distanceToMainGateMeters: 264.7,
+        nearestDisconnectedComponentId: 7,
+        hasVerifiedPathConnection: false,
+        policyNote:
+          'Zero-Fake-Connection Policy: Reference coordinate is 2.2m from Way 1551038399 and 10.0m from Node 14107324490 (6-way junction). Arbitrary or simulated routing connections are withheld until physical ground verification confirms actual access and curb transitions.'
       }
     };
   }

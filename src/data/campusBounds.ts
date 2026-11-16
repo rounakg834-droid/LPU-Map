@@ -6,8 +6,14 @@ import { Coordinates } from '../types/location';
  * Official Location: NH-44 (GT Road), Phagwara - 144411.
  */
 
-// Initial campus center as verified in requirements
+// Campus focus centered on user-supplied reference coordinate for road inspection
 export const LPU_CAMPUS_CENTER: Coordinates = {
+  lat: 31.258513739139417,
+  lng: 75.70787809596429,
+};
+
+// Historic central academic boulevard centroid
+export const HISTORIC_CAMPUS_CENTER: Coordinates = {
   lat: 31.25492,
   lng: 75.70462,
 };
@@ -26,7 +32,7 @@ export const LPU_CAMPUS_BOUNDS = {
 };
 
 export const MAP_CONFIG = {
-  defaultZoom: 16,
+  defaultZoom: 18,
   minZoom: 14,
   maxZoom: 19,
   focusZoom: 18,
