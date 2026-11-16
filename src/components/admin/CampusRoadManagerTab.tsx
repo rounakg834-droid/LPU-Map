@@ -515,21 +515,21 @@ export const CampusRoadManagerTab: React.FC<CampusRoadManagerTabProps> = ({ onSh
           </div>
         </div>
 
-        {/* Temporary Admin Road Verification Point Card */}
-        <div className="p-5 bg-slate-950 border border-amber-900/50 rounded-2xl space-y-3">
+        {/* Sh. Baldevraj Mittal Auditorium Location Card */}
+        <div className="p-5 bg-slate-950 border border-purple-900/50 rounded-2xl space-y-3">
           <div className="flex items-center justify-between">
-            <h3 className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-amber-500" />
-              <span>Active Road Verification Point (Admin Inspection)</span>
+            <h3 className="text-xs font-bold text-purple-400 uppercase tracking-wider flex items-center gap-2">
+              <MapPin className="w-4 h-4 text-purple-500" />
+              <span>Sh. Baldevraj Mittal Auditorium (Auditorium &amp; Events)</span>
             </h3>
-            <span className="text-[10px] font-bold text-amber-300 bg-amber-950/80 px-2 py-0.5 rounded border border-amber-800 uppercase">
-              Temporary Reference
+            <span className="text-[10px] font-bold text-purple-300 bg-purple-950/80 px-2 py-0.5 rounded border border-purple-800 uppercase">
+              User-Supplied Coords
             </span>
           </div>
           <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 space-y-2 text-xs">
             <div className="flex items-center justify-between">
-              <span className="text-slate-400">User-Supplied Reference Coordinates:</span>
-              <span className="font-mono text-amber-400 font-bold">31.258514, 75.707878</span>
+              <span className="text-slate-400">User-Supplied Coordinates:</span>
+              <span className="font-mono text-purple-400 font-bold">31.258514, 75.707878</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-slate-400">Nearest OSM Highway Segment:</span>

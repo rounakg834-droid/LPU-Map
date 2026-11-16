@@ -44,6 +44,7 @@ function getPinLabel(loc: CampusLocation): string {
   if (loc.id === 'block-34-kiosk-cluster') return 'FOOD';
   if (loc.id === 'block-30-admin') return 'ADM';
   if (loc.id === 'building-41') return 'B41';
+  if (loc.id === 'baldevraj-mittal-auditorium') return 'BMA';
 
   if (loc.blockNumber) {
     // BH-1 -> B1, GH-2 -> G2, Block 34 -> 34
@@ -74,23 +75,31 @@ export const LocationMarkers: React.FC<LocationMarkersProps> = ({
   }, [map]);
 
   // Public 2D Foundation:
-  // 1. Permanently display one clearly visible "Main Gate" marker candidate at coordinates 31.260692, 75.706754.
+  // 1. Permanently display verified candidates: LPU Main Gate and Sh. Baldevraj Mittal Auditorium.
   // 2. Hide ALL old custom building number markers (34, 36, 38, BH-1, etc.) and unverified custom gate markers from public map.
   // 3. Only display an additional focused marker when the user explicitly selects a verified destination via search.
   // 4. Building 41 entrance coordinate is preserved in database, but public marker is hidden until approved.
   const visibleLocations = useMemo(() => {
     const list: CampusLocation[] = [];
 
-    // Always include user-confirmed candidate: LPU Main Gate on public 2D map
+    // Include user-confirmed candidates: LPU Main Gate and Sh. Baldevraj Mittal Auditorium
     const sourceList = locations && locations.length > 0 ? locations : CAMPUS_LOCATIONS;
     const mainGate = sourceList.find((l) => l.id === 'lpu-main-gate');
     if (mainGate && mainGate.coordinates) {
       list.push(mainGate);
     }
 
+    const auditorium = sourceList.find((l) => l.id === 'baldevraj-mittal-auditorium');
+    if (auditorium && auditorium.coordinates) {
+      list.push(auditorium);
+    }
+
     // Include user-selected location if active and not already added
     if (selectedLocation && selectedLocation.coordinates) {
-      if (selectedLocation.id !== 'lpu-main-gate') {
+      if (
+        selectedLocation.id !== 'lpu-main-gate' &&
+        selectedLocation.id !== 'baldevraj-mittal-auditorium'
+      ) {
         // Preserve Building 41 in DB, but hide public marker until approved
         if (selectedLocation.id !== 'building-41' || selectedLocation.isEntranceConfirmed) {
           list.push(selectedLocation);
@@ -131,6 +140,38 @@ export const LocationMarkers: React.FC<LocationMarkersProps> = ({
         className: 'main-gate-candidate-marker',
         iconSize: [96, 32],
         iconAnchor: [48, 31],
+        tooltipAnchor: [0, -30],
+      });
+    }
+
+    // Specialized prominent badge marker for Sh. Baldevraj Mittal Auditorium
+    if (loc.id === 'baldevraj-mittal-auditorium') {
+      const html = `
+        <div class="relative group cursor-pointer flex flex-col items-center justify-center transition-transform duration-200">
+          ${isSelected ? `<div class="absolute -inset-2 rounded-full bg-purple-500/35 animate-ping"></div>` : ''}
+          <div style="background-color: #8b5cf6;" 
+               class="px-2.5 py-1 rounded-full shadow-[0_4px_14px_rgba(139,92,246,0.5)] border-[1.5px] border-white flex items-center gap-1.5 text-white font-bold transition-all duration-150 transform group-hover:scale-105 ${
+                 isSelected ? 'scale-110 ring-4 ring-purple-400/50 shadow-purple-600/50' : ''
+               }">
+            <svg class="w-3.5 h-3.5 text-white flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 10s3-3 3-8"/>
+              <path d="M22 10s-3-3-3-8"/>
+              <path d="M4 22h16"/>
+              <path d="M4 18h16"/>
+              <path d="m9 14 3-3 3 3"/>
+              <path d="M12 11v7"/>
+            </svg>
+            <span class="text-[11px] font-sans font-bold tracking-tight whitespace-nowrap leading-none">Mittal Auditorium</span>
+          </div>
+          <div style="border-top-color: #8b5cf6;" class="w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[5px] -mt-[0.5px]"></div>
+        </div>
+      `;
+
+      return L.divIcon({
+        html,
+        className: 'auditorium-candidate-marker',
+        iconSize: [142, 32],
+        iconAnchor: [71, 31],
         tooltipAnchor: [0, -30],
       });
     }
@@ -201,7 +242,11 @@ export const LocationMarkers: React.FC<LocationMarkersProps> = ({
               {/* Clean, non-colliding Tooltip with unambiguous concise info */}
               <Tooltip
                 direction="top"
-                offset={loc.id === 'lpu-main-gate' ? [0, -28] : [0, -20]}
+                offset={
+                  loc.id === 'lpu-main-gate' || loc.id === 'baldevraj-mittal-auditorium'
+                    ? [0, -28]
+                    : [0, -20]
+                }
                 opacity={0.96}
                 className="custom-map-tooltip"
               >
@@ -210,7 +255,9 @@ export const LocationMarkers: React.FC<LocationMarkersProps> = ({
                     {loc.shortName || loc.name}
                   </span>
                   <span className={`text-[10px] font-semibold capitalize ${
-                    loc.verificationStatus === 'user_confirmed_candidate' ? 'text-emerald-600' : 'text-slate-500'
+                    loc.verificationStatus === 'user_confirmed_candidate'
+                      ? loc.category === 'auditorium_events' ? 'text-purple-600' : 'text-emerald-600'
+                      : 'text-slate-500'
                   }`}>
                     {loc.verificationStatus === 'user_confirmed_candidate'
                       ? 'User-Confirmed Candidate'

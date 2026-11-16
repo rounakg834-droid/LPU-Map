@@ -269,6 +269,49 @@ export const CAMPUS_LOCATIONS: CampusLocation[] = [
     tags: ['shanti devi', 'auditorium', 'indoor hall', 'theatre', 'cultural events'],
     gateAccess: 'Near Block 25 and Main Gate 1.'
   },
+  {
+    id: 'baldevraj-mittal-auditorium',
+    name: 'Sh. Baldevraj Mittal Auditorium',
+    shortName: 'Baldevraj Mittal Auditorium',
+    category: 'auditorium_events',
+    coordinates: { lat: 31.258513739139417, lng: 75.70787809596429 },
+    isEntranceConfirmed: false,
+    verificationStatus: 'user_confirmed_candidate',
+    isVerified: true,
+    minZoom: 14,
+    roadConnectivityStatus: 'pending_verification',
+    description:
+      'Premier university indoor auditorium facility named in honor of Sh. Baldevraj Mittal. Hosted for prestigious university conventions, academic conclaves, and major cultural convocations.',
+    features: [
+      'Indoor Air-Conditioned Auditorium',
+      'Multi-Tier Seating',
+      'Advanced Stage Lighting & Acoustics',
+      'Conference Facilities',
+      'User-Supplied Coordinates'
+    ],
+    totalFloors: 2,
+    hasElevator: false,
+    hasRestrooms: true,
+    hasWaterDispenser: true,
+    departments: ['Division of Student Welfare', 'University Events Office'],
+    source: 'User-supplied coordinates (building entrance awaiting physical survey)',
+    tags: [
+      'sh. baldevraj mittal auditorium',
+      'baldevraj mittal auditorium',
+      'lpu auditorium',
+      'baldevraj auditorium',
+      'mittal auditorium',
+      'auditorium',
+      'convocation',
+      'theatre',
+      'seminar hall',
+      'events'
+    ],
+    gateAccess:
+      'Located along northern campus promenade sector (31.258514, 75.707878). Physical building entrance alignment and pedestrian route awaiting separate field verification.',
+    accessibilityNotes:
+      'Ground ramp accessibility survey pending separate on-ground entrance verification.'
+  },
 
   // --- GATES & ENTRANCES ---
   {

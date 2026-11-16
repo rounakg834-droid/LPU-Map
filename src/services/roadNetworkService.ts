@@ -303,7 +303,7 @@ export class RoadNetworkService {
         nearestDisconnectedComponentId: 7,
         hasVerifiedPathConnection: false,
         policyNote:
-          'Zero-Fake-Connection Policy: Reference coordinate is 2.2m from Way 1551038399 and 10.0m from Node 14107324490 (6-way junction). Arbitrary or simulated routing connections are withheld until physical ground verification confirms actual access and curb transitions.'
+          'Sh. Baldevraj Mittal Auditorium coordinates are user-supplied (2.2m from Way 1551038399 and 10.0m from Node 14107324490). Ground access routing is withheld until separate on-ground entrance survey is confirmed.'
       }
     };
   }

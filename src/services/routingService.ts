@@ -952,20 +952,21 @@ export class RoutingService implements IRoutingService {
       };
     }
 
-    // Specific road connectivity guard for temporary Road Verification Point:
+    // Specific road connectivity guard for Sh. Baldevraj Mittal Auditorium:
     // (Coordinates: 31.258514, 75.707878)
-    // Arbitrary connection without physical access verification is strictly prohibited.
-    const isOriginVerificationPoint =
+    // Physical entrance awaiting separate verification. Automatic walking connection is barred.
+    const isOriginAuditorium =
       Math.abs(effectiveOrigin.lat - 31.258513739139417) < 0.00005 &&
       Math.abs(effectiveOrigin.lng - 75.70787809596429) < 0.00005;
 
-    const isDestVerificationPoint =
+    const isDestAuditorium =
+      destination.id === 'baldevraj-mittal-auditorium' ||
       destination.id === 'road-ref-point-1' ||
       (destination.coordinates &&
         Math.abs(destination.coordinates.lat - 31.258513739139417) < 0.00005 &&
         Math.abs(destination.coordinates.lng - 75.70787809596429) < 0.00005);
 
-    if (isOriginVerificationPoint || isDestVerificationPoint) {
+    if (isOriginAuditorium || isDestAuditorium) {
       return {
         origin: effectiveOrigin,
         destination,
@@ -977,7 +978,7 @@ export class RoutingService implements IRoutingService {
         instructions: [],
         isVerifiedRoute: false,
         unreachableReason:
-          'Verified route unavailable: Road Verification Point (31.258514, 75.707878) is a temporary administrative reference coordinate. Connecting to the active road network requires physical ground survey.',
+          'Verified route unavailable: Physical entrance for Sh. Baldevraj Mittal Auditorium is awaiting separate on-ground verification. Fake walking shortcuts are not simulated.',
       };
     }
 
