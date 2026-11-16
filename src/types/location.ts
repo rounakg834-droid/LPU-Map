@@ -58,6 +58,7 @@ export interface CampusLocation {
   tags: string[];
   gateAccess?: string;
   accessibilityNotes?: string;
+  isAwaitingFieldSurvey?: boolean;
   // Entrance & Verification Metadata
   entranceCoordinates?: Coordinates;
   isEntranceConfirmed?: boolean;

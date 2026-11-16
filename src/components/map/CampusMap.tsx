@@ -9,6 +9,11 @@ import { UserLocationMarker } from './UserLocationMarker';
 import { EventMarkers } from './EventMarkers';
 import { FriendMarker } from './FriendMarker';
 import { RoadClosureMarkers } from './RoadClosureMarkers';
+import { CampusBoundaryLayer } from './CampusBoundaryLayer';
+import { CampusRoadsLayer } from './CampusRoadsLayer';
+import { CampusWalkwaysLayer } from './CampusWalkwaysLayer';
+import { CampusEntrancesLayer } from './CampusEntrancesLayer';
+import { CampusLayerControl, ActiveLayersState } from './CampusLayerControl';
 import { MapController } from './MapController';
 import { MapControls } from './MapControls';
 import { PublicCampusEvent } from '../../types/events';
@@ -73,6 +78,20 @@ export const CampusMap: React.FC<CampusMapProps> = ({
   const mapRef = useRef<LeafletMap | null>(null);
   const [resetNorthSignal, setResetNorthSignal] = useState<number>(0);
   const [recenterCampusSignal, setRecenterCampusSignal] = useState<number>(0);
+  const [activeLayers, setActiveLayers] = useState<ActiveLayersState>({
+    boundary: true,
+    roads: true,
+    walkingPaths: true,
+    buildings: true,
+    entrances: true,
+  });
+
+  const handleToggleLayer = (layerKey: keyof ActiveLayersState) => {
+    setActiveLayers((prev) => ({
+      ...prev,
+      [layerKey]: !prev[layerKey],
+    }));
+  };
 
   const handleZoomIn = () => {
     if (mapRef.current) {
@@ -166,8 +185,25 @@ export const CampusMap: React.FC<CampusMapProps> = ({
           </>
         )}
 
-        {/* Dynamic Campus Location Pins with Zoom-level LOD (hidden during turn-by-turn navigation for clarity) */}
-        {!isNavigating && (
+        {/* Layer 1: Verified Campus Boundary (OSM Relation 21599790) */}
+        <CampusBoundaryLayer isVisible={activeLayers.boundary} />
+
+        {/* Layer 2: Licensed Internal Vehicular Roads */}
+        <CampusRoadsLayer isVisible={activeLayers.roads} />
+
+        {/* Layer 3: Licensed Pedestrian Walkways & Paths */}
+        <CampusWalkwaysLayer isVisible={activeLayers.walkingPaths} />
+
+        {/* Layer 4: Pedestrian Entrance Gates (featuring Building 41 & campus security gates) */}
+        <CampusEntrancesLayer
+          locations={locations}
+          selectedLocation={selectedLocation}
+          onSelectLocation={onSelectLocation}
+          isVisible={activeLayers.entrances}
+        />
+
+        {/* Layer 5: Dynamic Campus Location Pins with Zoom-level LOD (hidden during turn-by-turn navigation for clarity) */}
+        {!isNavigating && activeLayers.buildings && (
           <LocationMarkers
             locations={locations}
             selectedLocation={selectedLocation}
@@ -240,6 +276,16 @@ export const CampusMap: React.FC<CampusMapProps> = ({
         onOpenReportClosureModal={onOpenReportClosureModal}
         liveEventsCount={events.filter((e) => e.status === 'live').length}
       />
+
+      {/* Floating 2D Base Map Layer Controller */}
+      {!isNavigating && (
+        <div className="fixed top-28 right-3 sm:right-6 z-20 pointer-events-auto">
+          <CampusLayerControl
+            layers={activeLayers}
+            onToggleLayer={handleToggleLayer}
+          />
+        </div>
+      )}
     </div>
   );
 };

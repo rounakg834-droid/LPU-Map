@@ -73,9 +73,9 @@ export const LocationMarkers: React.FC<LocationMarkersProps> = ({
     };
   }, [map]);
 
-  // Filter only locations with verified coordinates
+  // Filter only locations with verified coordinates that are not awaiting field survey
   const validLocations = useMemo(() => {
-    return locations.filter((loc) => loc.coordinates !== undefined);
+    return locations.filter((loc) => loc.coordinates !== undefined && !loc.isAwaitingFieldSurvey);
   }, [locations]);
 
   // Level-of-Detail (LOD) & Overlap Prevention:

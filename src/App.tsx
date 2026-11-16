@@ -8,7 +8,6 @@ import { Campus3DMap } from './components/map/Campus3DMap';
 import { GoogleCampusMap } from './components/map/GoogleCampusMap';
 import { GoogleMapsConfigModal } from './components/admin/GoogleMapsConfigModal';
 import { MapModeToggle, MapDisplayMode } from './components/map/MapModeToggle';
-import { isWebGLSupported } from './utils/webglSupport';
 import { SearchBar } from './components/search/SearchBar';
 import { PlaceDetailsSheet } from './components/sheet/PlaceDetailsSheet';
 import { EventDetailsSheet } from './components/sheet/EventDetailsSheet';
@@ -307,17 +306,15 @@ function CampusNavigatorView({ navigate }: { navigate: (path: string) => void })
   // Handle 2D / 3D / Google Map Mode Transition
   const handleToggleMapMode = useCallback(
     (newMode: MapDisplayMode) => {
-      if (newMode === '3d' && !isWebGLSupported()) {
-        showToast('3D mode requires WebGL, which is unsupported on this device. Keeping 2D view.', 'warning');
+      if (newMode === '3d') {
+        showToast('3D campus base is paused while the 2D geographic base map is being verified.', 'info');
         return;
       }
       setMapMode(newMode);
       if (newMode === 'google') {
         showToast('🌐 Google Maps Platform: Official roads, labels & Places API', 'info');
-      } else if (newMode === '3d') {
-        showToast('🏢 3D Explore: Tilt, rotate & view building extrusions', 'info');
       } else {
-        showToast('🗺️ 2D Navigation: Turn-by-turn routing & GPS guidance', 'info');
+        showToast('🗺️ 2D Geographic Base: Clean roads, walkways, boundary & verified locations', 'info');
       }
     },
     [showToast]
@@ -335,9 +332,9 @@ function CampusNavigatorView({ navigate }: { navigate: (path: string) => void })
       setIsFollowing(true);
       setIsNorthUp(false);
       startTracking();
-      // Ensure 3D WebGL mode is active for Google Maps forward-facing perspective camera
-      if (isWebGLSupported() && mapMode !== '3d') {
-        setMapMode('3d');
+      // Ensure clean 2D navigation mode while 3D base is paused
+      if (mapMode === '3d') {
+        setMapMode('2d');
       }
       showToast(
         plan.isAlreadyAtDestination
@@ -648,36 +645,7 @@ function CampusNavigatorView({ navigate }: { navigate: (path: string) => void })
             showToast('Switched to verified 2D Leaflet campus map', 'info');
           }}
         />
-      ) : mapMode === '2d' && !isNavigating ? (
-        <CampusMap
-          locations={displayedLocations}
-          selectedLocation={selectedLocation}
-          onSelectLocation={handleSelectLocation}
-          userPosition={position}
-          isFollowing={isFollowing}
-          onUserInteracted={handleUserInteracted}
-          onRecenterGps={handleRecenterGps}
-          heading={heading}
-          onRequestOrientationPermission={requestOrientationPermission}
-          selectedCategory={selectedCategory}
-          activeRoute={activeRoute}
-          isNavigating={isNavigating}
-          events={events}
-          selectedEvent={selectedEvent}
-          onSelectEvent={handleSelectEvent}
-          onOpenEventsModal={() => setIsEventsListModalOpen(true)}
-          onOpenAdminModal={() => navigate('/admin')}
-          friendShare={friendShare}
-          onSelectFriend={() => setIsFriendSheetOpen(true)}
-          roadClosures={roadClosures}
-          onSelectClosure={(closure) => {
-            showToast(`⚠️ Closed: ${closure.title} - ${closure.reason}`, 'warning');
-          }}
-          onOpenShareModal={() => setIsShareModalOpen(true)}
-          onOpenEmergencyModal={() => setIsEmergencyModalOpen(true)}
-          onOpenReportClosureModal={() => setIsReportClosureModalOpen(true)}
-        />
-      ) : (
+      ) : mapMode === '3d' ? (
         <Campus3DMap
           locations={displayedLocations}
           selectedLocation={selectedLocation}
@@ -706,6 +674,35 @@ function CampusNavigatorView({ navigate }: { navigate: (path: string) => void })
           onOpenEmergencyModal={() => setIsEmergencyModalOpen(true)}
           onOpenEventsModal={() => setIsEventsListModalOpen(true)}
         />
+      ) : (
+        <CampusMap
+          locations={displayedLocations}
+          selectedLocation={selectedLocation}
+          onSelectLocation={handleSelectLocation}
+          userPosition={position}
+          isFollowing={isFollowing}
+          onUserInteracted={handleUserInteracted}
+          onRecenterGps={handleRecenterGps}
+          heading={heading}
+          onRequestOrientationPermission={requestOrientationPermission}
+          selectedCategory={selectedCategory}
+          activeRoute={activeRoute}
+          isNavigating={isNavigating}
+          events={events}
+          selectedEvent={selectedEvent}
+          onSelectEvent={handleSelectEvent}
+          onOpenEventsModal={() => setIsEventsListModalOpen(true)}
+          onOpenAdminModal={() => navigate('/admin')}
+          friendShare={friendShare}
+          onSelectFriend={() => setIsFriendSheetOpen(true)}
+          roadClosures={roadClosures}
+          onSelectClosure={(closure) => {
+            showToast(`⚠️ Closed: ${closure.title} - ${closure.reason}`, 'warning');
+          }}
+          onOpenShareModal={() => setIsShareModalOpen(true)}
+          onOpenEmergencyModal={() => setIsEmergencyModalOpen(true)}
+          onOpenReportClosureModal={() => setIsReportClosureModalOpen(true)}
+        />
       )}
 
       {/* Floating 2D / 3D Mode Selector Pill (Hidden during active Navigation) */}
@@ -714,6 +711,10 @@ function CampusNavigatorView({ navigate }: { navigate: (path: string) => void })
           <MapModeToggle
             mode={mapMode}
             onChangeMode={handleToggleMapMode}
+            is3DDisabled={true}
+            on3DDisabledClick={() => {
+              showToast('3D campus base is paused while the 2D geographic base map is being verified.', 'info');
+            }}
           />
         </div>
       )}

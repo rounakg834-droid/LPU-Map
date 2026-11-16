@@ -132,6 +132,7 @@ export const CAMPUS_LOCATIONS: CampusLocation[] = [
   },
   {
     id: 'block-55-56',
+    isAwaitingFieldSurvey: true,
     name: 'Block 55-56 (School of Design & Bio-Sciences)',
     shortName: 'Block 55-56',
     category: 'academic',
@@ -382,6 +383,7 @@ export const CAMPUS_LOCATIONS: CampusLocation[] = [
   // --- BOYS HOSTELS ---
   {
     id: 'bh-1',
+    isAwaitingFieldSurvey: true,
     name: 'Boys Hostel 1 (BH-1)',
     shortName: 'BH-1',
     category: 'hostel_boys',
@@ -410,6 +412,7 @@ export const CAMPUS_LOCATIONS: CampusLocation[] = [
   },
   {
     id: 'bh-2',
+    isAwaitingFieldSurvey: true,
     name: 'Boys Hostel 2 (BH-2)',
     shortName: 'BH-2',
     category: 'hostel_boys',
@@ -436,6 +439,7 @@ export const CAMPUS_LOCATIONS: CampusLocation[] = [
   },
   {
     id: 'bh-3',
+    isAwaitingFieldSurvey: true,
     name: 'Boys Hostel 3 (BH-3)',
     shortName: 'BH-3',
     category: 'hostel_boys',
@@ -462,6 +466,7 @@ export const CAMPUS_LOCATIONS: CampusLocation[] = [
   },
   {
     id: 'bh-4',
+    isAwaitingFieldSurvey: true,
     name: 'Boys Hostel 4 (BH-4)',
     shortName: 'BH-4',
     category: 'hostel_boys',
@@ -488,6 +493,7 @@ export const CAMPUS_LOCATIONS: CampusLocation[] = [
   },
   {
     id: 'bh-5',
+    isAwaitingFieldSurvey: true,
     name: 'Boys Hostel 5 (BH-5)',
     shortName: 'BH-5',
     category: 'hostel_boys',
@@ -507,6 +513,7 @@ export const CAMPUS_LOCATIONS: CampusLocation[] = [
   },
   {
     id: 'bh-6',
+    isAwaitingFieldSurvey: true,
     name: 'Boys Hostel 6 (BH-6)',
     shortName: 'BH-6',
     category: 'hostel_boys',
@@ -526,6 +533,7 @@ export const CAMPUS_LOCATIONS: CampusLocation[] = [
   },
   {
     id: 'bh-7',
+    isAwaitingFieldSurvey: true,
     name: 'Boys Hostel 7 (BH-7)',
     shortName: 'BH-7',
     category: 'hostel_boys',
@@ -540,6 +548,7 @@ export const CAMPUS_LOCATIONS: CampusLocation[] = [
   },
   {
     id: 'bh-8',
+    isAwaitingFieldSurvey: true,
     name: 'Boys Hostel 8 (BH-8)',
     shortName: 'BH-8',
     category: 'hostel_boys',
@@ -594,6 +603,7 @@ export const CAMPUS_LOCATIONS: CampusLocation[] = [
   // --- GIRLS HOSTELS ---
   {
     id: 'gh-1',
+    isAwaitingFieldSurvey: true,
     name: 'Girls Hostel 1 (GH-1)',
     shortName: 'GH-1',
     category: 'hostel_girls',
@@ -621,6 +631,7 @@ export const CAMPUS_LOCATIONS: CampusLocation[] = [
   },
   {
     id: 'gh-2',
+    isAwaitingFieldSurvey: true,
     name: 'Girls Hostel 2 (GH-2)',
     shortName: 'GH-2',
     category: 'hostel_girls',
@@ -647,6 +658,7 @@ export const CAMPUS_LOCATIONS: CampusLocation[] = [
   },
   {
     id: 'gh-3',
+    isAwaitingFieldSurvey: true,
     name: 'Girls Hostel 3 (GH-3)',
     shortName: 'GH-3',
     category: 'hostel_girls',
@@ -673,6 +685,7 @@ export const CAMPUS_LOCATIONS: CampusLocation[] = [
   },
   {
     id: 'gh-4',
+    isAwaitingFieldSurvey: true,
     name: 'Girls Hostel 4 (GH-4)',
     shortName: 'GH-4',
     category: 'hostel_girls',
@@ -699,6 +712,7 @@ export const CAMPUS_LOCATIONS: CampusLocation[] = [
   },
   {
     id: 'gh-5',
+    isAwaitingFieldSurvey: true,
     name: 'Girls Hostel 5 (GH-5)',
     shortName: 'GH-5',
     category: 'hostel_girls',
@@ -713,6 +727,7 @@ export const CAMPUS_LOCATIONS: CampusLocation[] = [
   },
   {
     id: 'gh-6',
+    isAwaitingFieldSurvey: true,
     name: 'Girls Hostel 6 (GH-6)',
     shortName: 'GH-6',
     category: 'hostel_girls',
