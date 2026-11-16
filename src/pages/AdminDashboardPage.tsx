@@ -43,6 +43,7 @@ import { authService } from '../services/authService';
 import { RoadClosure } from '../types/roadClosure';
 import { roadClosureService } from '../services/roadClosureService';
 import { CAMPUS_LOCATIONS } from '../data/locations';
+import { CAMPUS_3D_FOOTPRINTS } from '../data/campus3DFootprints';
 import { CampusLocation, LocationCorrection } from '../types/location';
 import { campusRouteGraph } from '../data/campusRouteGraph';
 import { qrToSVG } from '../utils/qrGenerator';
@@ -1727,6 +1728,47 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
                     </div>
                   );
                 })}
+              </div>
+            </div>
+
+            {/* Unverified Raw OSM Building Footprints Review Layer (Survey Pending) */}
+            <div className="space-y-3 pt-3 border-t border-slate-800">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                    <Layers className="w-3.5 h-3.5 text-amber-400" />
+                    Unverified Footprints Review Layer (Hidden from Public Maps)
+                  </h3>
+                  <p className="text-[11px] text-slate-500 mt-0.5">
+                    163 raw OpenStreetMap building geometries preserved for physical verification. These are excluded from public 2D and 3D maps until confirmed by campus survey.
+                  </p>
+                </div>
+                <span className="text-[10px] font-mono font-bold bg-amber-950 text-amber-400 border border-amber-800 px-2.5 py-1 rounded-full self-start sm:self-auto">
+                  163 Raw Footprints Available
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 max-h-72 overflow-y-auto p-2 bg-slate-950 rounded-xl border border-slate-800/80">
+                {CAMPUS_3D_FOOTPRINTS.features
+                  .filter((f) => f.properties.isUnverified)
+                  .map((feat) => (
+                    <div
+                      key={feat.id}
+                      className="p-2.5 bg-slate-900/90 rounded-lg border border-slate-800 flex items-start justify-between gap-2 text-xs"
+                    >
+                      <div className="min-w-0">
+                        <div className="font-mono text-[11px] text-slate-300 truncate">
+                          {feat.properties.osmId ? `OSM Way ${feat.properties.osmId}` : feat.id}
+                        </div>
+                        <div className="text-[10px] text-slate-500 font-mono">
+                          {feat.properties.center[1].toFixed(5)}°N, {feat.properties.center[0].toFixed(5)}°E
+                        </div>
+                      </div>
+                      <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700 whitespace-nowrap">
+                        Survey Pending
+                      </span>
+                    </div>
+                  ))}
               </div>
             </div>
           </div>

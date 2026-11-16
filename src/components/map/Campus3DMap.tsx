@@ -188,17 +188,19 @@ export const Campus3DMap: React.FC<Campus3DMapProps> = ({
         id: 'campus-3d-buildings-base',
         type: 'line',
         source: 'campus-footprints',
+        filter: ['==', ['get', 'isVerifiedCampusFacility'], true],
         paint: {
           'line-color': 'rgba(15, 23, 42, 0.25)',
           'line-width': 1.5,
         },
       });
 
-      // 2. Real volumetric 3D building fill-extrusions
+      // 2. Real volumetric 3D building fill-extrusions (Verified Campus Facilities Only)
       map.addLayer({
         id: 'campus-3d-buildings',
         type: 'fill-extrusion',
         source: 'campus-footprints',
+        filter: ['==', ['get', 'isVerifiedCampusFacility'], true],
         paint: {
           'fill-extrusion-color': [
             'case',
@@ -293,11 +295,21 @@ export const Campus3DMap: React.FC<Campus3DMapProps> = ({
 
       map.on('mousemove', 'campus-3d-buildings', (e: MapLayerMouseEvent) => {
         if (!e.features || e.features.length === 0) return;
-        map.getCanvas().style.cursor = 'pointer';
 
         const feature = e.features[0];
         const featureId = feature.id ?? feature.properties?.id;
-        const name = feature.properties?.name || feature.properties?.shortName;
+        
+        // Match strictly against verified campus locations
+        const match = locations.find((l) => l.id === feature.properties?.id);
+        const name = match?.shortName || match?.name || (feature.properties?.isVerifiedCampusFacility ? feature.properties?.name : null);
+
+        // Suppress unverified numerical names or raw OSM IDs from hover tooltip
+        if (!name || name.startsWith('Building 422') || name.startsWith('Building 1300') || name.startsWith('Building 425') || name.startsWith('osm_')) {
+          map.getCanvas().style.cursor = '';
+          return;
+        }
+
+        map.getCanvas().style.cursor = 'pointer';
 
         if (currentHoveredId !== featureId) {
           if (currentHoveredId !== null) {
@@ -334,7 +346,7 @@ export const Campus3DMap: React.FC<Campus3DMapProps> = ({
     };
   }, []);
 
-  // 2. Render Floating 3D Building Labels
+  // 2. Render Floating 3D Building Labels (Verified Campus Facilities Only)
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
@@ -342,25 +354,36 @@ export const Campus3DMap: React.FC<Campus3DMapProps> = ({
     buildingMarkersRef.current.forEach((m) => m.remove());
     buildingMarkersRef.current = [];
 
-    const MAJOR_ANCHOR_IDS = new Set([
-      'central-library',
-      'unipolis',
-      'unimall',
-      'block-34',
-      'block-36',
-      'unihospital',
-      'sports-complex',
-      'gate-1',
-    ]);
+    // Filter only verified campus locations with valid coordinates
+    const validLocations = locations.filter((loc) => loc.coordinates !== undefined);
 
-    const features = CAMPUS_3D_FOOTPRINTS.features.filter((f) => {
-      if (selectedLocation?.id === f.properties.id) return true;
-      if (selectedCategory !== 'all') return f.properties.category === selectedCategory;
-      return MAJOR_ANCHOR_IDS.has(f.properties.id) || zoom >= 16.6;
+    const visibleLocations = validLocations.filter((loc) => {
+      // 1. Currently selected place is ALWAYS visible
+      if (selectedLocation?.id === loc.id) return true;
+
+      // 2. Active specific category filter ALWAYS displays all its items
+      if (selectedCategory !== 'all' && loc.category === selectedCategory) return true;
+
+      // 3. Zoom-dependent Level of Detail (LOD) & Overlap Prevention:
+      // Tier 1 (Campus Anchors: Gate 1, Central Library, UniMall, UniPolis, UniHospital, Sports Complex): zoom >= 14
+      // Tier 2 (Academic Blocks & Building 41): zoom >= 15.6
+      // Tier 3 (Individual Hostels & Amenities): zoom >= 16.6
+      const requiredZoom = loc.minZoom || 16.6;
+      return zoom >= requiredZoom;
     });
 
-    features.forEach((f) => {
-      const isSelected = selectedLocation?.id === f.properties.id;
+    visibleLocations.forEach((loc) => {
+      const isSelected = selectedLocation?.id === loc.id;
+      const matchedFeature = CAMPUS_3D_FOOTPRINTS.features.find((f) => f.properties.id === loc.id);
+      const markerCoords: [number, number] = matchedFeature
+        ? matchedFeature.properties.center
+        : [loc.coordinates!.lng, loc.coordinates!.lat];
+
+      // Meaningful verified label (e.g. "Boys Apartment (41)", "Central Library", "UniMall")
+      const displayName = loc.id === 'building-41' 
+        ? 'Boys Apartment (41)' 
+        : (loc.shortName || loc.name);
+
       const el = document.createElement('div');
       el.className = 'group pointer-events-auto cursor-pointer transition-transform hover:scale-105';
       el.innerHTML = `
@@ -370,23 +393,20 @@ export const Campus3DMap: React.FC<Campus3DMapProps> = ({
             : 'bg-white/90 dark:bg-slate-900/90 text-slate-800 dark:text-slate-100 backdrop-blur-xl shadow-[0_2px_10px_rgba(0,0,0,0.06)] border border-black/[0.06] dark:border-white/[0.08]'
         } flex items-center space-x-1.5 text-[11px] font-medium whitespace-nowrap">
           <span class="w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-blue-400' : 'bg-slate-500'}"></span>
-          <span>${f.properties.shortName}</span>
+          <span>${displayName}</span>
         </div>
       `;
 
       el.addEventListener('click', (e) => {
         e.stopPropagation();
-        const match = locations.find((l) => l.id === f.properties.id);
-        if (match) {
-          onSelectLocation(match);
-        }
+        onSelectLocation(loc);
       });
 
       const marker = new maplibregl.Marker({
         element: el,
         anchor: 'bottom',
       })
-        .setLngLat(f.properties.center)
+        .setLngLat(markerCoords)
         .addTo(map);
 
       buildingMarkersRef.current.push(marker);
@@ -405,6 +425,12 @@ export const Campus3DMap: React.FC<Campus3DMapProps> = ({
       const isConfirmed = Boolean(loc.isEntranceConfirmed);
       const isSelected = selectedLocation?.id === loc.id;
 
+      const gateLabel = loc.id === 'building-41'
+        ? 'Building 41 Gate'
+        : loc.blockNumber
+        ? `B-${loc.blockNumber} Gate`
+        : 'Gate';
+
       const el = document.createElement('div');
       el.className = `group pointer-events-auto cursor-pointer transition-transform hover:scale-110 ${
         isSelected ? 'scale-125 z-30' : ''
@@ -420,7 +446,7 @@ export const Campus3DMap: React.FC<Campus3DMapProps> = ({
           <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M13.8 12H3"/>
           </svg>
-          <span>${loc.blockNumber ? `B-${loc.blockNumber}` : ''} Gate</span>
+          <span>${gateLabel}</span>
         </div>
       `;
 
@@ -438,7 +464,7 @@ export const Campus3DMap: React.FC<Campus3DMapProps> = ({
 
       entranceMarkersRef.current.push(marker);
     });
-  }, [selectedCategory, locations, onSelectLocation, selectedLocation]);
+  }, [selectedCategory, locations, onSelectLocation, selectedLocation, zoom]);
 
   // 3. Highlight Selected Building & Smooth 3D Camera Flight (Non-navigating mode)
   useEffect(() => {

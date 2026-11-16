@@ -229,17 +229,24 @@ export const PlaceDetailsSheet: React.FC<PlaceDetailsSheetProps> = ({
       <div className="px-4 py-2.5 sm:px-5 flex items-center gap-2 overflow-x-auto border-b border-slate-100 dark:border-slate-800/80 no-scrollbar flex-shrink-0">
         <button
           onClick={() => {
+            if (!location.coordinates) {
+              onShowToast('Location verification pending: Physical survey required before routing can be calculated.', 'warning');
+              return;
+            }
             setShowDirections(!showDirections);
             setIsExpanded(true);
           }}
+          disabled={!location.coordinates}
           className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold transition active:scale-95 whitespace-nowrap shadow-sm ${
-            showDirections
+            !location.coordinates
+              ? 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed'
+              : showDirections
               ? 'bg-[#007AFF] text-white shadow-blue-500/25 ring-2 ring-blue-500/30'
               : 'bg-[#007AFF] text-white hover:bg-[#0071E3]'
           }`}
         >
-          <Navigation className="w-3.5 h-3.5 fill-white" />
-          <span>Directions</span>
+          <Navigation className="w-3.5 h-3.5 fill-current" />
+          <span>{location.coordinates ? 'Directions' : 'Verification Pending'}</span>
         </button>
 
         <button
@@ -297,6 +304,18 @@ export const PlaceDetailsSheet: React.FC<PlaceDetailsSheetProps> = ({
           isExpanded ? 'block' : 'hidden md:block'
         }`}
       >
+        {/* Location Verification Pending Notice Card */}
+        {(!location.coordinates || location.verificationStatus === 'pending_survey') && (
+          <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 space-y-2">
+            <div className="flex items-center gap-2 text-amber-800 dark:text-amber-300 font-bold text-xs uppercase tracking-wider">
+              <Info className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+              <span>Location Verification Pending</span>
+            </div>
+            <p className="text-xs text-amber-900 dark:text-amber-200 leading-relaxed">
+              Physical campus survey is pending for this building. Navigation is withheld to prevent misdirection until on-ground coordinates are confirmed by university administration.
+            </p>
+          </div>
+        )}
         {/* Dedicated Pedestrian Entrance Gate Section (Requirement 3: Separate Footprint & Entrance) */}
         {(location.entranceCoordinates || location.proposedEntrance) && (
           <div className="p-3.5 rounded-2xl bg-gradient-to-br from-emerald-50/70 via-slate-50 to-blue-50/40 border border-emerald-200/80 space-y-2">

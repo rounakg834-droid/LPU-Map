@@ -253,6 +253,49 @@ export class SearchService {
       }
     }
 
+    // Check for explicit building/block number searches (e.g. "block 45", "building 1300", "b99", "45")
+    // If no verified campus location matches this building number, display a structured "Location verification pending" result
+    const buildingNumberMatch = trimmed.match(/^(?:block|building|b|bh|gh)?\s*(\d{1,4})$/i);
+    if (buildingNumberMatch) {
+      const qNum = buildingNumberMatch[1];
+      const hasVerifiedMatch = combined.some((l) => {
+        const blk = (l.blockNumber || '').replace(/[^0-9]/g, '');
+        return blk === qNum && l.isVerified && l.coordinates !== undefined;
+      });
+
+      if (!hasVerifiedMatch) {
+        const isBoysHostel = /^bh\s*\d+/i.test(trimmed);
+        const isGirlsHostel = /^gh\s*\d+/i.test(trimmed);
+        const prefix = isBoysHostel
+          ? 'Boys Hostel'
+          : isGirlsHostel
+          ? 'Girls Hostel'
+          : 'Building';
+        const short = isBoysHostel
+          ? `BH-${qNum}`
+          : isGirlsHostel
+          ? `GH-${qNum}`
+          : `Block ${qNum}`;
+
+        const unverifiedLocation: CampusLocation = {
+          id: `unverified-building-${qNum}`,
+          name: `${prefix} ${qNum} (Location verification pending)`,
+          shortName: short,
+          category: isBoysHostel ? 'hostel_boys' : isGirlsHostel ? 'hostel_girls' : 'academic',
+          blockNumber: qNum,
+          coordinates: undefined, // Explicitly no coordinates: prevents navigation to incorrect coordinates!
+          verificationStatus: 'pending_survey',
+          isVerified: false,
+          description: `Physical campus survey is pending for ${short}. Navigation coordinates are withheld to prevent misdirection until on-ground verification is completed.`,
+          features: ['Location Verification Pending', 'Field Survey Required'],
+          source: 'LPU Campus Registry (Pending Survey)',
+          tags: [trimmed, `block ${qNum}`, `building ${qNum}`],
+        };
+
+        combined.unshift(unverifiedLocation);
+      }
+    }
+
     return combined;
   }
 

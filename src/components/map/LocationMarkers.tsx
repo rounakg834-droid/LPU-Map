@@ -33,10 +33,16 @@ function getPinLabel(loc: CampusLocation): string {
   if (loc.id === 'central-library') return 'LIB';
   if (loc.id === 'unimall') return 'MALL';
   if (loc.id === 'unipolis') return 'POLIS';
+  if (loc.id === 'shanti-devi-auditorium') return 'SDM';
   if (loc.id === 'unihospital') return 'HOSP';
   if (loc.id === 'sports-complex') return 'GYM';
   if (loc.id === 'cricket-stadium') return 'STAD';
   if (loc.id === 'main-gate-parking') return 'PKG';
+  if (loc.id === 'unimall-parking') return 'PKG';
+  if (loc.id === 'unimall-food-court') return 'FOOD';
+  if (loc.id === 'block-34-kiosk-cluster') return 'FOOD';
+  if (loc.id === 'block-30-admin') return 'ADM';
+  if (loc.id === 'building-41') return 'B41';
 
   if (loc.blockNumber) {
     // BH-1 -> B1, GH-2 -> G2, Block 34 -> 34
@@ -222,7 +228,7 @@ export const LocationMarkers: React.FC<LocationMarkersProps> = ({
                 >
                   <div className="px-1.5 py-0.5 text-center font-sans">
                     <span className="font-bold text-xs text-slate-800 block leading-tight">
-                      {loc.shortName || loc.name} Entrance Gate
+                      {loc.id === 'building-41' ? 'Building 41 Entrance Gate' : `${loc.shortName || loc.name} Entrance Gate`}
                     </span>
                     <span className="text-[10px] text-emerald-700 font-medium block">
                       {loc.isEntranceConfirmed ? 'Confirmed Pedestrian Gate' : 'Proposed Entrance (Pending Confirmation)'}

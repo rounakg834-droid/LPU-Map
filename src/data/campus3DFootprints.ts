@@ -18,6 +18,8 @@ export interface Campus3DFeatureProperties {
   geometrySource: FootprintGeometrySource;
   center: [number, number];
   description?: string;
+  isVerifiedCampusFacility?: boolean;
+  isUnverified?: boolean;
 }
 
 export interface Campus3DFeature {
@@ -58,7 +60,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7018508,
           31.252283
         ],
-        "description": "Verified OpenStreetMap building footprint (OSM Way 1550425052). Height estimated for 3D visualization only."
+        "description": "Verified OpenStreetMap building footprint (OSM Way 1550425052). Height estimated for 3D visualization only.",
+        "isVerifiedCampusFacility": true,
+        "isUnverified": false
       },
       "geometry": {
         "type": "Polygon",
@@ -119,7 +123,7 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
         "id": "building-41",
         "osmId": "422437895",
         "name": "Building 41 (Boys Apartment)",
-        "shortName": "B-41",
+        "shortName": "Boys Apartment (41)",
         "category": "hostel_boys",
         "height": 24,
         "baseHeight": 0,
@@ -132,7 +136,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7019745,
           31.2518959
         ],
-        "description": "Verified OpenStreetMap building footprint (OSM Way 422437895). Height estimated for 3D visualization only."
+        "description": "Verified OpenStreetMap building footprint (OSM Way 422437895) with user-confirmed entrance gate at 31.251697, 75.701877.",
+        "isVerifiedCampusFacility": true,
+        "isUnverified": false
       },
       "geometry": {
         "type": "Polygon",
@@ -182,7 +188,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7032932,
           31.2526252
         ],
-        "description": "Verified OpenStreetMap building footprint (OSM Way 422823421). Height estimated for 3D visualization only."
+        "description": "Verified OpenStreetMap building footprint (OSM Way 422823421). Height estimated for 3D visualization only.",
+        "isVerifiedCampusFacility": true,
+        "isUnverified": false
       },
       "geometry": {
         "type": "Polygon",
@@ -360,7 +368,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7013215,
           31.2534165
         ],
-        "description": "Verified OpenStreetMap building footprint (OSM Way 422548310). Height estimated for 3D visualization only."
+        "description": "Verified OpenStreetMap building footprint (OSM Way 422548310). Height estimated for 3D visualization only.",
+        "isVerifiedCampusFacility": true,
+        "isUnverified": false
       },
       "geometry": {
         "type": "Polygon",
@@ -418,7 +428,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.701321,
           31.2536501
         ],
-        "description": "Verified OpenStreetMap building footprint (OSM Way 422548309). Height estimated for 3D visualization only."
+        "description": "Verified OpenStreetMap building footprint (OSM Way 422548309). Height estimated for 3D visualization only.",
+        "isVerifiedCampusFacility": true,
+        "isUnverified": false
       },
       "geometry": {
         "type": "Polygon",
@@ -476,7 +488,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7040369,
           31.2552337
         ],
-        "description": "Verified OpenStreetMap building footprint (OSM Way 425699179). Height estimated for 3D visualization only."
+        "description": "Verified OpenStreetMap building footprint (OSM Way 425699179). Height estimated for 3D visualization only.",
+        "isVerifiedCampusFacility": true,
+        "isUnverified": false
       },
       "geometry": {
         "type": "Polygon",
@@ -526,7 +540,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7033124,
           31.2552684
         ],
-        "description": "Verified OpenStreetMap building footprint (OSM Way 422437890). Height estimated for 3D visualization only."
+        "description": "Verified OpenStreetMap building footprint (OSM Way 422437890). Height estimated for 3D visualization only.",
+        "isVerifiedCampusFacility": true,
+        "isUnverified": false
       },
       "geometry": {
         "type": "Polygon",
@@ -648,7 +664,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7039336,
           31.2560662
         ],
-        "description": "Verified OpenStreetMap building footprint (OSM Way 422437899). Height estimated for 3D visualization only."
+        "description": "Verified OpenStreetMap building footprint (OSM Way 422437899). Height estimated for 3D visualization only.",
+        "isVerifiedCampusFacility": true,
+        "isUnverified": false
       },
       "geometry": {
         "type": "Polygon",
@@ -710,7 +728,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7046444,
           31.256633
         ],
-        "description": "Verified OpenStreetMap building footprint (OSM Way 422437901). Height estimated for 3D visualization only."
+        "description": "Verified OpenStreetMap building footprint (OSM Way 422437901). Height estimated for 3D visualization only.",
+        "isVerifiedCampusFacility": true,
+        "isUnverified": false
       },
       "geometry": {
         "type": "Polygon",
@@ -784,7 +804,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.705696,
           31.2542496
         ],
-        "description": "Verified OpenStreetMap building footprint (OSM Way 422437888). Height estimated for 3D visualization only."
+        "description": "Verified OpenStreetMap building footprint (OSM Way 422437888). Height estimated for 3D visualization only.",
+        "isVerifiedCampusFacility": true,
+        "isUnverified": false
       },
       "geometry": {
         "type": "Polygon",
@@ -834,7 +856,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7049934,
           31.2526805
         ],
-        "description": "Verified OpenStreetMap building footprint (OSM Way 422823425). Height estimated for 3D visualization only."
+        "description": "Verified OpenStreetMap building footprint (OSM Way 422823425). Height estimated for 3D visualization only.",
+        "isVerifiedCampusFacility": true,
+        "isUnverified": false
       },
       "geometry": {
         "type": "Polygon",
@@ -904,7 +928,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7033124,
           31.2552684
         ],
-        "description": "Verified OpenStreetMap building footprint (OSM Way 675395630). Height estimated for 3D visualization only."
+        "description": "Verified OpenStreetMap building footprint (OSM Way 675395630). Height estimated for 3D visualization only.",
+        "isVerifiedCampusFacility": true,
+        "isUnverified": false
       },
       "geometry": {
         "type": "Polygon",
@@ -1026,7 +1052,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7057669,
           31.2569665
         ],
-        "description": "Verified OpenStreetMap building footprint (OSM Way 425716259). Height estimated for 3D visualization only."
+        "description": "Verified OpenStreetMap building footprint (OSM Way 425716259). Height estimated for 3D visualization only.",
+        "isVerifiedCampusFacility": true,
+        "isUnverified": false
       },
       "geometry": {
         "type": "Polygon",
@@ -1076,7 +1104,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7056392,
           31.2544728
         ],
-        "description": "Verified OpenStreetMap building footprint (OSM Way 422437887). Height estimated for 3D visualization only."
+        "description": "Verified OpenStreetMap building footprint (OSM Way 422437887). Height estimated for 3D visualization only.",
+        "isVerifiedCampusFacility": true,
+        "isUnverified": false
       },
       "geometry": {
         "type": "Polygon",
@@ -1130,7 +1160,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7070043,
           31.2562131
         ],
-        "description": "Verified OpenStreetMap building footprint (OSM Way 425717558). Height estimated for 3D visualization only."
+        "description": "Verified OpenStreetMap building footprint (OSM Way 425717558). Height estimated for 3D visualization only.",
+        "isVerifiedCampusFacility": true,
+        "isUnverified": false
       },
       "geometry": {
         "type": "Polygon",
@@ -1184,7 +1216,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7068527,
           31.2561927
         ],
-        "description": "Verified OpenStreetMap building footprint (OSM Way 425717556). Height estimated for 3D visualization only."
+        "description": "Verified OpenStreetMap building footprint (OSM Way 425717556). Height estimated for 3D visualization only.",
+        "isVerifiedCampusFacility": true,
+        "isUnverified": false
       },
       "geometry": {
         "type": "Polygon",
@@ -1234,7 +1268,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.707885,
           31.2574214
         ],
-        "description": "Verified OpenStreetMap building footprint (OSM Way 422738980). Height estimated for 3D visualization only."
+        "description": "Verified OpenStreetMap building footprint (OSM Way 422738980). Height estimated for 3D visualization only.",
+        "isVerifiedCampusFacility": true,
+        "isUnverified": false
       },
       "geometry": {
         "type": "Polygon",
@@ -1284,7 +1320,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7056193,
           31.2510943
         ],
-        "description": "Verified OpenStreetMap building footprint (OSM Way 422823430). Height estimated for 3D visualization only."
+        "description": "Verified OpenStreetMap building footprint (OSM Way 422823430). Height estimated for 3D visualization only.",
+        "isVerifiedCampusFacility": true,
+        "isUnverified": false
       },
       "geometry": {
         "type": "Polygon",
@@ -1334,7 +1372,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.704787,
           31.2518565
         ],
-        "description": "Verified OpenStreetMap building footprint (OSM Way 422823420). Height estimated for 3D visualization only."
+        "description": "Verified OpenStreetMap building footprint (OSM Way 422823420). Height estimated for 3D visualization only.",
+        "isVerifiedCampusFacility": true,
+        "isUnverified": false
       },
       "geometry": {
         "type": "Polygon",
@@ -1488,7 +1528,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7008035,
           31.2555617
         ],
-        "description": "Verified OpenStreetMap building footprint (OSM Way 422738894). Height estimated for 3D visualization only."
+        "description": "Verified OpenStreetMap building footprint (OSM Way 422738894). Height estimated for 3D visualization only.",
+        "isVerifiedCampusFacility": true,
+        "isUnverified": false
       },
       "geometry": {
         "type": "Polygon",
@@ -1538,7 +1580,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7047192,
           31.2568647
         ],
-        "description": "Verified OpenStreetMap building footprint (OSM Way 422437900). Height estimated for 3D visualization only."
+        "description": "Verified OpenStreetMap building footprint (OSM Way 422437900). Height estimated for 3D visualization only.",
+        "isVerifiedCampusFacility": true,
+        "isUnverified": false
       },
       "geometry": {
         "type": "Polygon",
@@ -1612,7 +1656,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7046659,
           31.2562882
         ],
-        "description": "Verified OpenStreetMap building footprint (OSM Way 422437898). Height estimated for 3D visualization only."
+        "description": "Verified OpenStreetMap building footprint (OSM Way 422437898). Height estimated for 3D visualization only.",
+        "isVerifiedCampusFacility": true,
+        "isUnverified": false
       },
       "geometry": {
         "type": "Polygon",
@@ -1770,7 +1816,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.705587,
           31.2570994
         ],
-        "description": "Verified OpenStreetMap building footprint (OSM Way 425716258). Height estimated for 3D visualization only."
+        "description": "Verified OpenStreetMap building footprint (OSM Way 425716258). Height estimated for 3D visualization only.",
+        "isVerifiedCampusFacility": true,
+        "isUnverified": false
       },
       "geometry": {
         "type": "Polygon",
@@ -1820,7 +1868,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7088599,
           31.2586021
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -1962,7 +2012,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7068854,
           31.2578922
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -2056,7 +2108,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7072683,
           31.2576196
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -2178,7 +2232,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7032054,
           31.2486705
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -2300,7 +2356,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7049979,
           31.2557162
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -2382,7 +2440,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7025067,
           31.2514703
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -2432,7 +2492,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7016802,
           31.2518916
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -2482,7 +2544,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7012022,
           31.2518476
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -2564,7 +2628,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7056536,
           31.2565249
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -2638,7 +2704,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7054314,
           31.2569219
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -2720,7 +2788,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7057004,
           31.2570505
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -2786,7 +2856,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7056932,
           31.2568638
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -2852,7 +2924,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7074927,
           31.2599905
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -2946,7 +3020,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7077333,
           31.2600853
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -3008,7 +3084,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7077737,
           31.2599344
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -3082,7 +3160,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.707869,
           31.2590922
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -3192,7 +3272,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7036029,
           31.2483477
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -3274,7 +3356,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.703837,
           31.2486022
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -3340,7 +3424,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7034272,
           31.2485036
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -3390,7 +3476,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7038542,
           31.2479995
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -3456,7 +3544,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7032784,
           31.2479349
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -3602,7 +3692,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7002384,
           31.249654
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -3812,7 +3904,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6994567,
           31.2486939
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -3990,7 +4084,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6983496,
           31.2494969
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -4072,7 +4168,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.699993,
           31.2513692
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -4186,7 +4284,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7006301,
           31.2536687
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -4276,7 +4376,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7008818,
           31.25388
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -4342,7 +4444,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7008643,
           31.253357
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -4424,7 +4528,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7011562,
           31.2536598
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -4514,7 +4620,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7004258,
           31.2538995
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -4572,7 +4680,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7004233,
           31.2536664
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -4630,7 +4740,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7004153,
           31.2534247
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -4688,7 +4800,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7013302,
           31.2538847
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -4746,7 +4860,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7005223,
           31.2536551
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -4796,7 +4912,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7005259,
           31.2538958
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -4846,7 +4964,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7007613,
           31.2538866
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -4896,7 +5016,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7005131,
           31.2534168
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -4946,7 +5068,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7007558,
           31.2534148
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -4996,7 +5120,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7009948,
           31.253412
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -5046,7 +5172,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7012556,
           31.2534075
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -5096,7 +5224,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7010184,
           31.253881
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -5146,7 +5276,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7012651,
           31.2538747
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -5196,7 +5328,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7012583,
           31.2536427
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -5246,7 +5380,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7009906,
           31.2546928
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -5344,7 +5480,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7014568,
           31.2550446
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -5426,7 +5564,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7013674,
           31.2547385
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -5524,7 +5664,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7038698,
           31.2519593
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -5666,7 +5808,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7040969,
           31.2520576
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -5808,7 +5952,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7042643,
           31.2521756
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -5878,7 +6024,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.708099,
           31.2584703
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -5996,7 +6144,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7013535,
           31.2508716
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -6046,7 +6196,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7004983,
           31.2487487
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -6096,7 +6248,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7013053,
           31.2540958
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -6146,7 +6300,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7001679,
           31.2547441
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -6196,7 +6352,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7005114,
           31.2550821
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -6246,7 +6404,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.700716,
           31.2553511
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -6296,7 +6456,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7008661,
           31.2553722
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -6346,7 +6508,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7006663,
           31.2555509
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -6396,7 +6560,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7007648,
           31.2550821
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -6446,7 +6612,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7002347,
           31.2504513
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -6496,7 +6664,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7005469,
           31.2506348
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -6546,7 +6716,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7037718,
           31.249371
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -6612,7 +6784,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7047406,
           31.2510204
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -6678,7 +6852,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.704804,
           31.2510579
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -6728,7 +6904,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7046626,
           31.25253
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -6790,7 +6968,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7048382,
           31.2527005
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -6864,7 +7044,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7049094,
           31.2526728
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -6930,7 +7112,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7049076,
           31.252631
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -6988,7 +7172,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7049048,
           31.2525942
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -7038,7 +7224,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7047046,
           31.2551026
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -7092,7 +7280,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7077749,
           31.2593094
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -7158,7 +7348,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.708933,
           31.2593564
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -7228,7 +7420,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7028183,
           31.251316
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -7414,7 +7608,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7028456,
           31.251306
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -7540,7 +7736,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7028093,
           31.2515194
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -7734,7 +7932,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7028866,
           31.2515238
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -7788,7 +7988,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7027868,
           31.2515178
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -7842,7 +8044,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7030068,
           31.2513898
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -7956,7 +8160,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7030048,
           31.2513734
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -8038,7 +8244,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7032533,
           31.2514016
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -8136,7 +8344,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7032513,
           31.2513863
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -8210,7 +8420,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.705573,
           31.2568092
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -8260,7 +8472,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7069162,
           31.258075
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -8318,7 +8532,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7049066,
           31.2525078
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -8384,7 +8600,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7079007,
           31.2581946
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -8474,7 +8692,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7079039,
           31.2584032
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -8580,7 +8800,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7049121,
           31.2530686
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -8630,7 +8852,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6988524,
           31.2520381
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -8684,7 +8908,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6986001,
           31.2521779
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -8734,7 +8960,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6985936,
           31.2522841
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -8784,7 +9012,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6985133,
           31.254882
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -8830,7 +9060,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6990181,
           31.252234
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -8880,7 +9112,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6989043,
           31.2522228
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -8930,7 +9164,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6987753,
           31.2522697
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -8996,7 +9232,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6986115,
           31.2520812
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -9046,7 +9284,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6989104,
           31.2520447
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -9096,7 +9336,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6990482,
           31.2520703
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -9146,7 +9388,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.699145,
           31.2522202
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -9196,7 +9440,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6992017,
           31.2522243
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -9246,7 +9492,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6992544,
           31.2522297
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -9296,7 +9544,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6996137,
           31.2521131
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -9346,7 +9596,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6995024,
           31.2521021
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -9396,7 +9648,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6991454,
           31.2520769
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -9446,7 +9700,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6992057,
           31.25208
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -9496,7 +9752,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6993157,
           31.2520913
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -9546,7 +9804,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6992584,
           31.2520841
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -9596,7 +9856,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6996482,
           31.2523946
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -9646,7 +9908,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6995613,
           31.2523828
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -9696,7 +9960,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6994746,
           31.2523714
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -9746,7 +10012,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6992707,
           31.2522427
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -9796,7 +10064,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6993189,
           31.2522495
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -9846,7 +10116,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6991827,
           31.2523411
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -9896,7 +10168,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6992979,
           31.2523548
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -9946,7 +10220,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6985216,
           31.2524018
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -10004,7 +10280,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6987802,
           31.2527649
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -10054,7 +10332,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6992078,
           31.2525233
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -10104,7 +10384,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6980229,
           31.2518125
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -10166,7 +10448,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6981773,
           31.2518615
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -10216,7 +10500,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.69903,
           31.2536582
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -10266,7 +10552,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6997397,
           31.2541135
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -10316,7 +10604,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6993604,
           31.2539211
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -10366,7 +10656,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6994181,
           31.2539985
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -10416,7 +10708,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6992913,
           31.2540384
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -10470,7 +10764,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.699347,
           31.2540348
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -10520,7 +10816,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6995047,
           31.2543695
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -10570,7 +10868,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.699204,
           31.2545164
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -10620,7 +10920,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.698034,
           31.2531416
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -10670,7 +10972,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6980193,
           31.2532937
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -10720,7 +11024,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6980219,
           31.2533714
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -10770,7 +11076,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6992121,
           31.253944
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -10828,7 +11136,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6990829,
           31.2540108
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -10894,7 +11204,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6991519,
           31.2541211
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -10944,7 +11256,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6990482,
           31.2541434
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -10994,7 +11308,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6988897,
           31.2542203
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -11044,7 +11360,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6996061,
           31.2542665
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -11094,7 +11412,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6995336,
           31.2542932
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -11144,7 +11464,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6994197,
           31.2544139
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -11194,7 +11516,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.69933,
           31.2544614
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -11244,7 +11568,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.699095,
           31.2545741
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -11294,7 +11620,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6989893,
           31.2546265
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -11344,7 +11672,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6980861,
           31.254672
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -11394,7 +11724,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6982069,
           31.2546686
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -11448,7 +11780,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6982812,
           31.2547417
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -11498,7 +11832,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6981106,
           31.2547863
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -11548,7 +11884,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6986425,
           31.2540441
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -11598,7 +11936,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6985739,
           31.2539994
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -11648,7 +11988,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6987039,
           31.2542847
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -11698,7 +12040,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6986115,
           31.2543589
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -11748,7 +12092,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6982902,
           31.2543418
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -11798,7 +12144,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6983156,
           31.2541515
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -11848,7 +12196,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6980992,
           31.253935
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -11902,7 +12252,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6981055,
           31.2540165
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -11952,7 +12304,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.69802,
           31.2544037
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -12002,7 +12356,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6978506,
           31.2539826
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -12052,7 +12408,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6980419,
           31.2481429
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -12102,7 +12460,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6982899,
           31.2480793
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -12152,7 +12512,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6980109,
           31.2483543
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -12202,7 +12564,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.6982646,
           31.2537423
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -12252,7 +12616,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7042058,
           31.2521311
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -12366,7 +12732,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7029748,
           31.2515145
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -12420,7 +12788,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7029973,
           31.2515161
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -12614,7 +12984,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7030746,
           31.2515205
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
@@ -12668,7 +13040,9 @@ export const CAMPUS_3D_FOOTPRINTS: Campus3DFeatureCollection = {
           75.7030329,
           31.2512943
         ],
-        "description": "OpenStreetMap verified building footprint."
+        "description": "OpenStreetMap verified building footprint.",
+        "isVerifiedCampusFacility": false,
+        "isUnverified": true
       },
       "geometry": {
         "type": "Polygon",
