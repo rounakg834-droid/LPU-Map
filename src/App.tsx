@@ -643,6 +643,10 @@ function CampusNavigatorView({ navigate }: { navigate: (path: string) => void })
           onSelectFriend={() => setIsFriendSheetOpen(true)}
           roadClosures={roadClosures}
           onOpenConfigModal={() => setIsGoogleConfigOpen(true)}
+          onFallbackTo2D={() => {
+            setMapMode('2d');
+            showToast('Switched to verified 2D Leaflet campus map', 'info');
+          }}
         />
       ) : mapMode === '2d' && !isNavigating ? (
         <CampusMap

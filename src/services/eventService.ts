@@ -15,6 +15,7 @@ import {
   EventReport,
 } from '../types/events';
 import { authService } from './authService';
+import { shouldAttemptApiSync, getApiUrl } from './apiConfig';
 
 const STORAGE_KEY_EVENTS = 'lpu_campus_events_v4';
 const STORAGE_KEY_PRIVATE_META = 'lpu_events_private_metadata_v4';
@@ -34,6 +35,7 @@ class EventService {
   private tickerInterval: number | null = null;
   private firestoreUnsubscribe: (() => void) | null = null;
   private sseSource: EventSource | null = null;
+  private isApiUnavailable = false;
 
   constructor() {
     this.initRealtimeSync();
@@ -121,13 +123,18 @@ class EventService {
     // Load local cache first for instant display
     this.loadLocalEvents();
 
+    // Check if backend API synchronization should even be attempted (false on static hosting like GitHub Pages)
+    if (!shouldAttemptApiSync() || this.isApiUnavailable) {
+      return;
+    }
+
     // Fetch latest shared events from server
     this.fetchSharedServerEvents();
 
     // Connect to Server-Sent Events (SSE) stream for real-time push from other devices
     if (typeof window !== 'undefined' && typeof EventSource !== 'undefined') {
       try {
-        this.sseSource = new EventSource('/api/events/stream');
+        this.sseSource = new EventSource(getApiUrl('/api/events/stream'));
 
         this.sseSource.onmessage = (e) => {
           try {
@@ -144,7 +151,12 @@ class EventService {
         };
 
         this.sseSource.onerror = () => {
-          // Reconnection is handled automatically by browser EventSource
+          // Immediately close on connection error/404 to prevent endless reconnect loop on static hosts
+          if (this.sseSource) {
+            this.sseSource.close();
+            this.sseSource = null;
+          }
+          this.isApiUnavailable = true;
         };
       } catch (err) {
         console.warn('SSE connection initialization skipped:', err);
@@ -177,9 +189,18 @@ class EventService {
    * Fetch authoritative shared events from local server
    */
   private async fetchSharedServerEvents() {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined' || !shouldAttemptApiSync() || this.isApiUnavailable) return;
     try {
-      const res = await fetch('/api/events');
+      const res = await fetch(getApiUrl('/api/events'));
+      if (res.status === 404) {
+        // Backend endpoint not available on this host; disable future requests
+        this.isApiUnavailable = true;
+        if (this.sseSource) {
+          this.sseSource.close();
+          this.sseSource = null;
+        }
+        return;
+      }
       if (res.ok) {
         const data = await res.json();
         const serverEvents: PublicCampusEvent[] = data.events || [];
@@ -537,10 +558,10 @@ class EventService {
     if (isFirebaseConfigured && db) {
       await setDoc(doc(db, 'events', eventId), publicEvent);
       await setDoc(doc(db, 'event_private_metadata', eventId), privateMeta);
-    } else {
-      // 2. Local Shared Campus Server API
+    } else if (shouldAttemptApiSync() && !this.isApiUnavailable) {
+      // 2. Local Shared Campus Server API (when backend is available)
       try {
-        await fetch('/api/events', {
+        const res = await fetch(getApiUrl('/api/events'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -548,6 +569,9 @@ class EventService {
             metadata: privateMeta
           })
         });
+        if (res.status === 404) {
+          this.isApiUnavailable = true;
+        }
       } catch (err) {
         console.warn('Local API create fallback:', err);
       }
@@ -633,13 +657,14 @@ class EventService {
       await updateDoc(doc(db, 'events', eventId), {
         reportCount: (event.reportCount || 0) + 1,
       });
-    } else {
+    } else if (shouldAttemptApiSync() && !this.isApiUnavailable) {
       try {
-        await fetch('/api/events/report', {
+        const res = await fetch(getApiUrl('/api/events/report'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(report)
         });
+        if (res.status === 404) this.isApiUnavailable = true;
       } catch (e) {
         console.warn('Local API report fallback:', e);
       }
@@ -708,11 +733,13 @@ class EventService {
       } catch (e) {
         console.warn('Firestore admin read fallback:', e);
       }
-    } else {
+    } else if (shouldAttemptApiSync() && !this.isApiUnavailable) {
       // 2. Local Shared Campus Server API
       try {
-        const res = await fetch('/api/events');
-        if (res.ok) {
+        const res = await fetch(getApiUrl('/api/events'));
+        if (res.status === 404) {
+          this.isApiUnavailable = true;
+        } else if (res.ok) {
           const data = await res.json();
           events = data.events || [];
           metadata = data.metadata || [];
@@ -764,21 +791,32 @@ class EventService {
         moderationReason: reason,
         removedBy: removedBy,
       });
-    } else {
+    } else if (shouldAttemptApiSync() && !this.isApiUnavailable) {
       // Local Shared Campus Server API
-      const res = await fetch('/api/events/remove', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          eventId,
-          reason,
-          removedBy,
-        }),
-      });
+      try {
+        const res = await fetch(getApiUrl('/api/events/remove'), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            eventId,
+            reason,
+            removedBy,
+          }),
+        });
 
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.error || `Failed to remove event: Server returned HTTP ${res.status}`);
+        if (!res.ok) {
+          if (res.status === 404) {
+            this.isApiUnavailable = true;
+          } else {
+            const errData = await res.json().catch(() => ({}));
+            throw new Error(errData.error || `Failed to remove event: Server returned HTTP ${res.status}`);
+          }
+        }
+      } catch (err: any) {
+        if (err?.message?.includes('Failed to remove event')) {
+          throw err;
+        }
+        console.warn('Local remove fallback:', err);
       }
     }
 

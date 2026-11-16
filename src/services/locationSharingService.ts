@@ -27,6 +27,7 @@ import {
   Unsubscribe
 } from 'firebase/firestore';
 import { authService } from './authService';
+import { shouldAttemptApiSync, getApiUrl } from './apiConfig';
 
 const LOCATION_SHARES_COLLECTION = 'location_shares';
 const ACTIVE_SHARE_STORAGE_KEY = 'lpu_active_my_location_share';
@@ -117,13 +118,15 @@ class LocationSharingService {
     }
 
     // 3. Sync to local shared campus backend (cross-browser & mobile Wi-Fi sync)
-    try {
-      await fetch('/api/shares', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ share })
-      }).catch(() => {});
-    } catch {}
+    if (shouldAttemptApiSync()) {
+      try {
+        await fetch(getApiUrl('/api/shares'), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ share })
+        }).catch(() => {});
+      } catch {}
+    }
 
     // 4. Save to Firebase Firestore if configured
     if (isFirebaseConfigured && db) {
@@ -199,13 +202,15 @@ class LocationSharingService {
     }
 
     // 3. Sync to local shared campus backend
-    try {
-      fetch('/api/shares/coords', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token, coords: updatedCoords })
-      }).catch(() => {});
-    } catch {}
+    if (shouldAttemptApiSync()) {
+      try {
+        fetch(getApiUrl('/api/shares/coords'), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token, coords: updatedCoords })
+        }).catch(() => {});
+      } catch {}
+    }
 
     // 4. Update Firebase Firestore if configured
     if (isFirebaseConfigured && db) {
@@ -239,13 +244,15 @@ class LocationSharingService {
     }
 
     // 2. Sync revocation to local shared campus backend
-    try {
-      await fetch('/api/shares/revoke', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token })
-      }).catch(() => {});
-    } catch {}
+    if (shouldAttemptApiSync()) {
+      try {
+        await fetch(getApiUrl('/api/shares/revoke'), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token })
+        }).catch(() => {});
+      } catch {}
+    }
 
     // 3. Update Firestore if configured
     if (isFirebaseConfigured && db) {
@@ -322,53 +329,65 @@ class LocationSharingService {
       console.warn('Error reading friend local share:', e);
     }
 
-    // 2. Initial fetch from local shared server
-    fetch(`/api/shares?token=${encodeURIComponent(token)}`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (isCancelled) return;
-        if (data && data.success && data.share) {
-          handleShareData(data.share);
-          try {
-            localStorage.setItem(`lpu_share_record_${token}`, JSON.stringify(data.share));
-          } catch {}
-        }
-      })
-      .catch(() => {});
+    // 2. Initial fetch from local shared server (when backend is available)
+    if (shouldAttemptApiSync()) {
+      fetch(getApiUrl(`/api/shares?token=${encodeURIComponent(token)}`))
+        .then((res) => {
+          if (res.ok) return res.json();
+          return null;
+        })
+        .then((data) => {
+          if (isCancelled || !data) return;
+          if (data && data.success && data.share) {
+            handleShareData(data.share);
+            try {
+              localStorage.setItem(`lpu_share_record_${token}`, JSON.stringify(data.share));
+            } catch {}
+          }
+        })
+        .catch(() => {});
 
-    // 3. Listen to Server-Sent Events (SSE) for multi-device LAN sync
-    if (typeof window !== 'undefined' && 'EventSource' in window) {
-      try {
-        eventSource = new EventSource('/api/events/stream');
-        eventSource.onmessage = (event) => {
-          if (isCancelled || !event.data) return;
-          try {
-            const parsed = JSON.parse(event.data);
-            if (parsed.type === 'SHARE_MUTATION') {
-              const { action, share, token: evtToken, coords } = parsed.payload || {};
-              if (action === 'create' && share && share.token === token) {
-                handleShareData(share);
-              } else if (action === 'update_coords' && evtToken === token && coords) {
-                if (currentShare) {
-                  const updated = { ...currentShare, coords };
-                  handleShareData(updated);
-                } else {
-                  // Fetch fresh share record
-                  fetch(`/api/shares?token=${encodeURIComponent(token)}`)
-                    .then((r) => r.json())
-                    .then((d) => d?.share && handleShareData(d.share))
-                    .catch(() => {});
-                }
-              } else if (action === 'revoke' && evtToken === token) {
-                if (currentShare) {
-                  handleShareData({ ...currentShare, revoked: true });
+      // 3. Listen to Server-Sent Events (SSE) for multi-device LAN sync
+      if (typeof window !== 'undefined' && 'EventSource' in window) {
+        try {
+          eventSource = new EventSource(getApiUrl('/api/events/stream'));
+          eventSource.onmessage = (event) => {
+            if (isCancelled || !event.data) return;
+            try {
+              const parsed = JSON.parse(event.data);
+              if (parsed.type === 'SHARE_MUTATION') {
+                const { action, share, token: evtToken, coords } = parsed.payload || {};
+                if (action === 'create' && share && share.token === token) {
+                  handleShareData(share);
+                } else if (action === 'update_coords' && evtToken === token && coords) {
+                  if (currentShare) {
+                    const updated = { ...currentShare, coords };
+                    handleShareData(updated);
+                  } else {
+                    // Fetch fresh share record
+                    fetch(getApiUrl(`/api/shares?token=${encodeURIComponent(token)}`))
+                      .then((r) => r.json())
+                      .then((d) => d?.share && handleShareData(d.share))
+                      .catch(() => {});
+                  }
+                } else if (action === 'revoke' && evtToken === token) {
+                  if (currentShare) {
+                    handleShareData({ ...currentShare, revoked: true });
+                  }
                 }
               }
+            } catch {}
+          };
+          eventSource.onerror = () => {
+            // Close immediately on static hosts / connection errors to prevent reconnect loops
+            if (eventSource) {
+              eventSource.close();
+              eventSource = null;
             }
-          } catch {}
-        };
-      } catch (e) {
-        console.warn('SSE subscription failed for friend share:', e);
+          };
+        } catch (e) {
+          console.warn('SSE subscription skipped for friend share:', e);
+        }
       }
     }
 

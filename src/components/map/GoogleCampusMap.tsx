@@ -39,6 +39,7 @@ interface GoogleCampusMapProps {
   onSelectFriend?: () => void;
   roadClosures?: RoadClosure[];
   onOpenConfigModal: () => void;
+  onFallbackTo2D: () => void;
 }
 
 export const GoogleCampusMap: React.FC<GoogleCampusMapProps> = ({
@@ -61,9 +62,12 @@ export const GoogleCampusMap: React.FC<GoogleCampusMapProps> = ({
   onSelectFriend,
   roadClosures = [],
   onOpenConfigModal,
+  onFallbackTo2D,
 }) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
+  const mapsLibRef = useRef<any>(null);
+  const markerClassRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
   const routePolylineRef = useRef<any>(null);
   const userMarkerRef = useRef<any>(null);
@@ -73,119 +77,129 @@ export const GoogleCampusMap: React.FC<GoogleCampusMapProps> = ({
   const [loadError, setLoadError] = useState<string | null>(null);
   const [mapTilt, setMapTilt] = useState<number>(0);
 
-  // Check and load Google Maps Script
+  // Initialize Map Instance only after the container exists in DOM
   useEffect(() => {
     let isMounted = true;
 
-    const checkAndInit = async () => {
+    async function initGoogleMaps() {
+      // Container existence guard
+      if (!mapContainerRef.current) {
+        return;
+      }
+
+      if (mapInstanceRef.current) {
+        return;
+      }
+
       if (!googleMapsService.isConfigured()) {
         if (isMounted) {
           setIsLoaded(false);
-          setLoadError('Google Maps API key is unconfigured. Click below to add your API key.');
+          setLoadError('Google Maps API key is not configured. Add your key or switch to the 2D Leaflet map.');
         }
         return;
       }
 
-      setLoadError(null);
-      const ready = await googleMapsService.load();
-      if (!isMounted) return;
+      try {
+        setLoadError(null);
 
-      if (ready && window.google?.maps) {
+        // Official Google Maps dynamic library loader import
+        const mapsLib = await googleMapsService.importLibrary('maps');
+        const markerLib = await googleMapsService.importLibrary('marker');
+
+        if (!isMounted || !mapContainerRef.current) return;
+
+        const MapClass = mapsLib?.Map || (window as any).google?.maps?.Map;
+        if (typeof MapClass !== 'function') {
+          throw new Error('Google Maps Map class could not be resolved as a constructor.');
+        }
+
+        mapsLibRef.current = mapsLib;
+        markerClassRef.current = markerLib?.Marker || (window as any).google?.maps?.Marker;
+
+        const map = new MapClass(mapContainerRef.current, {
+          center: { lat: LPU_CAMPUS_CENTER.lat, lng: LPU_CAMPUS_CENTER.lng },
+          zoom: 16,
+          minZoom: 14,
+          maxZoom: 20,
+          mapTypeId: 'roadmap',
+          disableDefaultUI: true,
+          gestureHandling: 'greedy',
+          clickableIcons: true,
+          restriction: {
+            latLngBounds: {
+              north: LPU_CAMPUS_BOUNDS.northEast.lat,
+              south: LPU_CAMPUS_BOUNDS.southWest.lat,
+              east: LPU_CAMPUS_BOUNDS.northEast.lng,
+              west: LPU_CAMPUS_BOUNDS.southWest.lng,
+            },
+            strictBounds: false,
+          },
+          styles: [
+            {
+              featureType: 'poi.business',
+              stylers: [{ visibility: 'simplified' }],
+            },
+            {
+              featureType: 'poi.school',
+              elementType: 'geometry',
+              stylers: [{ color: '#f1f5f9' }],
+            },
+            {
+              featureType: 'road',
+              elementType: 'geometry',
+              stylers: [{ lightness: 5 }],
+            },
+          ],
+        });
+
+        map.addListener('dragstart', () => {
+          onSetIsFollowing?.(false);
+        });
+
+        mapInstanceRef.current = map;
         setIsLoaded(true);
-      } else {
+      } catch (err: any) {
+        if (!isMounted) return;
+        console.error('Google Maps initialization failed:', err?.message || err);
         setIsLoaded(false);
-        setLoadError(googleMapsService.getErrorMessage() || 'Failed to initialize Google Maps Platform.');
+        setLoadError(err?.message || 'Google Maps failed to initialize. You can switch to the 2D Leaflet map.');
       }
-    };
+    }
 
-    checkAndInit();
+    initGoogleMaps();
 
     const unsub = googleMapsService.subscribe((status, err) => {
       if (!isMounted) return;
-      if (status === 'ready') {
-        setIsLoaded(true);
-        setLoadError(null);
-      } else if (status === 'error') {
+      if (status === 'error') {
         setIsLoaded(false);
-        setLoadError(err || 'Google Maps authorization error.');
+        setLoadError(err || 'Google Maps authentication failed.');
+      } else if (status === 'ready' && !mapInstanceRef.current) {
+        initGoogleMaps();
       }
     });
 
     return () => {
       isMounted = false;
       unsub();
-    };
-  }, []);
-
-  // Initialize Map Instance
-  useEffect(() => {
-    if (!isLoaded || !mapContainerRef.current || mapInstanceRef.current || !window.google?.maps) {
-      return;
-    }
-
-    try {
-      const map = new window.google.maps.Map(mapContainerRef.current, {
-        center: { lat: LPU_CAMPUS_CENTER.lat, lng: LPU_CAMPUS_CENTER.lng },
-        zoom: 16,
-        minZoom: 14,
-        maxZoom: 20,
-        mapTypeId: 'roadmap',
-        disableDefaultUI: true,
-        gestureHandling: 'greedy',
-        clickableIcons: true,
-        restriction: {
-          latLngBounds: {
-            north: LPU_CAMPUS_BOUNDS.northEast.lat,
-            south: LPU_CAMPUS_BOUNDS.southWest.lat,
-            east: LPU_CAMPUS_BOUNDS.northEast.lng,
-            west: LPU_CAMPUS_BOUNDS.southWest.lng,
-          },
-          strictBounds: false,
-        },
-        styles: [
-          {
-            featureType: 'poi.business',
-            stylers: [{ visibility: 'simplified' }],
-          },
-          {
-            featureType: 'poi.school',
-            elementType: 'geometry',
-            stylers: [{ color: '#f1f5f9' }],
-          },
-          {
-            featureType: 'road',
-            elementType: 'geometry',
-            stylers: [{ lightness: 5 }],
-          },
-        ],
-      });
-
-      map.addListener('dragstart', () => {
-        onSetIsFollowing?.(false);
-      });
-
-      mapInstanceRef.current = map;
-    } catch (e: any) {
-      console.error('Error creating Google Maps instance:', e);
-      setLoadError(e?.message || 'Error initializing map canvas.');
-    }
-
-    return () => {
-      // Cleanup map references
       if (mapInstanceRef.current) {
         mapInstanceRef.current = null;
       }
     };
-  }, [isLoaded, onSetIsFollowing]);
+  }, [onSetIsFollowing]);
 
   // Handle Location & Event Markers
   useEffect(() => {
     const map = mapInstanceRef.current;
-    if (!map || !window.google?.maps) return;
+    if (!map) return;
 
     // Clear previous markers
     markersRef.current.forEach((m) => m.setMap(null));
     markersRef.current = [];
+
+    const MarkerClass = markerClassRef.current || (window as any).google?.maps?.Marker;
+    const SymbolPath = (window as any).google?.maps?.SymbolPath;
+
+    if (!MarkerClass || !SymbolPath) return;
 
     // Filter campus locations
     const visibleLocations = locations.filter((loc) => {
@@ -205,12 +219,12 @@ export const GoogleCampusMap: React.FC<GoogleCampusMapProps> = ({
       const fillColor = isBuilding41 ? '#f59e0b' : isSelected ? '#2563eb' : '#0f172a';
       const scale = isSelected ? 9 : isBuilding41 ? 8 : 6;
 
-      const marker = new window.google.maps.Marker({
+      const marker = new MarkerClass({
         position: { lat: markerPosition.lat, lng: markerPosition.lng },
         map,
         title: loc.shortName || loc.name,
         icon: {
-          path: window.google.maps.SymbolPath.CIRCLE,
+          path: SymbolPath.CIRCLE,
           fillColor: fillColor,
           fillOpacity: 0.95,
           scale: scale,
@@ -232,12 +246,12 @@ export const GoogleCampusMap: React.FC<GoogleCampusMapProps> = ({
       if (!evt.coordinates) return;
       const isSelected = selectedEvent?.id === evt.id;
 
-      const evtMarker = new window.google.maps.Marker({
+      const evtMarker = new MarkerClass({
         position: { lat: evt.coordinates.lat, lng: evt.coordinates.lng },
         map,
         title: `Event: ${evt.title}`,
         icon: {
-          path: window.google.maps.SymbolPath.BACKWARD_CLOSED_ARROW,
+          path: SymbolPath.BACKWARD_CLOSED_ARROW,
           fillColor: isSelected ? '#dc2626' : '#ea580c',
           fillOpacity: 1,
           scale: 5,
@@ -256,7 +270,7 @@ export const GoogleCampusMap: React.FC<GoogleCampusMapProps> = ({
 
     // Friend live marker (Phase 5 & 7 "Meet My Friend")
     if (friendShare && friendShare.coords) {
-      const friendMarker = new window.google.maps.Marker({
+      const friendMarker = new MarkerClass({
         position: {
           lat: friendShare.coords.lat,
           lng: friendShare.coords.lng,
@@ -264,7 +278,7 @@ export const GoogleCampusMap: React.FC<GoogleCampusMapProps> = ({
         map,
         title: `${friendShare.creatorDisplayName}'s Live GPS`,
         icon: {
-          path: window.google.maps.SymbolPath.CIRCLE,
+          path: SymbolPath.CIRCLE,
           fillColor: '#10b981',
           fillOpacity: 1,
           scale: 9,
@@ -290,12 +304,12 @@ export const GoogleCampusMap: React.FC<GoogleCampusMapProps> = ({
       const midLat = (nodeA.coords.lat + nodeB.coords.lat) / 2;
       const midLng = (nodeA.coords.lng + nodeB.coords.lng) / 2;
 
-      const closureMarker = new window.google.maps.Marker({
+      const closureMarker = new MarkerClass({
         position: { lat: midLat, lng: midLng },
         map,
         title: `Closed: ${closure.title} - ${closure.reason}`,
         icon: {
-          path: window.google.maps.SymbolPath.CIRCLE,
+          path: SymbolPath.CIRCLE,
           fillColor: '#ef4444',
           fillOpacity: 0.9,
           scale: 6,
@@ -323,7 +337,7 @@ export const GoogleCampusMap: React.FC<GoogleCampusMapProps> = ({
   // Handle Active Route Polyline
   useEffect(() => {
     const map = mapInstanceRef.current;
-    if (!map || !window.google?.maps) return;
+    if (!map) return;
 
     if (routePolylineRef.current) {
       routePolylineRef.current.setMap(null);
@@ -334,12 +348,17 @@ export const GoogleCampusMap: React.FC<GoogleCampusMapProps> = ({
       return;
     }
 
+    const PolylineClass = mapsLibRef.current?.Polyline || (window as any).google?.maps?.Polyline;
+    const LatLngBoundsClass = mapsLibRef.current?.LatLngBounds || (window as any).google?.maps?.LatLngBounds;
+
+    if (!PolylineClass) return;
+
     const path = activeRoute.pathCoordinates.map((pt) => ({
       lat: pt.lat,
       lng: pt.lng,
     }));
 
-    const polyline = new window.google.maps.Polyline({
+    const polyline = new PolylineClass({
       path,
       geodesic: true,
       strokeColor: '#2563eb',
@@ -352,9 +371,9 @@ export const GoogleCampusMap: React.FC<GoogleCampusMapProps> = ({
     routePolylineRef.current = polyline;
 
     // Fit map bounds to route upon creation if user is not currently navigating
-    if (!isNavigating && path.length > 0) {
-      const bounds = new window.google.maps.LatLngBounds();
-      path.forEach((pt) => bounds.extend(pt));
+    if (!isNavigating && path.length > 0 && LatLngBoundsClass) {
+      const bounds = new LatLngBoundsClass();
+      path.forEach((pt: any) => bounds.extend(pt));
       map.fitBounds(bounds, {
         top: 60,
         bottom: 120,
@@ -367,7 +386,7 @@ export const GoogleCampusMap: React.FC<GoogleCampusMapProps> = ({
   // Handle User Location Puck & Heading
   useEffect(() => {
     const map = mapInstanceRef.current;
-    if (!map || !window.google?.maps || !userPosition) {
+    if (!map || !userPosition) {
       if (userMarkerRef.current) {
         userMarkerRef.current.setMap(null);
         userMarkerRef.current = null;
@@ -379,6 +398,12 @@ export const GoogleCampusMap: React.FC<GoogleCampusMapProps> = ({
       return;
     }
 
+    const CircleClass = mapsLibRef.current?.Circle || (window as any).google?.maps?.Circle;
+    const MarkerClass = markerClassRef.current || (window as any).google?.maps?.Marker;
+    const SymbolPath = (window as any).google?.maps?.SymbolPath;
+
+    if (!MarkerClass || !CircleClass || !SymbolPath) return;
+
     const userCoord = {
       lat: userPosition.coords.latitude,
       lng: userPosition.coords.longitude,
@@ -386,7 +411,7 @@ export const GoogleCampusMap: React.FC<GoogleCampusMapProps> = ({
 
     // User GPS accuracy circle
     if (!userAccuracyCircleRef.current) {
-      userAccuracyCircleRef.current = new window.google.maps.Circle({
+      userAccuracyCircleRef.current = new CircleClass({
         strokeColor: '#3b82f6',
         strokeOpacity: 0.3,
         strokeWeight: 1,
@@ -405,7 +430,7 @@ export const GoogleCampusMap: React.FC<GoogleCampusMapProps> = ({
     // User directional arrow icon
     const rotation = heading !== null && !isNaN(heading) ? heading : 0;
     const arrowSymbol = {
-      path: window.google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+      path: SymbolPath.FORWARD_CLOSED_ARROW,
       fillColor: '#2563eb',
       fillOpacity: 1,
       scale: 5,
@@ -415,7 +440,7 @@ export const GoogleCampusMap: React.FC<GoogleCampusMapProps> = ({
     };
 
     if (!userMarkerRef.current) {
-      userMarkerRef.current = new window.google.maps.Marker({
+      userMarkerRef.current = new MarkerClass({
         position: userCoord,
         map,
         title: 'Your Location',
@@ -499,7 +524,7 @@ export const GoogleCampusMap: React.FC<GoogleCampusMapProps> = ({
 
             <div className="space-y-1.5">
               <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                Google Maps Platform Setup Required
+                Google Maps Platform
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
                 {loadError || 'Add your Google Maps API key to access real Google road networks, building outlines, and Places API.'}
@@ -509,8 +534,16 @@ export const GoogleCampusMap: React.FC<GoogleCampusMapProps> = ({
             <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-2">
               <button
                 type="button"
+                onClick={onFallbackTo2D}
+                className="w-full sm:w-auto px-5 py-2.5 bg-slate-900 hover:bg-black dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-900 text-xs font-semibold rounded-2xl shadow-sm transition flex items-center justify-center space-x-1.5"
+              >
+                <Layers className="w-3.5 h-3.5" />
+                <span>Switch to 2D Leaflet Map</span>
+              </button>
+              <button
+                type="button"
                 onClick={onOpenConfigModal}
-                className="w-full sm:w-auto px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-2xl shadow-sm transition flex items-center justify-center space-x-1.5"
+                className="w-full sm:w-auto px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-2xl shadow-sm transition flex items-center justify-center space-x-1.5"
               >
                 <Settings className="w-3.5 h-3.5" />
                 <span>Configure API Key</span>
@@ -518,7 +551,7 @@ export const GoogleCampusMap: React.FC<GoogleCampusMapProps> = ({
             </div>
 
             <p className="text-[11px] text-slate-400 dark:text-slate-500">
-              You can also switch to the <strong>2D</strong> or <strong>3D</strong> buttons in the top right to use the verified offline-ready campus map engine.
+              The 2D Leaflet map is fully offline-ready and verified with all campus road networks and building numbers.
             </p>
           </div>
         </div>

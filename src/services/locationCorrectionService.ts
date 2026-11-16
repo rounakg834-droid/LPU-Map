@@ -1,5 +1,6 @@
 import { CampusLocation, Coordinates, LocationCorrection } from '../types/location';
 import { authService } from './authService';
+import { shouldAttemptApiSync, getApiUrl } from './apiConfig';
 
 const STORAGE_KEY = 'lpu_location_corrections_v1';
 const API_BASE = '/api/locations';
@@ -9,6 +10,7 @@ class LocationCorrectionService {
   private subscribers: Set<() => void> = new Set();
   private isLoaded = false;
   private sseSource: EventSource | null = null;
+  private isApiUnavailable = false;
 
   constructor() {
     this.initLocalStorage();
@@ -54,10 +56,10 @@ class LocationCorrectionService {
   }
 
   private initSSE() {
-    if (typeof window === 'undefined' || !window.EventSource) return;
+    if (typeof window === 'undefined' || !window.EventSource || !shouldAttemptApiSync() || this.isApiUnavailable) return;
 
     try {
-      this.sseSource = new EventSource('/api/events/stream');
+      this.sseSource = new EventSource(getApiUrl('/api/events/stream'));
       this.sseSource.onmessage = (event) => {
         try {
           const payload = JSON.parse(event.data);
@@ -79,7 +81,12 @@ class LocationCorrectionService {
       };
 
       this.sseSource.onerror = () => {
-        // SSE will auto-retry
+        // Close immediately on static hosts / connection errors to prevent reconnect loops
+        if (this.sseSource) {
+          this.sseSource.close();
+          this.sseSource = null;
+        }
+        this.isApiUnavailable = true;
       };
     } catch (err) {
       console.warn('SSE connection failed for location corrections:', err);
@@ -87,9 +94,20 @@ class LocationCorrectionService {
   }
 
   public async loadCorrections(): Promise<LocationCorrection[]> {
+    if (!shouldAttemptApiSync() || this.isApiUnavailable) {
+      this.isLoaded = true;
+      return Array.from(this.corrections.values());
+    }
+
     try {
-      const res = await fetch(`${API_BASE}/corrections`);
-      if (res.ok) {
+      const res = await fetch(getApiUrl(`${API_BASE}/corrections`));
+      if (res.status === 404) {
+        this.isApiUnavailable = true;
+        if (this.sseSource) {
+          this.sseSource.close();
+          this.sseSource = null;
+        }
+      } else if (res.ok) {
         const data = await res.json();
         if (data.success && Array.isArray(data.corrections)) {
           this.corrections.clear();
@@ -143,45 +161,51 @@ class LocationCorrectionService {
       notes: notes || 'Verified entrance coordinates via on-ground Google Maps survey',
     };
 
-    try {
-      const res = await fetch(`${API_BASE}/confirm-entrance`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer admin-authenticated',
-        },
-        body: JSON.stringify(payload),
-      });
+    if (shouldAttemptApiSync() && !this.isApiUnavailable) {
+      try {
+        const res = await fetch(getApiUrl(`${API_BASE}/confirm-entrance`), {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer admin-authenticated',
+          },
+          body: JSON.stringify(payload),
+        });
 
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Failed to persist entrance coordinates on campus server');
+        if (res.status === 404) {
+          this.isApiUnavailable = true;
+        } else if (!res.ok) {
+          const errorData = await res.json().catch(() => ({}));
+          throw new Error(errorData.error || 'Failed to persist entrance coordinates on campus server');
+        } else {
+          const data = await res.json();
+          const confirmed = data.correction as LocationCorrection;
+          this.corrections.set(locationId, confirmed);
+          this.persistLocal();
+          this.notifySubscribers();
+          return confirmed;
+        }
+      } catch (err: any) {
+        if (err?.message?.includes('Failed to persist')) {
+          throw err;
+        }
+        console.warn('API sync unavailable; persisting entrance locally:', err);
       }
-
-      const data = await res.json();
-      const confirmed = data.correction as LocationCorrection;
-      this.corrections.set(locationId, confirmed);
-      this.persistLocal();
-      this.notifySubscribers();
-      return confirmed;
-    } catch (err: any) {
-      // If network is offline, save locally if authenticated
-      if (authService.isAdmin()) {
-        const fallbackCorrection: LocationCorrection = {
-          locationId,
-          entranceCoordinates,
-          isConfirmed: true,
-          confirmedAt: new Date().toISOString(),
-          confirmedBy,
-          notes: payload.notes,
-        };
-        this.corrections.set(locationId, fallbackCorrection);
-        this.persistLocal();
-        this.notifySubscribers();
-        return fallbackCorrection;
-      }
-      throw err;
     }
+
+    // Persist locally for authenticated administrator
+    const localCorrection: LocationCorrection = {
+      locationId,
+      entranceCoordinates,
+      isConfirmed: true,
+      confirmedAt: new Date().toISOString(),
+      confirmedBy,
+      notes: payload.notes,
+    };
+    this.corrections.set(locationId, localCorrection);
+    this.persistLocal();
+    this.notifySubscribers();
+    return localCorrection;
   }
 
   /**
@@ -192,30 +216,28 @@ class LocationCorrectionService {
       throw new Error('Unauthorized: University administrator privileges required.');
     }
 
-    try {
-      const res = await fetch(`${API_BASE}/revert-entrance`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer admin-authenticated',
-        },
-        body: JSON.stringify({ locationId, adminToken: 'admin-authenticated' }),
-      });
-
-      if (!res.ok) {
-        throw new Error('Failed to revert entrance confirmation on server');
+    if (shouldAttemptApiSync() && !this.isApiUnavailable) {
+      try {
+        const res = await fetch(getApiUrl(`${API_BASE}/revert-entrance`), {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer admin-authenticated',
+          },
+          body: JSON.stringify({ locationId, adminToken: 'admin-authenticated' }),
+        });
+        if (res.status === 404) {
+          this.isApiUnavailable = true;
+        }
+      } catch (e) {
+        console.warn('API sync unavailable; reverting locally:', e);
       }
-
-      this.corrections.delete(locationId);
-      this.persistLocal();
-      this.notifySubscribers();
-      return true;
-    } catch {
-      this.corrections.delete(locationId);
-      this.persistLocal();
-      this.notifySubscribers();
-      return true;
     }
+
+    this.corrections.delete(locationId);
+    this.persistLocal();
+    this.notifySubscribers();
+    return true;
   }
 
   /**
