@@ -4,7 +4,7 @@ import L from 'leaflet';
 import { CampusLocation, LocationCategory } from '../../types/location';
 
 interface LocationMarkersProps {
-  locations: CampusLocation[];
+  locations?: CampusLocation[];
   selectedLocation: CampusLocation | null;
   onSelectLocation: (loc: CampusLocation) => void;
   selectedCategory?: LocationCategory | 'all';
@@ -55,10 +55,8 @@ function getPinLabel(loc: CampusLocation): string {
 }
 
 export const LocationMarkers: React.FC<LocationMarkersProps> = ({
-  locations,
   selectedLocation,
   onSelectLocation,
-  selectedCategory = 'all',
 }) => {
   const map = useMap();
   const [currentZoom, setCurrentZoom] = useState<number>(map.getZoom());
@@ -73,29 +71,22 @@ export const LocationMarkers: React.FC<LocationMarkersProps> = ({
     };
   }, [map]);
 
-  // Filter only locations with verified coordinates that are not awaiting field survey
-  const validLocations = useMemo(() => {
-    return locations.filter((loc) => loc.coordinates !== undefined && !loc.isAwaitingFieldSurvey);
-  }, [locations]);
-
-  // Level-of-Detail (LOD) & Overlap Prevention:
-  // Dynamically filter markers by zoom tier, but always preserve selected place or filtered category
+  // Public 2D Foundation:
+  // Hide ALL old custom building number markers (34, 36, 38, BH-1, etc.) and unverified custom gate markers from public map.
+  // Only display a single focused marker when the user explicitly selects a verified destination via search.
+  // Building 41 entrance coordinate (31.251697, 75.701877) is preserved in database, but public marker is hidden until approved.
   const visibleLocations = useMemo(() => {
-    return validLocations.filter((loc) => {
-      // 1. Currently selected place is ALWAYS visible
-      if (selectedLocation?.id === loc.id) return true;
+    if (!selectedLocation || !selectedLocation.coordinates) {
+      return [];
+    }
 
-      // 2. Active specific category filter ALWAYS displays all its items
-      if (selectedCategory !== 'all' && loc.category === selectedCategory) return true;
+    // Preserve Building 41 in DB, but hide public marker until approved for display
+    if (selectedLocation.id === 'building-41' && !selectedLocation.isEntranceConfirmed) {
+      return [];
+    }
 
-      // 3. Zoom-dependent visibility tier:
-      // Tier 1 (Campus Anchors): visible at zoom >= 14
-      // Tier 2 (Academic Blocks & Main Zones): visible at zoom >= 16
-      // Tier 3 (Individual Hostels & Kiosks): visible at zoom >= 17
-      const requiredZoom = loc.minZoom || 17;
-      return currentZoom >= requiredZoom;
-    });
-  }, [validLocations, selectedLocation, selectedCategory, currentZoom]);
+    return [selectedLocation];
+  }, [selectedLocation]);
 
   // Create custom marker icons scaled smoothly by zoom
   const createCustomIcon = (loc: CampusLocation, isSelected: boolean) => {
@@ -144,42 +135,12 @@ export const LocationMarkers: React.FC<LocationMarkersProps> = ({
     });
   };
 
-  // Distinct icon for pedestrian entrance gates (separate geographic object from building footprint)
-  const createEntranceIcon = (isConfirmed: boolean) => {
-    const color = isConfirmed ? '#059669' : '#d97706';
-    const html = `
-      <div class="relative group cursor-pointer flex flex-col items-center justify-center">
-        <div style="background-color: ${color}; width: 28px; height: 28px;"
-             class="rounded-[9px] shadow-[0_3px_10px_rgba(0,0,0,0.25)] border-[1.5px] border-white flex items-center justify-center text-white font-bold transition-all duration-150 transform group-hover:scale-110">
-          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M13.8 12H3"/>
-          </svg>
-        </div>
-        <div style="border-top-color: ${color};" class="w-0 h-0 border-l-[3.5px] border-l-transparent border-r-[3.5px] border-r-transparent border-t-[4px] -mt-[0.5px]"></div>
-      </div>
-    `;
-
-    return L.divIcon({
-      html,
-      className: 'custom-entrance-marker',
-      iconSize: [28, 32],
-      iconAnchor: [14, 31],
-      tooltipAnchor: [0, -29],
-    });
-  };
-
   return (
     <>
       {visibleLocations.map((loc) => {
         if (!loc.coordinates) return null;
         const isSelected = selectedLocation?.id === loc.id;
         const icon = createCustomIcon(loc, isSelected);
-
-        const entranceCoord = loc.entranceCoordinates || (loc.proposedEntrance ? { lat: loc.proposedEntrance.lat, lng: loc.proposedEntrance.lng } : null);
-        const isEntranceDistinct = entranceCoord && (
-          Math.abs(entranceCoord.lat - loc.coordinates.lat) > 0.00005 ||
-          Math.abs(entranceCoord.lng - loc.coordinates.lng) > 0.00005
-        );
 
         return (
           <React.Fragment key={loc.id}>
@@ -204,42 +165,11 @@ export const LocationMarkers: React.FC<LocationMarkersProps> = ({
                     {loc.shortName || loc.name}
                   </span>
                   <span className="text-[10px] text-slate-500 font-medium capitalize">
-                    {loc.category.replace('_', ' ')} (Building Structure)
+                    {loc.category.replace('_', ' ')}
                   </span>
                 </div>
               </Tooltip>
             </Marker>
-
-            {/* Separate Pedestrian Entrance Gate Marker */}
-            {isEntranceDistinct && entranceCoord && (isSelected || currentZoom >= 16 || loc.id === 'building-41') && (
-              <Marker
-                position={[entranceCoord.lat, entranceCoord.lng]}
-                icon={createEntranceIcon(Boolean(loc.isEntranceConfirmed))}
-                zIndexOffset={isSelected ? 1100 : 120}
-                eventHandlers={{
-                  click: () => onSelectLocation(loc),
-                }}
-              >
-                <Tooltip
-                  direction="top"
-                  offset={[0, -20]}
-                  opacity={0.96}
-                  className="custom-map-tooltip"
-                >
-                  <div className="px-1.5 py-0.5 text-center font-sans">
-                    <span className="font-bold text-xs text-slate-800 block leading-tight">
-                      {loc.id === 'building-41' ? 'Building 41 Entrance Gate' : `${loc.shortName || loc.name} Entrance Gate`}
-                    </span>
-                    <span className="text-[10px] text-emerald-700 font-medium block">
-                      {loc.isEntranceConfirmed ? 'Confirmed Pedestrian Gate' : 'Proposed Entrance (Pending Confirmation)'}
-                    </span>
-                    <span className="text-[9px] text-slate-400 font-mono block">
-                      {entranceCoord.lat.toFixed(6)}, {entranceCoord.lng.toFixed(6)}
-                    </span>
-                  </div>
-                </Tooltip>
-              </Marker>
-            )}
           </React.Fragment>
         );
       })}

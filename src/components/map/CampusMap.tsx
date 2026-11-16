@@ -13,12 +13,12 @@ import { CampusBoundaryLayer } from './CampusBoundaryLayer';
 import { CampusRoadsLayer } from './CampusRoadsLayer';
 import { CampusWalkwaysLayer } from './CampusWalkwaysLayer';
 import { CampusEntrancesLayer } from './CampusEntrancesLayer';
-import { CampusLayerControl, ActiveLayersState } from './CampusLayerControl';
 import { MapController } from './MapController';
 import { MapControls } from './MapControls';
 import { PublicCampusEvent } from '../../types/events';
 import { LiveLocationShare } from '../../types/locationSharing';
 import { RoadClosure } from '../../types/roadClosure';
+import { authService } from '../../services/authService';
 
 interface CampusMapProps {
   locations: CampusLocation[];
@@ -78,20 +78,8 @@ export const CampusMap: React.FC<CampusMapProps> = ({
   const mapRef = useRef<LeafletMap | null>(null);
   const [resetNorthSignal, setResetNorthSignal] = useState<number>(0);
   const [recenterCampusSignal, setRecenterCampusSignal] = useState<number>(0);
-  const [activeLayers, setActiveLayers] = useState<ActiveLayersState>({
-    boundary: true,
-    roads: true,
-    walkingPaths: true,
-    buildings: true,
-    entrances: true,
-  });
-
-  const handleToggleLayer = (layerKey: keyof ActiveLayersState) => {
-    setActiveLayers((prev) => ({
-      ...prev,
-      [layerKey]: !prev[layerKey],
-    }));
-  };
+  const [isAdmin] = useState<boolean>(() => authService.isAdmin());
+  const [showAdminDebugLayer, setShowAdminDebugLayer] = useState<boolean>(false);
 
   const handleZoomIn = () => {
     if (mapRef.current) {
@@ -185,25 +173,23 @@ export const CampusMap: React.FC<CampusMapProps> = ({
           </>
         )}
 
-        {/* Layer 1: Verified Campus Boundary (OSM Relation 21599790) */}
-        <CampusBoundaryLayer isVisible={activeLayers.boundary} />
+        {/* Admin-Only Editing/Debug Overlays (Hidden by default; accessible strictly to authenticated admins) */}
+        {isAdmin && showAdminDebugLayer && (
+          <>
+            <CampusBoundaryLayer isVisible={true} />
+            <CampusRoadsLayer isVisible={true} />
+            <CampusWalkwaysLayer isVisible={true} />
+            <CampusEntrancesLayer
+              locations={locations}
+              selectedLocation={selectedLocation}
+              onSelectLocation={onSelectLocation}
+              isVisible={true}
+            />
+          </>
+        )}
 
-        {/* Layer 2: Licensed Internal Vehicular Roads */}
-        <CampusRoadsLayer isVisible={activeLayers.roads} />
-
-        {/* Layer 3: Licensed Pedestrian Walkways & Paths */}
-        <CampusWalkwaysLayer isVisible={activeLayers.walkingPaths} />
-
-        {/* Layer 4: Pedestrian Entrance Gates (featuring Building 41 & campus security gates) */}
-        <CampusEntrancesLayer
-          locations={locations}
-          selectedLocation={selectedLocation}
-          onSelectLocation={onSelectLocation}
-          isVisible={activeLayers.entrances}
-        />
-
-        {/* Layer 5: Dynamic Campus Location Pins with Zoom-level LOD (hidden during turn-by-turn navigation for clarity) */}
-        {!isNavigating && activeLayers.buildings && (
+        {/* Selected Place Focused Marker (Hidden on public map until explicitly searched/selected) */}
+        {!isNavigating && selectedLocation && (
           <LocationMarkers
             locations={locations}
             selectedLocation={selectedLocation}
@@ -277,13 +263,23 @@ export const CampusMap: React.FC<CampusMapProps> = ({
         liveEventsCount={events.filter((e) => e.status === 'live').length}
       />
 
-      {/* Floating 2D Base Map Layer Controller */}
-      {!isNavigating && (
+      {/* Admin-Only Debug Overlay Toggle (Hidden for public users) */}
+      {!isNavigating && isAdmin && (
         <div className="fixed top-28 right-3 sm:right-6 z-20 pointer-events-auto">
-          <CampusLayerControl
-            layers={activeLayers}
-            onToggleLayer={handleToggleLayer}
-          />
+          <button
+            type="button"
+            onClick={() => setShowAdminDebugLayer((prev) => !prev)}
+            className={`px-3 py-1.5 rounded-full text-xs font-semibold backdrop-blur-xl border shadow-md transition active:scale-95 flex items-center space-x-1.5 ${
+              showAdminDebugLayer
+                ? 'bg-amber-500 text-white border-amber-600'
+                : 'bg-white/90 dark:bg-slate-900/90 text-slate-700 dark:text-slate-200 border-black/[0.08]'
+            }`}
+          >
+            <span>Admin Debug Overlay</span>
+            <span className="text-[10px] font-bold px-1.5 py-0.2 rounded-full bg-black/10">
+              {showAdminDebugLayer ? 'ON' : 'OFF'}
+            </span>
+          </button>
         </div>
       )}
     </div>
