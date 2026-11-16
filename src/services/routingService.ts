@@ -11,6 +11,7 @@ import { roadNetworkService } from './roadNetworkService';
 import { roadClosureService } from './roadClosureService';
 import { routeQualityService } from './routeQualityService';
 import { googleMapsService } from './googleMapsService';
+import { geoapifyService } from './geoapifyService';
 
 function mapGoogleManeuver(gManeuver?: string): ManeuverType {
   if (!gManeuver) return 'straight';
@@ -781,7 +782,59 @@ export class RoutingService implements IRoutingService {
       if (googlePlan) return googlePlan;
     }
 
-    return this.calculateCampusGraphRoute(origin, destination, mode);
+    // 1. Primary Routing Engine: Verified Campus Routing Graph
+    const campusPlan = await this.calculateCampusGraphRoute(origin, destination, mode);
+    if (campusPlan.status === 'available') {
+      return campusPlan;
+    }
+
+    // If destination is one of the candidate locations awaiting entrance verification,
+    // we strictly preserve the verified unavailable status and reason (no artificial shortcut).
+    if (
+      destination.id === 'lpu-main-gate' ||
+      destination.id === 'baldevraj-mittal-auditorium' ||
+      destination.id === 'uni-health-center' ||
+      (destination.id === 'building-41' && !destination.isEntranceConfirmed)
+    ) {
+      return campusPlan;
+    }
+
+    // 2. Secondary Optional Fallback: Geoapify Routing API (for public walking / cycling / driving)
+    if (origin && destination.coordinates && geoapifyService.isConfigured()) {
+      try {
+        const destCoord = destination.entranceCoordinates || destination.coordinates;
+        const geoapifyResult = await geoapifyService.calculateRoute(origin, destCoord, mode);
+        if (geoapifyResult && geoapifyResult.coordinates.length > 1) {
+          const instructions: TurnInstruction[] = geoapifyResult.steps.map((st, i) => ({
+            id: `inst_geoapify_${i}`,
+            instruction: st.instruction,
+            maneuver: (i === geoapifyResult.steps.length - 1 ? 'arrive' : 'turn_right') as ManeuverType,
+            distanceMeters: st.distanceMeters,
+            durationSeconds: st.durationSeconds,
+            coordinates: st.coordinates,
+            pathName: 'Public Road Pathway',
+          }));
+
+          return {
+            origin,
+            destination,
+            mode,
+            status: 'available',
+            distanceMeters: geoapifyResult.distanceMeters,
+            estimatedTimeMinutes: geoapifyResult.durationMinutes,
+            pathCoordinates: geoapifyResult.coordinates,
+            instructions,
+            isVerifiedRoute: false,
+            notes: 'Route calculated via Geoapify Public Road Routing API. Internal campus path survey pending.',
+          };
+        }
+      } catch (err) {
+        console.warn('Geoapify route fallback failed gracefully:', err);
+      }
+    }
+
+    // 3. Fallback to campus plan explanation (never drawing fake shortcuts)
+    return campusPlan;
   }
 
   /**

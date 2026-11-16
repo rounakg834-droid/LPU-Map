@@ -6,6 +6,7 @@ import { CategoryPills } from './CategoryPills';
 import { searchService } from '../../services/searchService';
 import { storageService } from '../../services/storageService';
 import { googleMapsService } from '../../services/googleMapsService';
+import { geoapifyService } from '../../services/geoapifyService';
 
 interface SearchBarProps {
   onSelectLocation: (location: CampusLocation) => void;
@@ -44,15 +45,29 @@ export const SearchBar: React.FC<SearchBarProps> = ({
       const matched = searchService.search(query, {
         category: selectedCategory,
       });
-      setResults(matched);
+      let currentResults = matched;
+      setResults(currentResults);
+
+      // Enrich with Geoapify Places (Secondary external search constrained to LPU campus)
+      if (query.trim().length >= 2 && geoapifyService.isConfigured()) {
+        try {
+          const geoapifyPlaces = await geoapifyService.searchPlaces(query);
+          if (!isCancelled && geoapifyPlaces.length > 0) {
+            currentResults = searchService.mergeGeoapifyPlaces(currentResults, geoapifyPlaces);
+            setResults(currentResults);
+          }
+        } catch {
+          // Gracefully retain local campus results on network/quota failure
+        }
+      }
 
       // Enrich with Google Places if configured and search term is non-trivial
       if (query.trim().length >= 2 && googleMapsService.isConfigured()) {
         try {
           const googlePlaces = await googleMapsService.searchPlaces(query);
           if (!isCancelled && googlePlaces.length > 0) {
-            const merged = searchService.mergeGooglePlaces(matched, googlePlaces);
-            setResults(merged);
+            currentResults = searchService.mergeGooglePlaces(currentResults, googlePlaces);
+            setResults(currentResults);
           }
         } catch {
           // Gracefully retain local campus results

@@ -87,7 +87,7 @@ export const SearchSuggestions: React.FC<SearchSuggestionsProps> = ({
                           )}
                         </>
                       )}
-                      <VerificationBadge status={loc.verificationStatus} />
+                      <VerificationBadge status={loc.verificationStatus} source={loc.source} />
                     </div>
 
                     <h4 className="text-sm font-semibold text-slate-900 group-hover:text-brand-600 transition truncate">

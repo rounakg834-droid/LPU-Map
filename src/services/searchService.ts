@@ -4,6 +4,7 @@ import { CampusLocation, LocationCategory } from '../types/location';
 import { ClassroomInfo } from '../types/classroom';
 import { locationCorrectionService } from './locationCorrectionService';
 import { GooglePlaceResult } from '../types/googleMaps';
+import { GeoapifyPlaceResult } from '../types/geoapify';
 
 export interface SearchFilters {
   category?: LocationCategory | 'all';
@@ -411,6 +412,115 @@ export class SearchService {
     }
     if (types.some((t) => ['parking'].includes(t))) {
       return 'parking';
+    }
+    return 'commercial';
+  }
+
+  /**
+   * Merges secondary external Geoapify place results into local campus results.
+   * STRICT INTEGRITY RULES:
+   * 1. Never overwrite user-confirmed or campus-verified coordinates.
+   * 2. Deduplicate against existing campus locations by matching ID, name, or proximity (< 35m).
+   * 3. Flag external results clearly as 'approximate_osm' / external search result awaiting campus verification.
+   */
+  public mergeGeoapifyPlaces(
+    campusResults: CampusLocation[],
+    geoapifyPlaces: GeoapifyPlaceResult[]
+  ): CampusLocation[] {
+    const results = [...campusResults];
+    const seenIds = new Set<string>(results.map((r) => r.id));
+    const seenNames = new Set<string>(results.map((r) => r.name.toLowerCase()));
+
+    for (const gPlace of geoapifyPlaces) {
+      const gNameLower = gPlace.name.toLowerCase().trim();
+
+      // Check if this matches any existing campus location
+      const matchedCampus = this.locations.find((loc) => {
+        const locName = loc.name.toLowerCase();
+        const shortName = (loc.shortName || '').toLowerCase();
+        const block = loc.blockNumber?.toLowerCase();
+
+        // Proximity match: within 35 meters
+        if (loc.coordinates) {
+          const dist = Math.hypot(
+            (loc.coordinates.lat - gPlace.coordinates.lat) * 111320,
+            (loc.coordinates.lng - gPlace.coordinates.lng) * 111320 * Math.cos(loc.coordinates.lat * (Math.PI / 180))
+          );
+          if (dist < 35) return true;
+        }
+
+        return (
+          locName === gNameLower ||
+          shortName === gNameLower ||
+          gNameLower.includes(locName) ||
+          locName.includes(gNameLower) ||
+          (block && (gNameLower.includes(`block ${block}`) || gNameLower.includes(`building ${block}`)))
+        );
+      });
+
+      if (matchedCampus) {
+        // If matchedCampus is already in results, we keep the verified coordinates untouched!
+        if (!seenIds.has(matchedCampus.id)) {
+          seenIds.add(matchedCampus.id);
+          results.unshift(matchedCampus); // Prioritize verified campus match!
+        }
+      } else {
+        // New external Geoapify Place located within campus grounds
+        const gId = `geoapify-${gPlace.placeId}`;
+        if (!seenIds.has(gId) && !seenNames.has(gNameLower)) {
+          seenIds.add(gId);
+          seenNames.add(gNameLower);
+
+          results.push({
+            id: gId,
+            name: gPlace.name,
+            shortName: gPlace.name,
+            category: this.inferCategoryFromGeoapifyCategories(gPlace.categories),
+            coordinates: gPlace.coordinates,
+            verificationStatus: 'approximate_osm',
+            isVerified: false,
+            description:
+              gPlace.formattedAddress ||
+              `External point of interest discovered via Geoapify Places API (${gPlace.categories.join(', ') || 'Facility'}).`,
+            features: [
+              'Geoapify Places Directory',
+              'External Search Result',
+              ...(gPlace.categories.slice(0, 3) || []),
+            ],
+            source: 'Geoapify Places API (External Directory - Awaiting Campus Verification)',
+            tags: [gNameLower, ...gPlace.categories],
+            roadConnectivityStatus: 'pending_verification',
+          });
+        }
+      }
+    }
+
+    return results;
+  }
+
+  private inferCategoryFromGeoapifyCategories(categories: string[]): LocationCategory {
+    if (!categories || categories.length === 0) return 'commercial';
+    const lower = categories.map((c) => c.toLowerCase());
+    if (lower.some((c) => c.includes('catering') || c.includes('restaurant') || c.includes('cafe') || c.includes('food'))) {
+      return 'cafeteria';
+    }
+    if (lower.some((c) => c.includes('education') || c.includes('university') || c.includes('school'))) {
+      return 'academic';
+    }
+    if (lower.some((c) => c.includes('healthcare') || c.includes('hospital') || c.includes('pharmacy') || c.includes('medical'))) {
+      return 'medical';
+    }
+    if (lower.some((c) => c.includes('entertainment') || c.includes('auditorium') || c.includes('theatre'))) {
+      return 'auditorium_events';
+    }
+    if (lower.some((c) => c.includes('sport') || c.includes('gym') || c.includes('stadium'))) {
+      return 'sports';
+    }
+    if (lower.some((c) => c.includes('parking'))) {
+      return 'parking';
+    }
+    if (lower.some((c) => c.includes('accommodation') || c.includes('hostel'))) {
+      return 'hostel_boys';
     }
     return 'commercial';
   }

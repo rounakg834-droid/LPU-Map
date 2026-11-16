@@ -13,6 +13,7 @@ dist
 dist-ssr
 *.local
 .campus_events_db.json
+scratch/
 
 # Editor directories and files
 .vscode/*

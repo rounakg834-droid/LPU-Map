@@ -33,6 +33,7 @@ import {
   Key,
 } from 'lucide-react';
 import { googleMapsService } from '../services/googleMapsService';
+import { geoapifyService } from '../services/geoapifyService';
 import { PublicCampusEvent, ProtectedStudentMetadata, EventReport } from '../types/events';
 import { eventService } from '../services/eventService';
 import { authService } from '../services/authService';
@@ -51,7 +52,7 @@ interface AdminDashboardPageProps {
   onNavigateHome: () => void;
 }
 
-type AdminTab = 'overview' | 'events' | 'students' | 'reports' | 'closures' | 'qr' | 'locations' | 'network' | 'google_maps';
+type AdminTab = 'overview' | 'events' | 'students' | 'reports' | 'closures' | 'qr' | 'locations' | 'network' | 'google_maps' | 'geoapify';
 
 export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNavigateHome }) => {
   const [isAdmin, setIsAdmin] = useState<boolean>(authService.isAdmin());
@@ -123,6 +124,35 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
       }
     } finally {
       setIsTestingGoogleKey(false);
+    }
+  };
+
+  // Geoapify Services States
+  const [geoapifyKeyInput, setGeoapifyKeyInput] = useState<string>(() => geoapifyService.getApiKey());
+  const [geoapifyStatus, setGeoapifyStatus] = useState<string>(() => geoapifyService.getStatus());
+  const [geoapifyError, setGeoapifyError] = useState<string | null>(() => geoapifyService.getErrorMessage());
+  const [isTestingGeoapifyKey, setIsTestingGeoapifyKey] = useState<boolean>(false);
+
+  useEffect(() => {
+    const unsub = geoapifyService.subscribe((status, error) => {
+      setGeoapifyStatus(status);
+      setGeoapifyError(error || null);
+    });
+    return () => unsub();
+  }, []);
+
+  const handleSaveGeoapifyKey = async () => {
+    setIsTestingGeoapifyKey(true);
+    geoapifyService.setCustomApiKey(geoapifyKeyInput.trim());
+    try {
+      const ok = await geoapifyService.testApiKey();
+      if (ok) {
+        showToast('Geoapify API key verified and active for Places & Routing!');
+      } else {
+        showToast('Geoapify verification failed. Check key & domain restrictions.');
+      }
+    } finally {
+      setIsTestingGeoapifyKey(false);
     }
   };
 
@@ -643,7 +673,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
               { id: 'qr', label: 'QR Navigation', icon: QrCode },
               { id: 'locations', label: 'Locations & Entrances', icon: MapPin },
               { id: 'network', label: 'Road Network GIS', icon: Compass },
-              { id: 'google_maps', label: 'Google Maps API', icon: Globe, badge: googleStatus === 'ready' ? 'Active' : undefined }
+              { id: 'google_maps', label: 'Google Maps API', icon: Globe, badge: googleStatus === 'ready' ? 'Active' : undefined },
+              { id: 'geoapify', label: 'Geoapify Services', icon: Search, badge: geoapifyStatus === 'ready' ? 'Active' : undefined }
             ].map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
@@ -752,7 +783,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
             { id: 'qr', label: 'QR Navigation', icon: QrCode },
             { id: 'locations', label: 'Locations & Entrances', icon: MapPin },
             { id: 'network', label: 'Road Network GIS', icon: Compass },
-            { id: 'google_maps', label: 'Google Maps API', icon: Globe }
+            { id: 'google_maps', label: 'Google Maps API', icon: Globe },
+            { id: 'geoapify', label: 'Geoapify Services', icon: Search }
           ].map((item) => (
             <button
               key={item.id}
@@ -1902,6 +1934,231 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
                       <td className="py-2.5 px-3 font-semibold text-white">Offline Capability</td>
                       <td className="py-2.5 px-3 text-rose-400">Requires live network connection</td>
                       <td className="py-2.5 px-3 text-emerald-400">Fully cached & offline-ready</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* GEOAPIFY TAB: API Key, Bounding Box, Search & Fallback Routing            */}
+        {/* ========================================================================= */}
+        {activeTab === 'geoapify' && (
+          <div className="space-y-6 animate-fade-in max-w-6xl">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 bg-slate-950 border border-slate-800 rounded-2xl shadow-xl">
+              <div>
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-indigo-950/80 text-indigo-400 border border-indigo-800 mb-2">
+                  <Search className="w-3.5 h-3.5" />
+                  <span>Geoapify Services Integration</span>
+                </div>
+                <h1 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
+                  <span>Geoapify Places & Fallback Routing</span>
+                  {geoapifyStatus === 'ready' && (
+                    <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                      Active
+                    </span>
+                  )}
+                  {geoapifyStatus === 'unconfigured' && (
+                    <span className="text-xs px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                      Unconfigured
+                    </span>
+                  )}
+                  {geoapifyStatus === 'quota_exceeded' && (
+                    <span className="text-xs px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/30">
+                      Daily Quota Exceeded (3,000 req/day)
+                    </span>
+                  )}
+                  {geoapifyStatus === 'error' && (
+                    <span className="text-xs px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/30">
+                      Auth / Domain Error
+                    </span>
+                  )}
+                </h1>
+                <p className="text-xs text-slate-400 mt-1 max-w-2xl">
+                  Secondary geocoding & external road routing engine. Preserves OpenFreeMap Liberty as the primary basemap and local LPU routing graph for verified campus pedestrian navigation.
+                </p>
+                {geoapifyError && (
+                  <p className="text-xs text-rose-400 mt-2 font-mono bg-rose-950/40 p-2 rounded-lg border border-rose-900/50">
+                    {geoapifyError}
+                  </p>
+                )}
+              </div>
+
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={handleSaveGeoapifyKey}
+                  disabled={isTestingGeoapifyKey}
+                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white rounded-xl text-xs font-bold shadow-lg shadow-indigo-600/25 flex items-center gap-2 transition"
+                >
+                  <ShieldCheck className="w-4 h-4" />
+                  <span>{isTestingGeoapifyKey ? 'Testing Key...' : 'Save & Verify Key'}</span>
+                </button>
+              </div>
+            </div>
+
+            {/* API Key Configuration Card */}
+            <div className="p-6 bg-slate-950 border border-slate-800 rounded-2xl shadow-xl space-y-4">
+              <h2 className="text-sm font-bold text-white flex items-center gap-2">
+                <Key className="w-4 h-4 text-indigo-400" />
+                <span>Geoapify API Credentials & Key Restrictions</span>
+              </h2>
+
+              <div className="space-y-3">
+                <div>
+                  <label className="text-[11px] font-semibold text-slate-400 block mb-1">
+                    Geoapify API Key
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={geoapifyKeyInput}
+                      onChange={(e) => setGeoapifyKeyInput(e.target.value)}
+                      placeholder="Paste your 32-character Geoapify API key here"
+                      className="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 font-mono"
+                    />
+                    <button
+                      onClick={handleSaveGeoapifyKey}
+                      disabled={isTestingGeoapifyKey}
+                      className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-xl transition"
+                    >
+                      {isTestingGeoapifyKey ? 'Verifying...' : 'Save'}
+                    </button>
+                  </div>
+                  <p className="text-[11px] text-slate-500 mt-1.5">
+                    Saved in browser localStorage (<code className="text-slate-400">lpu_geoapify_api_key</code>) or configured via build-time env variable <code className="text-slate-400">VITE_GEOAPIFY_API_KEY</code>.
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs space-y-1.5">
+                  <div className="font-bold flex items-center gap-1.5">
+                    <AlertTriangle className="w-4 h-4 shrink-0" />
+                    <span>Important Security & Free Quota Notice</span>
+                  </div>
+                  <p className="text-[11px] text-amber-400/90 leading-relaxed">
+                    Vite builds expose client-side environment variables to browser inspection. In your <strong className="text-white">Geoapify Project Dashboard</strong>, under API Key Restrictions, restrict this key by HTTP Referrer to:
+                  </p>
+                  <div className="bg-slate-950 p-2 rounded-lg font-mono text-[10px] text-amber-200 border border-amber-500/20 space-y-0.5">
+                    <div>https://rounakg834-droid.github.io/*</div>
+                    <div>http://localhost:*</div>
+                    <div>http://127.0.0.1:*</div>
+                  </div>
+                  <p className="text-[10px] text-amber-400/80">
+                    Geoapify Free Tier includes <strong>3,000 credits/day</strong>. If the quota is exhausted, LPU Navigator automatically falls back gracefully to the offline campus search database and local routing graph without crashing.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Architecture Integration Blueprint */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="p-5 bg-slate-950 border border-slate-800 rounded-2xl shadow-xl space-y-2.5">
+                <div className="flex items-center gap-2 text-indigo-400 font-bold text-xs uppercase tracking-wider">
+                  <Search className="w-4 h-4" />
+                  <span>1. Smart Bounded Search</span>
+                </div>
+                <h3 className="text-sm font-bold text-white">Local First + BBox Filter</h3>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Queries are matched against the local verified campus database first. Secondary Geoapify Places queries are strictly bounded to the LPU bounding box:
+                </p>
+                <div className="p-2 rounded bg-slate-900 border border-slate-800 text-[10px] font-mono text-indigo-300">
+                  rect: 75.694, 31.246, 75.717, 31.265
+                </div>
+                <p className="text-[11px] text-slate-500">
+                  Duplicates within 35 meters or matching verified records are suppressed.
+                </p>
+              </div>
+
+              <div className="p-5 bg-slate-950 border border-slate-800 rounded-2xl shadow-xl space-y-2.5">
+                <div className="flex items-center gap-2 text-emerald-400 font-bold text-xs uppercase tracking-wider">
+                  <Compass className="w-4 h-4" />
+                  <span>2. Routing Hierarchy</span>
+                </div>
+                <h3 className="text-sm font-bold text-white">Campus Graph Primary</h3>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Internal pedestrian and vehicle routing always runs on the verified campus graph. Geoapify Routing API is invoked as an optional fallback for public external routes.
+                </p>
+                <div className="p-2 rounded bg-slate-900 border border-slate-800 text-[10px] font-mono text-emerald-300">
+                  Fallback: walk / bicycle / drive
+                </div>
+                <p className="text-[11px] text-slate-500">
+                  External routes are tagged with a non-verified advisory badge.
+                </p>
+              </div>
+
+              <div className="p-5 bg-slate-950 border border-slate-800 rounded-2xl shadow-xl space-y-2.5">
+                <div className="flex items-center gap-2 text-blue-400 font-bold text-xs uppercase tracking-wider">
+                  <Layers className="w-4 h-4" />
+                  <span>3. Basemap Integrity</span>
+                </div>
+                <h3 className="text-sm font-bold text-white">OpenFreeMap Liberty</h3>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  The visual map is powered entirely by MapLibre GL JS and OpenFreeMap Liberty vector tiles. No map styling or tiles are loaded from Geoapify, preserving zero tile costs.
+                </p>
+                <div className="p-2 rounded bg-slate-900 border border-slate-800 text-[10px] font-mono text-blue-300">
+                  tiles.openfreemap.org/styles/liberty
+                </div>
+                <p className="text-[11px] text-slate-500">
+                  100% open-source vector basemap with cached OSM building footprints.
+                </p>
+              </div>
+            </div>
+
+            {/* Feature Comparison Matrix */}
+            <div className="p-6 bg-slate-950 border border-slate-800 rounded-2xl shadow-xl space-y-4">
+              <h2 className="text-sm font-bold text-white flex items-center gap-2">
+                <Globe className="w-4 h-4 text-brand-400" />
+                <span>Multi-Provider Capabilities Matrix</span>
+              </h2>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="border-b border-slate-800 text-slate-400 uppercase text-[10px] tracking-wider">
+                      <th className="py-2.5 px-3">System Capability</th>
+                      <th className="py-2.5 px-3">OpenFreeMap</th>
+                      <th className="py-2.5 px-3">Local Campus Graph</th>
+                      <th className="py-2.5 px-3">Geoapify (New)</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800/60 text-slate-300">
+                    <tr>
+                      <td className="py-2.5 px-3 font-semibold text-white">Visual 2D Vector Basemap</td>
+                      <td className="py-2.5 px-3 text-emerald-400 font-bold">Primary (Liberty Style)</td>
+                      <td className="py-2.5 px-3 text-slate-500">—</td>
+                      <td className="py-2.5 px-3 text-slate-500">Not used (zero tile quota)</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2.5 px-3 font-semibold text-white">Campus Location Search</td>
+                      <td className="py-2.5 px-3 text-slate-500">—</td>
+                      <td className="py-2.5 px-3 text-emerald-400 font-bold">Primary (Verified DB)</td>
+                      <td className="py-2.5 px-3 text-indigo-400 font-semibold">Secondary (Bounded BBox)</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2.5 px-3 font-semibold text-white">Internal Pedestrian Paths</td>
+                      <td className="py-2.5 px-3 text-slate-400">Visual OSM Footpaths</td>
+                      <td className="py-2.5 px-3 text-emerald-400 font-bold">Primary (100% Connected)</td>
+                      <td className="py-2.5 px-3 text-slate-500">Unverified internal paths</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2.5 px-3 font-semibold text-white">External Public Road Navigation</td>
+                      <td className="py-2.5 px-3 text-slate-500">—</td>
+                      <td className="py-2.5 px-3 text-slate-400">Campus perimeter only</td>
+                      <td className="py-2.5 px-3 text-emerald-400 font-bold">Supported (Fallback)</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2.5 px-3 font-semibold text-white">Unverified Gate Guardrails</td>
+                      <td className="py-2.5 px-3 text-slate-500">—</td>
+                      <td className="py-2.5 px-3 text-emerald-400 font-bold">Strict (Zero fake shortcuts)</td>
+                      <td className="py-2.5 px-3 text-emerald-400 font-bold">Inherits strict guardrail</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2.5 px-3 font-semibold text-white">Offline Availability</td>
+                      <td className="py-2.5 px-3 text-emerald-400">Map tile browser cache</td>
+                      <td className="py-2.5 px-3 text-emerald-400 font-bold">100% Offline Capable</td>
+                      <td className="py-2.5 px-3 text-rose-400">Requires network connection</td>
                     </tr>
                   </tbody>
                 </table>

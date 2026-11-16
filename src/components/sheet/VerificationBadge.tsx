@@ -8,6 +8,15 @@ interface VerificationBadgeProps {
 }
 
 export const VerificationBadge: React.FC<VerificationBadgeProps> = ({ status, source }) => {
+  if (source?.includes('Geoapify')) {
+    return (
+      <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-800 text-[11px] font-medium">
+        <Compass className="w-3.5 h-3.5 text-indigo-600" />
+        <span>Geoapify Search (Survey Pending)</span>
+      </div>
+    );
+  }
+
   if (status === 'verified_osm') {
     return (
       <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] font-medium">
