@@ -7,7 +7,7 @@ import {
   ManeuverType,
 } from '../types/navigation';
 import { CampusGraphNode, CampusGraphEdge, IRoutingService } from '../types/routing';
-import { campusRouteGraph } from '../data/campusRouteGraph';
+import { roadNetworkService } from './roadNetworkService';
 import { roadClosureService } from './roadClosureService';
 import { routeQualityService } from './routeQualityService';
 import { googleMapsService } from './googleMapsService';
@@ -66,7 +66,27 @@ export const NAVIGATION_MODES: NavigationModeConfig[] = [
 ];
 
 export class RoutingService implements IRoutingService {
-  private graph = campusRouteGraph;
+  private graph = roadNetworkService.buildRoutingGraph();
+  private edgeMap: Map<string, CampusGraphEdge[]> = new Map();
+
+  constructor() {
+    this.rebuildEdgeIndex();
+  }
+
+  public rebuildEdgeIndex(): void {
+    this.edgeMap.clear();
+    for (const edge of this.graph.edges) {
+      if (!this.edgeMap.has(edge.from)) {
+        this.edgeMap.set(edge.from, []);
+      }
+      this.edgeMap.get(edge.from)!.push(edge);
+    }
+  }
+
+  public refreshGraph(): void {
+    this.graph = roadNetworkService.buildRoutingGraph();
+    this.rebuildEdgeIndex();
+  }
 
   public isGraphLoaded(): boolean {
     return Object.keys(this.graph.nodes).length > 0 && this.graph.edges.length > 0;
@@ -405,105 +425,168 @@ export class RoutingService implements IRoutingService {
   }
 
   /**
-   * Dijkstra / A* shortest path search over the campus graph with mode filtering
+   * High-Performance A* Shortest Path Engine with Transit Profile Enforcement & Road Closures
    */
   public findShortestPath(
     startNodeId: string,
     endNodeId: string,
-    mode: NavigationMode
+    mode: NavigationMode,
+    penalizedEdgeIds?: Set<string>
   ): { path: CampusGraphNode[]; edges: CampusGraphEdge[]; distance: number; closuresAvoided?: string[] } | null {
     const nodes = this.graph.nodes;
-    const edges = this.graph.edges;
+    if (!nodes[startNodeId] || !nodes[endNodeId]) return null;
+
     const activeClosures = roadClosureService.getActiveClosures();
+    const endCoords = nodes[endNodeId].coords;
 
     type PrevEntry = { nodeId: string; edge: CampusGraphEdge } | null;
-    const distances: Record<string, number> = {};
-    const previous: Record<string, PrevEntry> = {};
-    const unvisited = new Set<string>();
+    const gScore = new Map<string, number>();
+    const fScore = new Map<string, number>();
+    const previous = new Map<string, PrevEntry>();
+    const openSet = new Set<string>([startNodeId]);
+    const closedSet = new Set<string>();
 
-    for (const id of Object.keys(nodes)) {
-      distances[id] = Infinity;
-      previous[id] = null;
-      unvisited.add(id);
-    }
+    gScore.set(startNodeId, 0);
+    fScore.set(startNodeId, this.calculateStraightLineMeters(nodes[startNodeId].coords, endCoords));
 
-    distances[startNodeId] = 0;
-
-    while (unvisited.size > 0) {
-      // Pick unvisited node with lowest distance
+    while (openSet.size > 0) {
+      // Find node in openSet with lowest fScore
       let currentId: string | null = null;
-      let minDis = Infinity;
-      for (const id of unvisited) {
-        if (distances[id] < minDis) {
-          minDis = distances[id];
+      let minF = Infinity;
+
+      for (const id of openSet) {
+        const f = fScore.get(id) ?? Infinity;
+        if (f < minF) {
+          minF = f;
           currentId = id;
         }
       }
 
-      if (!currentId || minDis === Infinity) {
-        break; // Remaining nodes are unreachable
+      if (!currentId || minF === Infinity) {
+        break; // Remaining unreachable
       }
 
       if (currentId === endNodeId) {
-        break; // Destination reached
+        // Goal reached: reconstruct path
+        const pathNodes: CampusGraphNode[] = [];
+        const pathEdges: CampusGraphEdge[] = [];
+        let curr: string | null = endNodeId;
+
+        while (curr && curr !== startNodeId) {
+          const entry = previous.get(curr);
+          if (!entry) break;
+          pathNodes.unshift(nodes[curr]);
+          pathEdges.unshift(entry.edge);
+          curr = entry.nodeId;
+        }
+        pathNodes.unshift(nodes[startNodeId]);
+
+        const closuresAvoided = activeClosures.map((c) => c.title);
+        return {
+          path: pathNodes,
+          edges: pathEdges,
+          distance: Math.round(gScore.get(endNodeId) ?? 0),
+          closuresAvoided: activeClosures.length > 0 ? closuresAvoided : undefined,
+        };
       }
 
-      unvisited.delete(currentId);
+      openSet.delete(currentId);
+      closedSet.add(currentId);
 
-      // Find valid outgoing edges matching the requested navigation mode and NOT closed by active road maintenance
-      const outgoingEdges = edges.filter((e) => {
-        if (e.from !== currentId) return false;
-        if (!e.allowedModes.includes(mode)) return false;
-        if (mode === 'wheelchair' && !e.isWheelchairAccessible) return false;
-
-        // Check if edge is blocked by active road closure
-        const isClosed = activeClosures.some(
-          (c) =>
-            (c.edgeId && c.edgeId === e.id) ||
-            (c.nodeA === e.from && c.nodeB === e.to) ||
-            (c.nodeA === e.to && c.nodeB === e.from)
-        );
-        return !isClosed;
-      });
+      // Fast O(1) lookup of outgoing edges
+      const outgoingEdges = this.edgeMap.get(currentId) || [];
 
       for (const edge of outgoingEdges) {
-        if (!unvisited.has(edge.to)) continue;
+        if (closedSet.has(edge.to)) continue;
 
-        const alt = distances[currentId] + edge.distanceMeters;
-        if (alt < distances[edge.to]) {
-          distances[edge.to] = alt;
-          previous[edge.to] = { nodeId: currentId, edge };
+        // Mode constraint checks
+        if (!edge.allowedModes.includes(mode)) continue;
+
+        if (mode === 'wheelchair') {
+          // Strict requirement: Never classify unknown wheelchair accessibility as confirmed safe
+          if (!edge.isWheelchairAccessible) continue;
+          if (edge.surface === 'gravel' || edge.surface === 'unpaved') continue;
+          if (edge.highwayType === 'steps') continue;
+        }
+
+        if (mode === 'car') {
+          // Car barred from pedestrian-only paths and steps
+          if (edge.category === 'pedestrian_walkway' || edge.category === 'footpath' || edge.highwayType === 'steps') {
+            continue;
+          }
+          if (edge.isRestrictedVehicle) continue;
+        }
+
+        if (mode === 'bike') {
+          // Bike barred from steps
+          if (edge.highwayType === 'steps') continue;
+        }
+
+        // Road closure check
+        const isClosed = activeClosures.some(
+          (c) =>
+            (c.edgeId && c.edgeId === edge.id) ||
+            (c.nodeA === edge.from && c.nodeB === edge.to) ||
+            (c.nodeA === edge.to && c.nodeB === edge.from)
+        );
+        if (isClosed) continue;
+
+        // Calculate traversal cost with surface and alternative penalty
+        let edgeWeight = edge.distanceMeters;
+        if (penalizedEdgeIds && (penalizedEdgeIds.has(edge.id) || penalizedEdgeIds.has(edge.id.replace(/_(fwd|rev)$/, '')))) {
+          edgeWeight *= 2.5; // Alternative route penalty
+        }
+
+        const tentativeG = (gScore.get(currentId) ?? Infinity) + edgeWeight;
+        const currentNeighborG = gScore.get(edge.to) ?? Infinity;
+
+        if (tentativeG < currentNeighborG) {
+          previous.set(edge.to, { nodeId: currentId, edge });
+          gScore.set(edge.to, tentativeG);
+
+          const h = this.calculateStraightLineMeters(nodes[edge.to].coords, endCoords);
+          fScore.set(edge.to, tentativeG + h);
+
+          openSet.add(edge.to);
         }
       }
     }
 
-    // If destination was not reached
-    if (distances[endNodeId] === Infinity) {
-      return null;
+    return null;
+  }
+
+  /**
+   * Calculate alternative route by penalizing edges of the primary route
+   */
+  public findAlternativePath(
+    startNodeId: string,
+    endNodeId: string,
+    mode: NavigationMode,
+    primaryEdges: CampusGraphEdge[]
+  ): { path: CampusGraphNode[]; edges: CampusGraphEdge[]; distance: number } | null {
+    if (primaryEdges.length < 2) return null;
+
+    const penalizedEdgeIds = new Set<string>();
+    for (const e of primaryEdges) {
+      penalizedEdgeIds.add(e.id);
+      penalizedEdgeIds.add(e.id.replace(/_(fwd|rev)$/, ''));
     }
 
-    // Reconstruct path
-    const pathNodes: CampusGraphNode[] = [];
-    const pathEdges: CampusGraphEdge[] = [];
-    let curr: string | null = endNodeId;
+    const altResult = this.findShortestPath(startNodeId, endNodeId, mode, penalizedEdgeIds);
+    if (!altResult) return null;
 
-    while (curr && curr !== startNodeId) {
-      const entry: PrevEntry = previous[curr];
-      if (!entry) break;
-      pathNodes.unshift(nodes[curr]);
-      pathEdges.unshift(entry.edge);
-      curr = entry.nodeId;
+    // Check if alternative route is genuinely distinct (> 25% different edges)
+    let overlapCount = 0;
+    for (const e of altResult.edges) {
+      if (penalizedEdgeIds.has(e.id)) overlapCount++;
     }
-    pathNodes.unshift(nodes[startNodeId]);
 
-    const closuresAvoided = activeClosures.map((c) => c.title);
+    const overlapRatio = overlapCount / (altResult.edges.length || 1);
+    if (overlapRatio > 0.75) {
+      return null; // Not distinct enough
+    }
 
-    return {
-      path: pathNodes,
-      edges: pathEdges,
-      distance: distances[endNodeId],
-      closuresAvoided: activeClosures.length > 0 ? closuresAvoided : undefined
-    };
+    return altResult;
   }
 
   /**

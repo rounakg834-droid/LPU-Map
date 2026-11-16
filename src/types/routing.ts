@@ -16,6 +16,8 @@ export interface CampusGraphNode {
   description?: string;
   isVerified?: boolean;
   verificationSource?: string;
+  componentId?: number;
+  degree?: number;
 }
 
 export interface CampusGraphEdge {
@@ -26,7 +28,7 @@ export interface CampusGraphEdge {
   allowedModes: NavigationMode[]; // ['walking', 'bike', 'car', 'wheelchair']
   pathName: string;
   isWheelchairAccessible: boolean;
-  surface: 'paved_asphalt' | 'concrete' | 'paver_blocks' | 'gravel';
+  surface: 'paved_asphalt' | 'concrete' | 'paver_blocks' | 'gravel' | 'unpaved';
   isOneWay?: boolean;
   waypoints?: Coordinates[]; // Additional intermediate curve/bend points
   geometry?: Coordinates[]; // Full ordered polyline from `from` node to `to` node
@@ -34,6 +36,14 @@ export interface CampusGraphEdge {
   verificationSource?: string;
   isRestrictedVehicle?: boolean;
   maxSpeedKmh?: number;
+  category?: string;
+  highwayType?: string;
+  componentId?: number;
+  buildingCollision?: {
+    collides: boolean;
+    buildingName?: string;
+    osmId?: string;
+  };
 }
 
 export interface CampusRouteGraph {

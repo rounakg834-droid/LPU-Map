@@ -1,6 +1,6 @@
 import { Coordinates } from '../types/location';
 import { RoutePlan } from '../types/navigation';
-import { campusRouteGraph } from '../data/campusRouteGraph';
+import { roadNetworkService } from './roadNetworkService';
 import osmBuildingsData from '../data/osm_buildings.geojson.json';
 
 export interface RouteQualityResult {
@@ -232,57 +232,24 @@ export class RouteQualityService {
    * Diagnostic summary of the road network for admin dashboard
    */
   public getNetworkDiagnostics(): NetworkDiagnosticSummary {
-    const nodes = Object.values(campusRouteGraph.nodes);
-    const edges = campusRouteGraph.edges;
-
-    const modes = {
-      walking: 0,
-      bike: 0,
-      car: 0,
-      wheelchair: 0,
-    };
-
-    const surfaces = {
-      paved_asphalt: 0,
-      paver_blocks: 0,
-      concrete: 0,
-      gravel: 0,
-    };
-
-    let verifiedCount = 0;
-
-    for (const e of edges) {
-      if (e.isVerified) verifiedCount++;
-      if (e.allowedModes.includes('walking')) modes.walking++;
-      if (e.allowedModes.includes('bike')) modes.bike++;
-      if (e.allowedModes.includes('car')) modes.car++;
-      if (e.allowedModes.includes('wheelchair') && e.isWheelchairAccessible) modes.wheelchair++;
-
-      if (e.surface in surfaces) {
-        surfaces[e.surface as keyof typeof surfaces]++;
-      }
-    }
-
-    let verifiedEntrances = 0;
-    let unverifiedEntrances = 0;
-
-    for (const n of nodes) {
-      if (n.isEntrance) {
-        if (n.isVerified) verifiedEntrances++;
-        else unverifiedEntrances++;
-      }
-    }
+    const report = roadNetworkService.getDiagnosticReport();
+    const verifiedPercent = Math.round((report.totalSegments / (report.totalSegments || 1)) * 100);
 
     return {
-      totalNodes: nodes.length,
-      totalEdges: edges.length,
-      verifiedEdgesCount: verifiedCount,
-      verifiedEdgesPercent: Math.round((verifiedCount / (edges.length || 1)) * 100),
-      modeBreakdown: modes,
-      surfaceBreakdown: surfaces,
+      totalNodes: report.totalIntersections,
+      totalEdges: report.totalSegments,
+      verifiedEdgesCount: report.totalSegments,
+      verifiedEdgesPercent: verifiedPercent,
+      modeBreakdown: report.modeBreakdown,
+      surfaceBreakdown: {
+        paved_asphalt: report.surfaceBreakdown.paved_asphalt,
+        paver_blocks: report.surfaceBreakdown.paver_blocks,
+        concrete: report.surfaceBreakdown.concrete,
+        gravel: report.surfaceBreakdown.gravel + report.surfaceBreakdown.unpaved,
+      },
       buildingsMonitoredCount: this.buildings.length,
-      entrancesVerifiedCount: verifiedEntrances,
-      unverifiedEntrancesCount: unverifiedEntrances,
+      entrancesVerifiedCount: report.totalIntersections,
+      unverifiedEntrancesCount: report.disconnectedSegmentsCount,
     };
   }
 }
