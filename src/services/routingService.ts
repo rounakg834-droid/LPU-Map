@@ -929,6 +929,29 @@ export class RoutingService implements IRoutingService {
       };
     }
 
+    // Specific road connectivity guard for LPU Main Gate candidate (user-supplied coordinates):
+    // Connectivity to the campus road graph is pending physical ground verification.
+    // Fake shortcuts or simulated road connections are strictly prohibited.
+    const isOriginMainGate =
+      Math.abs(effectiveOrigin.lat - 31.260691694532763) < 0.00005 &&
+      Math.abs(effectiveOrigin.lng - 75.70675425232257) < 0.00005;
+
+    if (destination.id === 'lpu-main-gate' || isOriginMainGate) {
+      return {
+        origin: effectiveOrigin,
+        destination,
+        mode,
+        status: 'unavailable',
+        distanceMeters: 0,
+        estimatedTimeMinutes: 0,
+        pathCoordinates: [],
+        instructions: [],
+        isVerifiedRoute: false,
+        unreachableReason:
+          'Verified route unavailable: Road connectivity for the user-confirmed LPU Main Gate candidate (31.260692, 75.706754) is pending physical ground verification. Fake shortcuts are not simulated.',
+      };
+    }
+
     // Specific verification guard for Building 41 (field coordinates):
     // Requires administrator confirmation and restricts to verified pedestrian walkway
     if (destination.id === 'building-41') {

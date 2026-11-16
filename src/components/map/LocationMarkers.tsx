@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Marker, Tooltip, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { CampusLocation, LocationCategory } from '../../types/location';
+import { CAMPUS_LOCATIONS } from '../../data/locations';
 
 interface LocationMarkersProps {
   locations?: CampusLocation[];
@@ -55,6 +56,7 @@ function getPinLabel(loc: CampusLocation): string {
 }
 
 export const LocationMarkers: React.FC<LocationMarkersProps> = ({
+  locations,
   selectedLocation,
   onSelectLocation,
 }) => {
@@ -72,24 +74,67 @@ export const LocationMarkers: React.FC<LocationMarkersProps> = ({
   }, [map]);
 
   // Public 2D Foundation:
-  // Hide ALL old custom building number markers (34, 36, 38, BH-1, etc.) and unverified custom gate markers from public map.
-  // Only display a single focused marker when the user explicitly selects a verified destination via search.
-  // Building 41 entrance coordinate (31.251697, 75.701877) is preserved in database, but public marker is hidden until approved.
+  // 1. Permanently display one clearly visible "Main Gate" marker candidate at coordinates 31.260692, 75.706754.
+  // 2. Hide ALL old custom building number markers (34, 36, 38, BH-1, etc.) and unverified custom gate markers from public map.
+  // 3. Only display an additional focused marker when the user explicitly selects a verified destination via search.
+  // 4. Building 41 entrance coordinate is preserved in database, but public marker is hidden until approved.
   const visibleLocations = useMemo(() => {
-    if (!selectedLocation || !selectedLocation.coordinates) {
-      return [];
+    const list: CampusLocation[] = [];
+
+    // Always include user-confirmed candidate: LPU Main Gate on public 2D map
+    const sourceList = locations && locations.length > 0 ? locations : CAMPUS_LOCATIONS;
+    const mainGate = sourceList.find((l) => l.id === 'lpu-main-gate');
+    if (mainGate && mainGate.coordinates) {
+      list.push(mainGate);
     }
 
-    // Preserve Building 41 in DB, but hide public marker until approved for display
-    if (selectedLocation.id === 'building-41' && !selectedLocation.isEntranceConfirmed) {
-      return [];
+    // Include user-selected location if active and not already added
+    if (selectedLocation && selectedLocation.coordinates) {
+      if (selectedLocation.id !== 'lpu-main-gate') {
+        // Preserve Building 41 in DB, but hide public marker until approved
+        if (selectedLocation.id !== 'building-41' || selectedLocation.isEntranceConfirmed) {
+          list.push(selectedLocation);
+        }
+      }
     }
 
-    return [selectedLocation];
-  }, [selectedLocation]);
+    return list;
+  }, [locations, selectedLocation]);
 
   // Create custom marker icons scaled smoothly by zoom
   const createCustomIcon = (loc: CampusLocation, isSelected: boolean) => {
+    // Specialized prominent badge marker for LPU Main Gate candidate
+    if (loc.id === 'lpu-main-gate') {
+      const html = `
+        <div class="relative group cursor-pointer flex flex-col items-center justify-center transition-transform duration-200">
+          ${isSelected ? `<div class="absolute -inset-2 rounded-full bg-emerald-500/30 animate-ping"></div>` : ''}
+          <div style="background-color: #059669;" 
+               class="px-2.5 py-1 rounded-full shadow-[0_4px_12px_rgba(5,150,105,0.45)] border-[1.5px] border-white flex items-center gap-1.5 text-white font-bold transition-all duration-150 transform group-hover:scale-105 ${
+                 isSelected ? 'scale-110 ring-4 ring-emerald-400/50 shadow-emerald-600/50' : ''
+               }">
+            <svg class="w-3.5 h-3.5 text-white flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 21h18"/>
+              <path d="M3 7v14"/>
+              <path d="M21 7v14"/>
+              <path d="M6 3h12a2 2 0 0 1 2 2v2H4V5a2 2 0 0 1 2-2z"/>
+              <path d="M9 11v6"/>
+              <path d="M15 11v6"/>
+            </svg>
+            <span class="text-[11px] font-sans font-bold tracking-tight whitespace-nowrap leading-none">Main Gate</span>
+          </div>
+          <div style="border-top-color: #059669;" class="w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[5px] -mt-[0.5px]"></div>
+        </div>
+      `;
+
+      return L.divIcon({
+        html,
+        className: 'main-gate-candidate-marker',
+        iconSize: [96, 32],
+        iconAnchor: [48, 31],
+        tooltipAnchor: [0, -30],
+      });
+    }
+
     const color = CATEGORY_COLORS[loc.category] || '#2563eb';
     const label = getPinLabel(loc);
 
@@ -156,7 +201,7 @@ export const LocationMarkers: React.FC<LocationMarkersProps> = ({
               {/* Clean, non-colliding Tooltip with unambiguous concise info */}
               <Tooltip
                 direction="top"
-                offset={[0, -20]}
+                offset={loc.id === 'lpu-main-gate' ? [0, -28] : [0, -20]}
                 opacity={0.96}
                 className="custom-map-tooltip"
               >
@@ -164,8 +209,12 @@ export const LocationMarkers: React.FC<LocationMarkersProps> = ({
                   <span className="font-semibold text-xs text-slate-800 block leading-tight">
                     {loc.shortName || loc.name}
                   </span>
-                  <span className="text-[10px] text-slate-500 font-medium capitalize">
-                    {loc.category.replace('_', ' ')}
+                  <span className={`text-[10px] font-semibold capitalize ${
+                    loc.verificationStatus === 'user_confirmed_candidate' ? 'text-emerald-600' : 'text-slate-500'
+                  }`}>
+                    {loc.verificationStatus === 'user_confirmed_candidate'
+                      ? 'User-Confirmed Candidate'
+                      : loc.category.replace('_', ' ')}
                   </span>
                 </div>
               </Tooltip>

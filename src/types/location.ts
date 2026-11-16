@@ -19,9 +19,11 @@ export type LocationCategory =
   | 'administration';
 
 export type VerificationStatus =
-  | 'verified_osm'      // Exact coordinates verified via OpenStreetMap node/way
-  | 'approximate_osm'   // Approximate campus sector verified via OSM campus zone
-  | 'pending_survey';   // University facility verified, GPS marker pending on-ground survey
+  | 'verified_osm'                  // Exact coordinates verified via OpenStreetMap node/way
+  | 'approximate_osm'               // Approximate campus sector verified via OSM campus zone
+  | 'pending_survey'                // University facility verified, GPS marker pending on-ground survey
+  | 'user_confirmed_candidate'      // User-confirmed candidate location identified from campus visual maps
+  | 'archived_pending_confirmation';// Previously recorded location archived pending formal confirmation
 
 export interface Coordinates {
   lat: number;
@@ -59,6 +61,7 @@ export interface CampusLocation {
   gateAccess?: string;
   accessibilityNotes?: string;
   isAwaitingFieldSurvey?: boolean;
+  roadConnectivityStatus?: 'connected' | 'pending_verification' | 'unconnected';
   // Entrance & Verification Metadata
   entranceCoordinates?: Coordinates;
   isEntranceConfirmed?: boolean;

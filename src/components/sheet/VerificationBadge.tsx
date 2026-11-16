@@ -17,6 +17,24 @@ export const VerificationBadge: React.FC<VerificationBadgeProps> = ({ status, so
     );
   }
 
+  if (status === 'user_confirmed_candidate') {
+    return (
+      <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-300 text-emerald-800 text-[11px] font-semibold">
+        <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+        <span>User-Confirmed Candidate</span>
+      </div>
+    );
+  }
+
+  if (status === 'archived_pending_confirmation') {
+    return (
+      <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 border border-slate-300 text-slate-700 text-[11px] font-medium">
+        <Compass className="w-3.5 h-3.5 text-slate-500" />
+        <span>Archived Gate Record</span>
+      </div>
+    );
+  }
+
   if (status === 'approximate_osm') {
     return (
       <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-[11px] font-medium">

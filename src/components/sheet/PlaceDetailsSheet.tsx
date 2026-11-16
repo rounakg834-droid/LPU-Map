@@ -316,6 +316,19 @@ export const PlaceDetailsSheet: React.FC<PlaceDetailsSheetProps> = ({
             </p>
           </div>
         )}
+
+        {/* User-Confirmed Candidate Road Connectivity Notice */}
+        {location.roadConnectivityStatus === 'pending_verification' && (
+          <div className="p-3.5 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 space-y-2">
+            <div className="flex items-center gap-2 text-emerald-800 dark:text-emerald-300 font-bold text-xs uppercase tracking-wider">
+              <Info className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+              <span>User-Confirmed Candidate Notice</span>
+            </div>
+            <p className="text-xs text-emerald-900 dark:text-emerald-200 leading-relaxed">
+              This entrance candidate was identified from campus visual layout data at ({location.coordinates?.lat.toFixed(6)}, {location.coordinates?.lng.toFixed(6)}). Stored as user-supplied; road network connectivity is pending physical on-ground survey. Fake path connections are not simulated.
+            </p>
+          </div>
+        )}
         {/* Dedicated Pedestrian Entrance Gate Section (Requirement 3: Separate Footprint & Entrance) */}
         {(location.entranceCoordinates || location.proposedEntrance) && (
           <div className="p-3.5 rounded-2xl bg-gradient-to-br from-emerald-50/70 via-slate-50 to-blue-50/40 border border-emerald-200/80 space-y-2">

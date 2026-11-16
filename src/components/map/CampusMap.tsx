@@ -188,8 +188,8 @@ export const CampusMap: React.FC<CampusMapProps> = ({
           </>
         )}
 
-        {/* Selected Place Focused Marker (Hidden on public map until explicitly searched/selected) */}
-        {!isNavigating && selectedLocation && (
+        {/* Public 2D Location Markers: Permanent Main Gate candidate marker + focused selected place marker */}
+        {!isNavigating && (
           <LocationMarkers
             locations={locations}
             selectedLocation={selectedLocation}
